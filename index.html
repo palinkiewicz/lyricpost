@@ -3,9 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="styles/main.css">
+    <title>Lyrics Image Generator</title>
 </head>
 <body>
+    <main>
+        <header>
+            <h1>Lyrics Image Generator</h1>
+        </header>
+        <form>
+            <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+            <button class="primary" id="search">
+                Find that song!
+            </button>
+        </form>
+    </main>
+    <footer class="surface">
+        Made by <a href="https://github.com/palinkiewicz" target="_blank">palinkiewicz</a>
+    </footer>
     <script src="classes/data/Artist.js"></script>
     <script src="classes/data/Lyric.js"></script>
     <script src="classes/data/Song.js"></script>

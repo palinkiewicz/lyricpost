@@ -1,5 +1,5 @@
-const df = new DataFetcher();
+const fetcher = new DataFetcher();
 
 setTimeout(()=>{
-    df.findSong('chivas trash').then(console.log);
+    fetcher.findSong('chivas trash').then(console.log);
 },500);
