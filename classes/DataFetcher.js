@@ -27,12 +27,13 @@ class DataFetcher {
     }
     
     /**
-     * Searches for a song on spotify
+     * Searches for a song on Spotify
      * 
+     * @private
      * @param {string} name
-     * @returns {Song} song
+     * @returns {object} song information object
      */
-    async findSong(name) {
+    async getSongInfo(name) {
         if (this.accessToken === undefined) return {};
 
         const response = await fetch(`https://api.spotify.com/v1/search?q=${name}&type=track&limit=1`, {
@@ -42,6 +43,37 @@ class DataFetcher {
 
         const result = await response.json();
 
-        return new Song(result.tracks.items[0]);
+        return result.tracks.items[0];
+    }
+    
+    /**
+     * Searches for song lyrics on lrclib
+     * 
+     * @private
+     * @param {string} name
+     * @returns {object} song lyrics object
+     */
+    async getSongLyrics(name) {
+        const response = await fetch(`https://lrclib.net/api/search?q=${name}`, {
+            method: "GET",
+        });
+
+        const result = await response.json();
+
+        return result[0] ?? {};
+    }
+    
+    /**
+     * Creates Song object with fetched song information and lyrics
+     * 
+     * @private
+     * @param {string} name
+     * @returns {Song} fetched song information and lyrics
+     */
+    async findSong(name) {
+        const songInfo = await this.getSongInfo(name);
+        const lyrics = await this.getSongLyrics(name);
+
+        return new Song(songInfo, lyrics);
     }
 }

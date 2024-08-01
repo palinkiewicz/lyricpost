@@ -1,21 +1,28 @@
 class Song {
     /**
-     * @param {object} songObject
+     * @param {object} songInfo
+     * @param {object} lyrics
      */
-    constructor(songObject, lyricsObject) {
+    constructor(songInfo, lyrics) {
         /** @type {string} */
-        this.name = songObject.name;
+        this.name = songInfo.name;
 
         /** @type {number} */
-        this.durationMs = songObject.duration_ms;
+        this.durationMs = songInfo.duration_ms;
         
         /** @type {string} */
-        this.spotifyUrl = songObject.external_urls.spotify;
+        this.spotifyUrl = songInfo.external_urls.spotify;
 
         /** @type {Artist[]} */
-        this.artists = songObject.artists.map(artist => new Artist(artist));
+        this.artists = songInfo.artists.map(artist => new Artist(artist));
 
         /** @type {string} */
-        this.albumCoverUrl = songObject.album.images[0].url;
+        this.albumCoverUrl = songInfo.album.images[0].url;
+
+        /** @type {bool} */
+        this.hasSyncedLyrics = lyrics?.syncedLyrics ? true : false;
+
+        /** @type {string} */
+        this.lyrics = lyrics?.syncedLyrics ?? lyrics?.plainLyrics;
     }
 }

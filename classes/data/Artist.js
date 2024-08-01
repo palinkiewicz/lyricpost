@@ -1,12 +1,12 @@
 class Artist {
     /**
-     * @param {object} artistObject
+     * @param {object} artist
      */
-    constructor(artistObject) {
+    constructor(artist) {
         /** @type {string} */
-        this.name = artistObject.name;
+        this.name = artist.name;
         
         /** @type {string} */
-        this.spotifyUrl = artistObject.external_urls.spotify;
+        this.spotifyUrl = artist.external_urls.spotify;
     }
 }
