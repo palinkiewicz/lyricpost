@@ -21,7 +21,7 @@ class DataFetcher {
                  * @type {string}
                  * @private
                  */
-                this.accessToken = json.access_token;
+                this._accessToken = json.access_token;
             });
         });
     }
@@ -34,11 +34,11 @@ class DataFetcher {
      * @returns {object} song information object
      */
     async getSongInfo(name) {
-        if (this.accessToken === undefined) return {};
+        if (this._accessToken === undefined) return {};
 
         const response = await fetch(`https://api.spotify.com/v1/search?q=${name}&type=track&limit=1`, {
             method: "GET",
-            headers: { Authorization: "Bearer " + this.accessToken },
+            headers: { Authorization: "Bearer " + this._accessToken },
         });
 
         const result = await response.json();
