@@ -1,6 +1,4 @@
 class DataFetcher {
-    access_token = null;
-
     constructor() {
         const params = new URLSearchParams();
     
@@ -19,7 +17,11 @@ class DataFetcher {
             body: params,
         }).then((res) => {
             res.json().then((json) => {
-                this.access_token = json.access_token;
+                /**
+                 * @type {string}
+                 * @private
+                 */
+                this.accessToken = json.access_token;
             });
         });
     }
@@ -28,16 +30,18 @@ class DataFetcher {
      * Searches for a song on spotify
      * 
      * @param {string} name
-     * @returns {object} song
+     * @returns {Song} song
      */
     async findSong(name) {
+        if (this.accessToken === undefined) return {};
+
         const response = await fetch(`https://api.spotify.com/v1/search?q=${name}&type=track&limit=1`, {
             method: "GET",
-            headers: { Authorization: "Bearer " + this.access_token },
+            headers: { Authorization: "Bearer " + this.accessToken },
         });
 
         const result = await response.json();
 
-        return result.tracks.items[0];
+        return new Song(result.tracks.items[0]);
     }
 }

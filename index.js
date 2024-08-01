@@ -1,5 +1,5 @@
 const df = new DataFetcher();
 
 setTimeout(()=>{
-    console.log(df.findSong('5 milionów influencerek'));
+    df.findSong('5 milionów influencerek').then(console.log);
 },500);
