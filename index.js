@@ -1,5 +1,7 @@
 const fetcher = new DataFetcher();
+const domHandler = new DOMHandler(fetcher);
 
-setTimeout(()=>{
-    fetcher.findSong('chivas trash').then(console.log);
-},500);
+document.querySelector('#search').addEventListener('click', (e) => {
+    e.preventDefault();
+    domHandler.findSong();
+})

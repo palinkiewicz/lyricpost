@@ -1,0 +1,47 @@
+#search-results {
+    padding-top: 2em;
+    overflow: hidden;
+}
+
+#search-results.hidden {
+    /* display: none; */
+}
+
+.song-image {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding: 1.5em;
+    max-width: 20em;
+    background-color: rgba(84, 154, 171, 1);
+    color: white;
+    border-radius: 1.5em;
+}
+
+.song-image > .header {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.song-image > .header > img {
+    height: 2.5em;
+    aspect-ratio: 1;
+    border-radius: 0.3em;
+}
+
+.song-image > .header .name {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.song-image > .header .authors {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.song-image > .lyrics {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.9rem;
+}
