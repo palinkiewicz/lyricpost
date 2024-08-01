@@ -22,7 +22,10 @@ class Song {
         /** @type {bool} */
         this.hasSyncedLyrics = lyrics?.syncedLyrics ? true : false;
 
-        /** @type {string} */
-        this.lyrics = lyrics?.syncedLyrics ?? lyrics?.plainLyrics;
+        /** @type {Lyric[]} */
+        this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
+            ?.replace(/\n+/g, '\n')
+            ?.split('\n')
+            ?.map(lyric => new Lyric(lyric));
     }
 }
