@@ -31,6 +31,13 @@ class DOMHandler {
         this.searchInput = document.querySelector("#song-name");
         /** @type {Element} */
         this.searchButton = document.querySelector("#search");
+
+        /** @type {Element} */
+        this.cloneableSelectSong = document.querySelector(
+            ".select-song.cloneable"
+        );
+        /** @type {Element} */
+        this.songSelection = document.querySelector(".song-selection");
     }
 
     setListeners() {
@@ -45,9 +52,13 @@ class DOMHandler {
      * @param {string} name
      */
     async findSong() {
-        const name = this.searchInput.value.replaceAll('\\', '').replaceAll('/', '').trim();
+        // return this.displayScreen(2);
+        const name = this.searchInput.value
+            .replaceAll("\\", "")
+            .replaceAll("/", "")
+            .trim();
 
-        if (name === '') {
+        if (name === "") {
             return this.throwError(
                 `Hold on! Haven't you forgotten about something?`
             );
@@ -61,18 +72,36 @@ class DOMHandler {
 
         try {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
-            this.hideSearching();
         } catch (error) {
             console.error(error);
 
             this.searchInput.removeAttribute("disabled");
             this.searchButton.removeAttribute("disabled");
 
-            this.throwError(
+            this.hideSearching();
+            return this.throwError(
                 `Oops! Looks like we couldn't find any songs for \"${name}\".`
             );
-            this.hideSearching();
         }
+
+        this.hideSearching();
+
+        this.songs.forEach((song) => {
+            const clone = this.cloneableSelectSong.cloneNode(true);
+
+            clone.querySelector("img").setAttribute("src", song.albumCoverUrl);
+            clone.querySelector(".name").textContent = song.name;
+            clone.querySelector(".authors").textContent = song.artists
+                .map((artist) => artist.name)
+                .join(", ");
+
+            clone.addEventListener("click", () => {});
+            clone.classList.remove("cloneable");
+
+            this.songSelection.append(clone);
+        });
+
+        this.displayScreen(2);
 
         console.log(this.songs);
 
@@ -87,7 +116,9 @@ class DOMHandler {
      * Converts cover image to base64 and sets it as song image's cover image
      */
     async setCoverImage() {
-        const response = await fetch(this.songs[this.selectedSongIndex].albumCoverUrl);
+        const response = await fetch(
+            this.songs[this.selectedSongIndex].albumCoverUrl
+        );
         const blob = await response.blob();
 
         const base64 = await new Promise((resolve, reject) => {
@@ -109,7 +140,9 @@ class DOMHandler {
         document.querySelector(".song-image > .header .name").textContent =
             this.songs[this.selectedSongIndex].name;
         document.querySelector(".song-image > .header .authors").textContent =
-            this.songs[this.selectedSongIndex].artists.map((artist) => artist.name).join(", ");
+            this.songs[this.selectedSongIndex].artists
+                .map((artist) => artist.name)
+                .join(", ");
     }
 
     /**
@@ -117,11 +150,12 @@ class DOMHandler {
      * @param {number[]} indexes
      */
     setSongLyrics(indexes) {
-        document.querySelector(".song-image > .lyrics").innerHTML =
-            this.songs[this.selectedSongIndex].lyrics
-                .filter((_, index) => indexes.includes(index))
-                .map((lyric) => lyric.text)
-                .join("<br>");
+        document.querySelector(".song-image > .lyrics").innerHTML = this.songs[
+            this.selectedSongIndex
+        ].lyrics
+            .filter((_, index) => indexes.includes(index))
+            .map((lyric) => lyric.text)
+            .join("<br>");
     }
 
     /**
@@ -144,7 +178,7 @@ class DOMHandler {
      * @param {string} html
      */
     throwError(html) {
-        this.errorTexts.forEach(element => {
+        this.errorTexts.forEach((element) => {
             element.innerHTML = html;
             element.classList.remove("hidden");
         });
@@ -154,7 +188,7 @@ class DOMHandler {
      * Hides the error message
      */
     hideError() {
-        this.errorTexts.forEach(element => {
+        this.errorTexts.forEach((element) => {
             element.classList.add("hidden");
         });
     }
@@ -164,7 +198,7 @@ class DOMHandler {
      * @param {string} text
      */
     displaySearching(text) {
-        this.searchingTexts.forEach(element => {
+        this.searchingTexts.forEach((element) => {
             element.textContent = text;
             element.classList.remove("hidden");
         });
@@ -174,7 +208,7 @@ class DOMHandler {
      * Hides the searching text
      */
     hideSearching() {
-        this.searchingTexts.forEach(element => {
+        this.searchingTexts.forEach((element) => {
             element.classList.add("hidden");
         });
     }
@@ -184,16 +218,16 @@ class DOMHandler {
      * @param {number} number
      */
     displayScreen(number) {
-        this.screens.forEach(screen => {
+        this.screens.forEach((screen) => {
             if (Number(screen.dataset.number) < number) {
-                screen.classList.add('hidden');
-                screen.classList.add('left');
+                screen.classList.add("hidden");
+                screen.classList.add("left");
             } else if (Number(screen.dataset.number) === number) {
-                screen.classList.remove('hidden');
-                screen.classList.remove('left');
+                screen.classList.remove("hidden");
+                screen.classList.remove("left");
             } else {
-                screen.classList.add('hidden');
-                screen.classList.remove('left');
+                screen.classList.add("hidden");
+                screen.classList.remove("left");
             }
         });
     }

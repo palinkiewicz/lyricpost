@@ -6,6 +6,7 @@
 
     --background-color: rgba(246, 246, 246, 1);
     --background-text-color: rgba(18, 55, 64, 1);
+    --surface-light-color: rgba(84, 154, 171, 0.1);
     --surface-color: rgba(84, 154, 171, 0.3);
     --surface-text-color: rgba(18, 55, 64, 0.85);
     --primary-color: rgba(241, 128, 45, 1);
@@ -16,6 +17,10 @@
     --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
+.cloneable {
+    display: none!important;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -24,6 +29,12 @@ body {
     margin: 0;
     background: var(--background-color);
     color: var(--background-text-color);
+}
+
+h1, h2 {
+    margin: 0;
+    padding: 1.5em 0 1.1em;
+    font-size: 1.6em;
 }
 
 .surface {
