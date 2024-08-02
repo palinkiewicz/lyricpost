@@ -27,23 +27,24 @@ class DataFetcher {
     }
     
     /**
-     * Searches for a song on Spotify
+     * Searches for songs on Spotify
      * 
      * @private
      * @param {string} name
-     * @returns {object} song information object
+     * @param {number} limit
+     * @returns {Song[]} an array of Song objects
      */
-    async getSongInfo(name) {
+    async getSongInfos(name, limit = 1) {
         if (this._accessToken === undefined) return {};
 
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${name}&type=track&limit=1`, {
+        const response = await fetch(`https://api.spotify.com/v1/search?q=${name}&type=track&limit=${limit}`, {
             method: "GET",
             headers: { Authorization: "Bearer " + this._accessToken },
         });
 
         const result = await response.json();
 
-        return result.tracks.items[0];
+        return result.tracks.items.map(song => new Song (song));
     }
     
     /**
@@ -61,19 +62,5 @@ class DataFetcher {
         const result = await response.json();
 
         return result[0] ?? {};
-    }
-    
-    /**
-     * Creates Song object with fetched song information and lyrics
-     * 
-     * @private
-     * @param {string} name
-     * @returns {Song} fetched song information and lyrics
-     */
-    async findSong(name) {
-        const songInfo = await this.getSongInfo(name);
-        const lyrics = await this.getSongLyrics(name);
-
-        return new Song(songInfo, lyrics);
     }
 }

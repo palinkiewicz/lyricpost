@@ -1,3 +1,4 @@
+const SONGS_TO_FETCH = 6;
 const DOWNLOAD_SCALING_FACTOR = 4;
 const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
@@ -10,8 +11,11 @@ class DOMHandler {
         /** @type {DataFetcher} */
         this.fetcher = fetcher;
 
-        /** @type {Song?} */
-        this.song = null;
+        /** @type {Song[]} */
+        this.songs = [];
+
+        /** @type {number?} */
+        this.selectedSongIndex = null;
 
         /**
          * Below all are DOM elements
@@ -52,7 +56,12 @@ class DOMHandler {
         this.hideError();
         this.displaySearching(SEARCHING_FOR_SONG);
 
-        setTimeout(() => {
+        try {
+            this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+            this.hideSearching();
+        } catch (error) {
+            console.e(error);
+
             this.searchInput.removeAttribute("disabled");
             this.searchButton.removeAttribute("disabled");
 
@@ -60,11 +69,9 @@ class DOMHandler {
                 `Oops! Looks like we couldn't find any songs for \"${name}\".`
             );
             this.hideSearching();
-        }, 1500);
+        }
 
-        // this.song = await this.fetcher.findSong(name);
-
-        // console.log(this.song);
+        console.log(this.songs);
 
         // this.setSongInfo();
         // await this.setCoverImage();
@@ -77,7 +84,7 @@ class DOMHandler {
      * Converts cover image to base64 and sets it as song image's cover image
      */
     async setCoverImage() {
-        const response = await fetch(this.song.albumCoverUrl);
+        const response = await fetch(this.songs[this.selectedSongIndex].albumCoverUrl);
         const blob = await response.blob();
 
         const base64 = await new Promise((resolve, reject) => {
@@ -97,9 +104,9 @@ class DOMHandler {
      */
     setSongInfo() {
         document.querySelector(".song-image > .header .name").textContent =
-            this.song.name;
+            this.songs[this.selectedSongIndex].name;
         document.querySelector(".song-image > .header .authors").textContent =
-            this.song.artists.map((artist) => artist.name).join(", ");
+            this.songs[this.selectedSongIndex].artists.map((artist) => artist.name).join(", ");
     }
 
     /**
@@ -108,7 +115,7 @@ class DOMHandler {
      */
     setSongLyrics(indexes) {
         document.querySelector(".song-image > .lyrics").innerHTML =
-            this.song.lyrics
+            this.songs[this.selectedSongIndex].lyrics
                 .filter((_, index) => indexes.includes(index))
                 .map((lyric) => lyric.text)
                 .join("<br>");
