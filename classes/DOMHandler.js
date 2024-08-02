@@ -40,10 +40,19 @@ class DOMHandler {
         this.songSelection = document.querySelector(".song-selection");
     }
 
+    /**
+     * Sets static elements' listeners
+     */
     setListeners() {
         this.searchButton.addEventListener("click", (e) => {
             e.preventDefault();
             this.findSong();
+        });
+
+        document.querySelectorAll('.go-to-screen').forEach(button => {
+            button.addEventListener('click', () => {
+                this.displayScreen(Number(button.dataset.number));
+            });
         });
     }
 
@@ -52,7 +61,6 @@ class DOMHandler {
      * @param {string} name
      */
     async findSong() {
-        // return this.displayScreen(2);
         const name = this.searchInput.value
             .replaceAll("\\", "")
             .replaceAll("/", "")
@@ -72,19 +80,29 @@ class DOMHandler {
 
         try {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+    
+            this.populateSongSelection();
+            this.displayScreen(2);
         } catch (error) {
             console.error(error);
 
-            this.searchInput.removeAttribute("disabled");
-            this.searchButton.removeAttribute("disabled");
-
-            this.hideSearching();
-            return this.throwError(
+            this.throwError(
                 `Oops! Looks like we couldn't find any songs for \"${name}\".`
             );
         }
 
         this.hideSearching();
+        this.searchInput.removeAttribute("disabled");
+        this.searchButton.removeAttribute("disabled");
+    }
+
+    /**
+     * Creates song selection DOM elements from Song objects stored in songs variable
+     */
+    populateSongSelection() {
+        this.songSelection
+            .querySelectorAll(".select-song:not(.cloneable)")
+            .forEach((el) => el.remove());
 
         this.songs.forEach((song) => {
             const clone = this.cloneableSelectSong.cloneNode(true);
@@ -100,16 +118,6 @@ class DOMHandler {
 
             this.songSelection.append(clone);
         });
-
-        this.displayScreen(2);
-
-        console.log(this.songs);
-
-        // this.setSongInfo();
-        // await this.setCoverImage();
-        // this.setSongLyrics([0,1,2,3]);
-
-        // this.downloadSongImage();
     }
 
     /**

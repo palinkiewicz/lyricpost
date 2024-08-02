@@ -25,7 +25,7 @@
 }
 
 .searching {
-    padding: 2em 0 1em;
+    padding: 2rem 0 1rem;
     position: relative;
     overflow: hidden;
     transition: 200ms var(--cubic-ease-out);
@@ -36,7 +36,7 @@
     position: absolute;
     bottom: 0;
     background-color: var(--background-text-color);
-    height: 0.3em;
+    height: 0.3rem;
     opacity: 1;
     transition: 100ms;
     animation: search-indicator 1s linear infinite;
@@ -55,11 +55,11 @@
 .error {
     background-color: var(--error-color);
     color: var(--error-text-color);
-    padding: 1em;
-    border-radius: 0.5em;
-    margin-top: 2em;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.9rem;
     transition: 250ms var(--cubic-ease-out);
 }
 
@@ -88,6 +88,7 @@
 
 .screen-wrapper {
     width: 100vw;
+    min-height: calc(100vh - 6rem);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -109,24 +110,24 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1em;
+    gap: 1rem;
     width: 100%;
 }
 
 .search-form form > input {
-    padding: 1em;
+    padding: 1rem;
     border: none;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     outline: none;
     width: 80%;
-    max-width: 25em;
+    max-width: 25rem;
 }
 
 .search-form form > button {
     text-align: center;
-    padding: 1em 1.5em;
+    padding: 1rem 1.5rem;
     border: none;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     outline: none;
     font-weight: 600;
     opacity: 1;
@@ -135,7 +136,7 @@
 
 .search-form form > button:hover {
     cursor: pointer;
-    padding: 1em 3em;
+    padding: 1rem 3rem;
 }
 
 .search-form form > button:disabled {
@@ -148,17 +149,17 @@
 .search-results .song-selection {
     display: flex;
     justify-content: space-between;
-    row-gap: 2em;
-    max-width: 50em;
-    padding: 2em;
+    row-gap: 2rem;
+    max-width: 50rem;
+    padding: 2rem;
     flex-wrap: wrap;
 }
 
 .select-song {
     width: 30%;
-    padding: 1em;
+    padding: 1rem;
     background-color: var(--surface-light-color);
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     transition: 200ms var(--cubic-ease-out);
 }
 
@@ -172,7 +173,7 @@
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     transition: 150ms var(--cubic-ease-out);
 }
 
@@ -182,10 +183,10 @@
 
 .select-song .name {
     font-weight: 700;
-    padding-top: 0.5em;
+    padding-top: 0.5rem;
 }
 
 .select-song .authors {
     font-weight: 600;
-    font-size: 0.8em;
+    font-size: 0.8rem;
 }
