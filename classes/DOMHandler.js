@@ -42,7 +42,7 @@ class DOMHandler {
      * @param {string} name
      */
     async findSong() {
-        const name = this.searchInput.value.trim();
+        const name = this.searchInput.value.replaceAll('\\', '').replaceAll('/', '').trim();
 
         if (name === '') {
             return this.throwError(
