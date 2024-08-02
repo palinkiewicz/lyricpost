@@ -60,7 +60,7 @@ class DOMHandler {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
             this.hideSearching();
         } catch (error) {
-            console.e(error);
+            console.error(error);
 
             this.searchInput.removeAttribute("disabled");
             this.searchButton.removeAttribute("disabled");
