@@ -38,6 +38,8 @@ class DOMHandler {
         );
         /** @type {Element} */
         this.songSelection = document.querySelector(".song-selection");
+        /** @type {Element} */
+        this.lineSelection = document.querySelector(".lines-selection");
     }
 
     /**
@@ -49,15 +51,15 @@ class DOMHandler {
             this.findSong();
         });
 
-        document.querySelectorAll('.go-to-screen').forEach(button => {
-            button.addEventListener('click', () => {
+        document.querySelectorAll(".go-to-screen").forEach((button) => {
+            button.addEventListener("click", () => {
                 this.displayScreen(Number(button.dataset.number));
             });
         });
     }
 
     /**
-     * Searches for a song and prepares the user to select lyrics lines
+     * Searches for a song and prepares song selection list
      * @param {string} name
      */
     async findSong() {
@@ -80,7 +82,7 @@ class DOMHandler {
 
         try {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
-    
+
             this.populateSongSelection();
             this.displayScreen(2);
         } catch (error) {
@@ -104,7 +106,7 @@ class DOMHandler {
             .querySelectorAll(".select-song:not(.cloneable)")
             .forEach((el) => el.remove());
 
-        this.songs.forEach((song) => {
+        this.songs.forEach((song, index) => {
             const clone = this.cloneableSelectSong.cloneNode(true);
 
             clone.querySelector("img").setAttribute("src", song.albumCoverUrl);
@@ -113,10 +115,59 @@ class DOMHandler {
                 .map((artist) => artist.name)
                 .join(", ");
 
-            clone.addEventListener("click", () => {});
+            clone.addEventListener("click", () => {
+                this.selectedSongIndex = index;
+                this.findLyrics();
+            });
+
             clone.classList.remove("cloneable");
 
             this.songSelection.append(clone);
+        });
+    }
+
+    /**
+     * Searches for song lyrics and prepares lines selection list
+     */
+    async findLyrics() {
+        this.displayScreen(3);
+
+        /** @type {Song} */
+        const song = this.songs[this.selectedSongIndex];
+
+        const artists = [...song.artists.map((artist) => artist.name), ""];
+        let lyrics = null;
+        let currentArtist = 0;
+
+        while (lyrics === null && artists.length > currentArtist) {
+            lyrics = await this.fetcher.getSongLyrics(
+                artists[currentArtist],
+                song.name
+            );
+        }
+
+        if (lyrics === null) {
+            return this.displayScreen(4);
+        }
+
+        song.loadLyrics(lyrics);
+        this.populateLineSelection();
+    }
+
+    populateLineSelection() {
+        this.lineSelection.innerHTML = "";
+
+        this.songs[this.selectedSongIndex].lyrics.forEach((line, index) => {
+            const element = document.createElement("div");
+            element.classList.add("select-line");
+            element.textContent = line.text;
+            element.dataset.index = index;
+
+            element.addEventListener("click", () => {
+                element.classList.toggle("selected");
+            });
+
+            this.lineSelection.append(element);
         });
     }
 

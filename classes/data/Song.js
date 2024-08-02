@@ -38,6 +38,7 @@ class Song {
         this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
             ?.replace(/\n+/g, '\n')
             ?.split('\n')
-            ?.map(lyric => new Lyric(lyric));
+            ?.map(lyric => new Lyric(lyric))
+            ?.filter(lyric => lyric.text !== '');
     }
 }

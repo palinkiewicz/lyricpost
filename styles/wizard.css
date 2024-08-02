@@ -190,3 +190,32 @@
     font-weight: 600;
     font-size: 0.8rem;
 }
+
+/* Screen 3: Lines selection */
+.lines-selection {
+    padding-top: 1.5rem;
+    width: 80%;
+    max-width: 30rem;
+}
+
+.select-line {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--surface-light-color);
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.select-line:hover {
+    cursor: pointer;
+    background-color: var(--surface-color);
+    scale: 1.05;
+}
+
+.select-line.selected {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+}

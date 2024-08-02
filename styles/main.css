@@ -68,7 +68,7 @@ header {
     position: relative;
 }
 
-header > .go-to-screen {
+header > .go-to-screen, #download {
     position: absolute;
     top: calc(50% + 0.2rem);
     left: -1rem;
@@ -80,7 +80,13 @@ header > .go-to-screen {
     transition: 150ms var(--cubic-ease-out);
 }
 
-header > .go-to-screen:hover {
+header > .go-to-screen.right, #download {
+    right: -1rem;
+    left: auto;
+    translate: 100% -50%;
+}
+
+header > .go-to-screen:hover, #download:hover {
     cursor: pointer;
     background-color: var(--surface-color);
 }
