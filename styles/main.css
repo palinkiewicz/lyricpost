@@ -10,6 +10,10 @@
     --surface-text-color: rgba(18, 55, 64, 0.85);
     --primary-color: rgba(241, 128, 45, 1);
     --primary-text-color: rgba(246, 246, 246, 1);
+    --error-color: rgba(240, 40, 30, 0.3);
+    --error-text-color: rgba(240, 40, 30, 1);
+
+    --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 body {
@@ -79,12 +83,19 @@ main > form > button {
     border-radius: 0.5em;
     outline: none;
     font-weight: 600;
-    transition: padding 150ms;
+    opacity: 1;
+    transition: 200ms var(--cubic-ease-out);
 }
 
 main > form > button:hover {
     cursor: pointer;
-    padding: 1em 2.5em;
+    padding: 1em 3em;
+}
+
+main > form > button:disabled {
+    font-size: 0;
+    padding: 0;
+    opacity: 0;
 }
 
 footer {

@@ -6,6 +6,7 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/wizard.css">
     <link rel="stylesheet" href="styles/song-image.css">
     <title>Lyrics Image Generator</title>
 </head>
@@ -20,8 +21,9 @@
                 Find that song!
             </button>
         </form>
-        <section class="hidden" id="search-results">
-            <!-- <div class="searching">Searching for your song...</div> -->
+        <section id="search-results">
+            <div class="searching hidden"></div>
+            <div class="error hidden"></div>
             <div class="song-image">
                 <div class="header">
                     <img src="https://i.scdn.co/image/ab67616d0000b2732ad4907e7a451077946e1f76" alt="album-cover">

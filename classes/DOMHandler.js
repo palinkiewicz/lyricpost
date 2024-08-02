@@ -1,4 +1,6 @@
 const DOWNLOAD_SCALING_FACTOR = 4;
+const SEARCHING_FOR_SONG = "Searching for your song...";
+const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
 
 class DOMHandler {
     /**
@@ -10,6 +12,25 @@ class DOMHandler {
 
         /** @type {Song?} */
         this.song = null;
+
+        /**
+         * Below all are DOM elements
+         */
+        /** @type {Element} */
+        this.errorText = document.querySelector(".error");
+        /** @type {Element} */
+        this.searchInput = document.querySelector("#song-name");
+        /** @type {Element} */
+        this.searchButton = document.querySelector("#search");
+        /** @type {Element} */
+        this.searchingText = document.querySelector(".searching");
+    }
+
+    setListeners() {
+        this.searchButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.findSong();
+        });
     }
 
     /**
@@ -17,17 +38,39 @@ class DOMHandler {
      * @param {string} name
      */
     async findSong() {
-        const name = document.querySelector("#song-name").value.trim();
+        const name = this.searchInput.value.trim();
 
-        this.song = await this.fetcher.findSong(name);
+        if (name === '') {
+            return this.throwError(
+                `Hold on! Haven't you forgotten about something?`
+            );
+        }
 
-        console.log(this.song);
+        this.searchInput.setAttribute("disabled", "true");
+        this.searchButton.setAttribute("disabled", "true");
 
-        this.setSongInfo();
-        await this.setCoverImage();
-        this.setSongLyrics([0,1,2,3]);
+        this.hideError();
+        this.displaySearching(SEARCHING_FOR_SONG);
 
-        this.downloadSongImage();
+        setTimeout(() => {
+            this.searchInput.removeAttribute("disabled");
+            this.searchButton.removeAttribute("disabled");
+
+            this.throwError(
+                `Oops! Looks like we couldn't find any songs for \"${name}\".`
+            );
+            this.hideSearching();
+        }, 1500);
+
+        // this.song = await this.fetcher.findSong(name);
+
+        // console.log(this.song);
+
+        // this.setSongInfo();
+        // await this.setCoverImage();
+        // this.setSongLyrics([0,1,2,3]);
+
+        // this.downloadSongImage();
     }
 
     /**
@@ -84,5 +127,37 @@ class DOMHandler {
                 window.saveAs(blob, "download.png");
             });
         });
+    }
+
+    /**
+     * Displays an error message with provided html
+     * @param {string} html
+     */
+    throwError(html) {
+        this.errorText.innerHTML = html;
+        this.errorText.classList.remove("hidden");
+    }
+
+    /**
+     * Hides the error message
+     */
+    hideError() {
+        this.errorText.classList.add("hidden");
+    }
+
+    /**
+     * Displays a searching text
+     * @param {string} text
+     */
+    displaySearching(text) {
+        this.searchingText.textContent = text;
+        this.searchingText.classList.remove("hidden");
+    }
+
+    /**
+     * Hides the searching text
+     */
+    hideSearching() {
+        this.searchingText.classList.add("hidden");
     }
 }
