@@ -1,3 +1,5 @@
+const DOWNLOAD_SCALING_FACTOR = 4;
+
 class DOMHandler {
     /**
      * @param {DataFetcher} fetcher
@@ -76,7 +78,7 @@ class DOMHandler {
         html2canvas(
             document.querySelector(".song-image"),
             { backgroundColor: null },
-            { scale: window.devicePixelRatio }
+            { scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR }
         ).then((canvas) => {
             canvas.toBlob(function (blob) {
                 window.saveAs(blob, "download.png");
