@@ -20,14 +20,17 @@ class DOMHandler {
         /**
          * Below all are DOM elements
          */
-        /** @type {Element} */
-        this.errorText = document.querySelector(".error");
+        /** @type {NodeListOf<Element>} */
+        this.errorTexts = document.querySelectorAll(".error");
+        /** @type {NodeListOf<Element>} */
+        this.searchingTexts = document.querySelectorAll(".searching");
+        /** @type {NodeListOf<Element>} */
+        this.screens = document.querySelectorAll(".lyrics-image-screen");
+
         /** @type {Element} */
         this.searchInput = document.querySelector("#song-name");
         /** @type {Element} */
         this.searchButton = document.querySelector("#search");
-        /** @type {Element} */
-        this.searchingText = document.querySelector(".searching");
     }
 
     setListeners() {
@@ -141,15 +144,19 @@ class DOMHandler {
      * @param {string} html
      */
     throwError(html) {
-        this.errorText.innerHTML = html;
-        this.errorText.classList.remove("hidden");
+        this.errorTexts.forEach(element => {
+            element.innerHTML = html;
+            element.classList.remove("hidden");
+        });
     }
 
     /**
      * Hides the error message
      */
     hideError() {
-        this.errorText.classList.add("hidden");
+        this.errorTexts.forEach(element => {
+            element.classList.add("hidden");
+        });
     }
 
     /**
@@ -157,14 +164,37 @@ class DOMHandler {
      * @param {string} text
      */
     displaySearching(text) {
-        this.searchingText.textContent = text;
-        this.searchingText.classList.remove("hidden");
+        this.searchingTexts.forEach(element => {
+            element.textContent = text;
+            element.classList.remove("hidden");
+        });
     }
 
     /**
      * Hides the searching text
      */
     hideSearching() {
-        this.searchingText.classList.add("hidden");
+        this.searchingTexts.forEach(element => {
+            element.classList.add("hidden");
+        });
+    }
+
+    /**
+     * Displays a searching text
+     * @param {number} number
+     */
+    displayScreen(number) {
+        this.screens.forEach(screen => {
+            if (Number(screen.dataset.number) < number) {
+                screen.classList.add('hidden');
+                screen.classList.add('left');
+            } else if (Number(screen.dataset.number) === number) {
+                screen.classList.remove('hidden');
+                screen.classList.remove('left');
+            } else {
+                screen.classList.add('hidden');
+                screen.classList.remove('left');
+            }
+        });
     }
 }

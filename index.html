@@ -12,30 +12,36 @@
 </head>
 <body>
     <main>
-        <header>
-            <h1>Lyrics Image Generator</h1>
-        </header>
-        <form>
-            <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
-            <button class="primary" id="search">
-                Find that song!
-            </button>
-        </form>
-        <section id="search-results">
-            <div class="searching hidden"></div>
-            <div class="error hidden"></div>
-            <div class="song-image">
-                <div class="header">
-                    <img src="https://i.scdn.co/image/ab67616d0000b2732ad4907e7a451077946e1f76" alt="album-cover">
-                    <div>
-                        <div class="name">anyżowe żelki</div>
-                        <div class="authors">Chivas</div>
+        <section class="lyrics-image-screen search-form" data-number="1">
+            <div class="screen-wrapper">
+                <header>
+                    <h1>Lyrics Image Generator</h1>
+                </header>
+                <form>
+                    <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+                    <button class="primary" id="search">
+                        Find that song!
+                    </button>
+                </form>
+                <div class="searching hidden"></div>
+                <div class="error hidden"></div>
+            </div>
+        </section>
+        <section class="lyrics-image-screen hidden search-results" data-number="2">
+            <div class="screen-wrapper">
+                <div class="song-image">
+                    <div class="header">
+                        <img src="https://i.scdn.co/image/ab67616d0000b2732ad4907e7a451077946e1f76" alt="album-cover">
+                        <div>
+                            <div class="name">anyżowe żelki</div>
+                            <div class="authors">Chivas</div>
+                        </div>
                     </div>
-                </div>
-                <div class="lyrics">
-                    Młody Say10<br>
-                    Młody border pozdrawia rodziców i moją siostrę<br>
-                    A najlepsze, że najgorsze chwile wcale nie kojarzą się z domkiem<br>
+                    <div class="lyrics">
+                        Młody Say10<br>
+                        Młody border pozdrawia rodziców i moją siostrę<br>
+                        A najlepsze, że najgorsze chwile wcale nie kojarzą się z domkiem<br>
+                    </div>
                 </div>
             </div>
         </section>

@@ -49,53 +49,8 @@ a:hover {
 main {
     flex: 1;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-main > header {
-    text-align: center;
-}
-
-main > form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-    width: 100%;
-}
-
-main > form > input {
-    padding: 1em;
-    border: none;
-    border-radius: 0.5em;
-    outline: none;
-    width: 80%;
-    max-width: 25em;
-}
-
-main > form > button {
-    text-align: center;
-    padding: 1em 1.5em;
-    border: none;
-    border-radius: 0.5em;
-    outline: none;
-    font-weight: 600;
-    opacity: 1;
-    transition: 200ms var(--cubic-ease-out);
-}
-
-main > form > button:hover {
-    cursor: pointer;
-    padding: 1em 3em;
-}
-
-main > form > button:disabled {
-    font-size: 0;
-    padding: 0;
-    opacity: 0;
 }
 
 footer {
