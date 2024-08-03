@@ -42,6 +42,9 @@ class DOMHandler {
         this.songSelection = document.querySelector(".song-selection");
         /** @type {Element} */
         this.lineSelection = document.querySelector(".lines-selection");
+
+        /** @type {Element} */
+        this.lastGoBack = document.querySelector("#last-go-back");
     }
 
     /**
@@ -51,6 +54,12 @@ class DOMHandler {
         this.searchButton.addEventListener("click", (e) => {
             e.preventDefault();
             this.findSong();
+        });
+
+        this.lastGoBack.addEventListener("click", () => {
+            this.displayScreen(
+                this.songs[this.selectedSongIndex].lyrics === undefined ? 2 : 3
+            );
         });
 
         document.querySelectorAll(".go-to-screen").forEach((button) => {
@@ -158,12 +167,13 @@ class DOMHandler {
             currentArtist++;
         }
 
+        this.hideSearching();
+
         if (lyrics === null) {
             return this.displayScreen(4);
         }
 
         song.loadLyrics(lyrics);
-        this.hideSearching();
         this.populateLineSelection();
     }
 
