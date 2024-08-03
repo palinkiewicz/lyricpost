@@ -1,5 +1,7 @@
 const SONGS_TO_FETCH = 6;
 const DOWNLOAD_SCALING_FACTOR = 4;
+const SELECTION_ANIMATION_DELAY = 300;
+const NEXT_LINE_ANIMATION_DELAY = 30;
 const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
 
@@ -106,6 +108,8 @@ class DOMHandler {
             .querySelectorAll(".select-song:not(.cloneable)")
             .forEach((el) => el.remove());
 
+        this.songSelection.classList.add("hidden");
+
         this.songs.forEach((song, index) => {
             const clone = this.cloneableSelectSong.cloneNode(true);
 
@@ -124,18 +128,24 @@ class DOMHandler {
 
             this.songSelection.append(clone);
         });
+
+        setTimeout(() => {
+            this.songSelection.classList.remove("hidden");
+        }, SELECTION_ANIMATION_DELAY);
     }
 
     /**
      * Searches for song lyrics and prepares lines selection list
      */
     async findLyrics() {
+        this.lineSelection.innerHTML = "";
+
         this.displayScreen(3);
 
         /** @type {Song} */
         const song = this.songs[this.selectedSongIndex];
 
-        const artists = [...song.artists.map((artist) => artist.name), ""];
+        const artists = song.artists.map((artist) => artist.name);
         let lyrics = null;
         let currentArtist = 0;
 
@@ -144,6 +154,7 @@ class DOMHandler {
                 artists[currentArtist],
                 song.name
             );
+            currentArtist++;
         }
 
         if (lyrics === null) {
@@ -155,17 +166,23 @@ class DOMHandler {
     }
 
     populateLineSelection() {
-        this.lineSelection.innerHTML = "";
+        let animationDelay = SELECTION_ANIMATION_DELAY;
 
         this.songs[this.selectedSongIndex].lyrics.forEach((line, index) => {
             const element = document.createElement("div");
-            element.classList.add("select-line");
+            element.classList.add("select-line", "hidden");
             element.textContent = line.text;
             element.dataset.index = index;
 
             element.addEventListener("click", () => {
                 element.classList.toggle("selected");
             });
+
+            setTimeout(() => {
+                element.classList.remove("hidden");
+            }, animationDelay);
+
+            animationDelay += NEXT_LINE_ANIMATION_DELAY;
 
             this.lineSelection.append(element);
         });
