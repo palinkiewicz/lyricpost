@@ -231,7 +231,14 @@
     text-align: center;
     font-size: 1.1rem;
     font-weight: 600;
-    transition: 400ms var(--cubic-ease-out);
+    width: 100%;
+    margin: 0 auto 1rem;
+    transition: padding 400ms var(--cubic-ease-out),
+        margin-bottom 400ms var(--cubic-ease-out),
+        font-size 400ms var(--cubic-ease-out),
+        width 400ms var(--cubic-ease-out),
+        background-color 200ms var(--cubic-ease-out),
+        scale 200ms var(--cubic-ease-out);
 }
 
 .select-line:hover {
@@ -240,10 +247,12 @@
     scale: 1.05;
 }
 
-.hidden .select-line, .select-line.hidden {
+.hidden .select-line,
+.select-line.hidden {
     padding: 0;
     margin-bottom: 0;
     font-size: 0;
+    width: 0;
     /* transition: 200ms var(--cubic-ease-out); */
 }
 

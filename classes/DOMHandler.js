@@ -141,6 +141,7 @@ class DOMHandler {
         this.lineSelection.innerHTML = "";
 
         this.displayScreen(3);
+        this.displaySearching(SEARCHING_FOR_LYRICS);
 
         /** @type {Song} */
         const song = this.songs[this.selectedSongIndex];
@@ -162,9 +163,13 @@ class DOMHandler {
         }
 
         song.loadLyrics(lyrics);
+        this.hideSearching();
         this.populateLineSelection();
     }
 
+    /**
+     * Creates line selection DOM elements from Lyric objects stored in the selected song's object
+     */
     populateLineSelection() {
         let animationDelay = SELECTION_ANIMATION_DELAY;
 
