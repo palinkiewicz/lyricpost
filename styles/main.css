@@ -17,6 +17,10 @@
     --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
+[contenteditable] {
+    outline: none;
+}
+
 .cloneable {
     display: none!important;
 }

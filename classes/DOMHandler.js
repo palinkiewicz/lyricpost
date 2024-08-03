@@ -77,7 +77,11 @@ class DOMHandler {
         this.populateColorSelection();
         this.setListeners();
 
-        this.displayScreen(4);
+        this.setBase64Image(
+            "https://www.vectorlogo.zone/logos/spotify/spotify-ar21.svg",
+            ".song-image > .spotify > img",
+            0
+        );
     }
 
     /**
@@ -110,7 +114,14 @@ class DOMHandler {
         });
 
         this.lightTextSwitch.addEventListener("click", () => {
-            this.lightTextSwitch.parentElement.classList.toggle("light-text");
+            const parent = this.lightTextSwitch.parentElement;
+            parent.classList.toggle("light-text");
+
+            this.setBase64Image(
+                "https://www.vectorlogo.zone/logos/spotify/spotify-ar21.svg",
+                ".song-image > .spotify > img",
+                parent.classList.contains("light-text") ? 255 : 0
+            );
         });
 
         this.spotifyTagSwitch.addEventListener("click", () => {
@@ -119,6 +130,18 @@ class DOMHandler {
 
         this.downloadButton.addEventListener("click", () => {
             this.downloadSongImage();
+        });
+
+        // Paste into contenteditable as plain text
+        document.querySelectorAll("[contenteditable]").forEach((field) => {
+            field.addEventListener("paste", function (event) {
+                event.preventDefault();
+                document.execCommand(
+                    "inserttext",
+                    false,
+                    event.clipboardData.getData("text/plain")
+                );
+            });
         });
     }
 
@@ -294,7 +317,10 @@ class DOMHandler {
      * Prepares song image DOM element
      */
     setSongImage() {
-        this.setCoverImage();
+        this.setBase64Image(
+            this.songs[this.selectedSongIndex].albumCoverUrl,
+            ".song-image > .header > img"
+        );
         this.setSongInfo();
         this.setSongLyrics(
             Array.from(document.querySelectorAll(".select-line.selected")).map(
@@ -310,27 +336,6 @@ class DOMHandler {
      */
     setSongImageColor(background) {
         this.songImage.style.backgroundColor = background;
-    }
-
-    /**
-     * Converts cover image to base64 and sets it as song image's cover image
-     */
-    async setCoverImage() {
-        const response = await fetch(
-            this.songs[this.selectedSongIndex].albumCoverUrl
-        );
-        const blob = await response.blob();
-
-        const base64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-
-        document
-            .querySelector(".song-image > .header > img")
-            .setAttribute("src", base64);
     }
 
     /**
@@ -363,13 +368,67 @@ class DOMHandler {
     async downloadSongImage() {
         const canvas = await html2canvas(
             document.querySelector(".song-image"),
-            { backgroundColor: null },
-            { scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR }
+            {
+                backgroundColor: null,
+                scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
+            }
         );
 
         canvas.toBlob((blob) => {
             window.saveAs(blob, "download.png");
         });
+    }
+
+    /**
+     * Converts cover image to base64 and sets it as image's source in order to avoid canvas CORS policy
+     * @param {string} url
+     * @param {string} imgSelector
+     */
+    async setBase64Image(url, imgSelector, newColor = null) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+
+        if (newColor === null)
+            return document
+                .querySelector(imgSelector)
+                .setAttribute("src", base64);
+
+        const img = new Image();
+        img.src = base64;
+
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] > 0) {
+                    data[i] = data[i + 1] = data[i + 2] = 0; // Set RGB (0 = black, 255 = white)
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            document
+                .querySelector(imgSelector)
+                .setAttribute("src", canvas.toDataURL());
+        };
     }
 
     /**
