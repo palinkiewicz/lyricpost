@@ -4,6 +4,18 @@ const SELECTION_ANIMATION_DELAY = 300;
 const NEXT_LINE_ANIMATION_DELAY = 30;
 const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
+const NO_LYRICS_FOUND =
+    "No lyrics found<br>You can still type your own lyrics by clicking here :)";
+
+const COLORS = [
+    "#008fd1",
+    "#549aab",
+    "#8fc00c",
+    "#729962",
+    "#a2904e",
+    "#cd6800",
+    "#fc302f",
+];
 
 class DOMHandler {
     /**
@@ -42,9 +54,30 @@ class DOMHandler {
         this.songSelection = document.querySelector(".song-selection");
         /** @type {Element} */
         this.lineSelection = document.querySelector(".lines-selection");
+        /** @type {Element} */
+        this.goToFinal = document.querySelector(
+            ".lyrics-image-screen .go-to-screen.right"
+        );
 
         /** @type {Element} */
         this.lastGoBack = document.querySelector("#last-go-back");
+        /** @type {Element} */
+        this.downloadButton = document.querySelector("#download");
+        /** @type {Element} */
+        this.colorSelection = document.querySelector(".color-selection");
+        /** @type {Element} */
+        this.customColorInput = document.querySelector("#custom-color input");
+        /** @type {Element} */
+        this.lightTextSwitch = document.querySelector("#light-text");
+        /** @type {Element} */
+        this.spotifyTagSwitch = document.querySelector("#spotify-tag");
+        /** @type {Element} */
+        this.songImage = document.querySelector(".song-image");
+
+        this.populateColorSelection();
+        this.setListeners();
+
+        this.displayScreen(4);
     }
 
     /**
@@ -66,6 +99,47 @@ class DOMHandler {
             button.addEventListener("click", () => {
                 this.displayScreen(Number(button.dataset.number));
             });
+        });
+
+        this.goToFinal.addEventListener("click", () => {
+            this.displaySongImage();
+        });
+
+        this.customColorInput.addEventListener("input", () => {
+            this.setSongImageColor(this.customColorInput.value);
+        });
+
+        this.lightTextSwitch.addEventListener("click", () => {
+            this.lightTextSwitch.parentElement.classList.toggle("light-text");
+        });
+
+        this.spotifyTagSwitch.addEventListener("click", () => {
+            this.spotifyTagSwitch.parentElement.classList.toggle("spotify-tag");
+        });
+
+        this.downloadButton.addEventListener("click", () => {
+            this.downloadSongImage();
+        });
+    }
+
+    /**
+     * Creates color selection DOM elements
+     */
+    populateColorSelection() {
+        COLORS.forEach((color) => {
+            const element = document.createElement("div");
+            element.classList.add("select-color");
+            element.style.backgroundColor = color;
+            element.textContent = ".";
+
+            element.addEventListener("click", () => {
+                this.setSongImageColor(color);
+            });
+
+            this.colorSelection.insertBefore(
+                element,
+                this.colorSelection.querySelector("#custom-color")
+            );
         });
     }
 
@@ -159,20 +233,25 @@ class DOMHandler {
         let lyrics = null;
         let currentArtist = 0;
 
-        while (lyrics === null && artists.length > currentArtist) {
-            lyrics = await this.fetcher.getSongLyrics(
-                artists[currentArtist],
-                song.name
-            );
-            currentArtist++;
+        try {
+            while (lyrics === null && artists.length > currentArtist) {
+                lyrics = await this.fetcher.getSongLyrics(
+                    artists[currentArtist],
+                    song.name
+                );
+                currentArtist++;
+            }
+
+            if (lyrics === null) {
+                throw Error("Lyrics not found");
+            }
+        } catch (error) {
+            this.hideSearching();
+            this.displaySongImage();
+            return console.error(error);
         }
 
         this.hideSearching();
-
-        if (lyrics === null) {
-            return this.displayScreen(4);
-        }
-
         song.loadLyrics(lyrics);
         this.populateLineSelection();
     }
@@ -201,6 +280,36 @@ class DOMHandler {
 
             this.lineSelection.append(element);
         });
+    }
+
+    /**
+     * Displays song image final screen
+     */
+    displaySongImage() {
+        this.setSongImage();
+        this.displayScreen(4);
+    }
+
+    /**
+     * Prepares song image DOM element
+     */
+    setSongImage() {
+        this.setCoverImage();
+        this.setSongInfo();
+        this.setSongLyrics(
+            Array.from(document.querySelectorAll(".select-line.selected")).map(
+                (selectLine) => Number(selectLine.dataset.index)
+            )
+        );
+    }
+
+    /**
+     * Set's song image's colors
+     * @param {string} background
+     * @param {string} text
+     */
+    setSongImageColor(background) {
+        this.songImage.style.backgroundColor = background;
     }
 
     /**
@@ -241,12 +350,11 @@ class DOMHandler {
      * @param {number[]} indexes
      */
     setSongLyrics(indexes) {
-        document.querySelector(".song-image > .lyrics").innerHTML = this.songs[
-            this.selectedSongIndex
-        ].lyrics
-            .filter((_, index) => indexes.includes(index))
-            .map((lyric) => lyric.text)
-            .join("<br>");
+        document.querySelector(".song-image > .lyrics").innerHTML =
+            this.songs[this.selectedSongIndex].lyrics
+                ?.filter((_, index) => indexes.includes(index))
+                ?.map((lyric) => lyric.text)
+                ?.join("<br>") ?? NO_LYRICS_FOUND;
     }
 
     /**
