@@ -1,5 +1,11 @@
 class DataFetcher {
     constructor() {
+        this._accessToken = undefined;
+
+        this.setAccessToken();
+    }
+
+    async setAccessToken() {
         const params = new URLSearchParams();
 
         params.append("grant_type", "client_credentials");
@@ -11,19 +17,15 @@ class DataFetcher {
         params.append("client_id", "4d6b7066ac2443cf82a29b79e9920e88");
         params.append("client_secret", "cddfc0b1c87e4131ae0f3622bdc5b731");
 
-        fetch("https://accounts.spotify.com/api/token", {
+        const response = await fetch("https://accounts.spotify.com/api/token", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: params,
-        }).then((res) => {
-            res.json().then((json) => {
-                /**
-                 * @type {string}
-                 * @private
-                 */
-                this._accessToken = json.access_token;
-            });
-        });
+        })
+        
+        const json = await response.json()
+        
+        this._accessToken = json.access_token;
     }
 
     /**
@@ -73,7 +75,7 @@ class DataFetcher {
                 data.trackName.toLowerCase().trim() ===
                 trackName.toLowerCase().trim()
         );
-        
+
         return filteredResult[0] ?? result[0] ?? null;
     }
 }

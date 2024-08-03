@@ -252,15 +252,15 @@ class DOMHandler {
     /**
      * Downloads song image by generating canvas from its DOM elements
      */
-    downloadSongImage() {
-        html2canvas(
+    async downloadSongImage() {
+        const canvas = await html2canvas(
             document.querySelector(".song-image"),
             { backgroundColor: null },
             { scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR }
-        ).then((canvas) => {
-            canvas.toBlob(function (blob) {
-                window.saveAs(blob, "download.png");
-            });
+        );
+
+        canvas.toBlob((blob) => {
+            window.saveAs(blob, "download.png");
         });
     }
 
