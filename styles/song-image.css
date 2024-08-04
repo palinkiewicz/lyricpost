@@ -31,10 +31,12 @@
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.2rem;
+    padding-bottom: 0.1rem;
 }
 
 .song-image > .header .authors {
     font-size: 0.75rem;
+    line-height: 1rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.6);
     transition: 200ms var(--cubic-ease-out);
