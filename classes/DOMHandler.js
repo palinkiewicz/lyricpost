@@ -11,7 +11,7 @@ const NO_LYRICS_SELECTED =
 const SPOTIFY_LOGO =
     "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
 
-const BACKGROUND_SHADOW_COLOR = "rgba(0, 0, 0, 0.4)";
+const BACKGROUND_SHADOW_COLOR = "rgba(0, 0, 0, 0.25)";
 const BACKGROUND_SHADOW_BORDER_RADIUS = 24;
 const BACKGROUND_SHADOW_BLUR = 12;
 const BACKGROUND_SHADOW_OFFSET_X = 0;
