@@ -370,6 +370,10 @@
     left: calc(100% - 1.75rem);
 }
 
+.additional-bg #additional-bg .switch::after {
+    left: calc(100% - 1.75rem);
+}
+
 @media screen and (max-width: 450px) {
     .select-song {
         width: 45%;

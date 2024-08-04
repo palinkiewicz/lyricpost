@@ -11,6 +11,13 @@ const NO_LYRICS_SELECTED =
 const SPOTIFY_LOGO =
     "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
 
+const BACKGROUND_SHADOW_COLOR = "rgba(0, 0, 0, 0.4)";
+const BACKGROUND_SHADOW_BORDER_RADIUS = 24;
+const BACKGROUND_SHADOW_BLUR = 12;
+const BACKGROUND_SHADOW_OFFSET_X = 0;
+const BACKGROUND_SHADOW_OFFSET_Y = 4;
+const BACKGROUND_TO_SHADOW_FACTOR = 4;
+
 const COLORS = [
     "#008fd1",
     "#549aab",
@@ -76,6 +83,8 @@ class DOMHandler {
         /** @type {Element} */
         this.spotifyTagSwitch = document.querySelector("#spotify-tag");
         /** @type {Element} */
+        this.additionalBgSwitch = document.querySelector("#additional-bg");
+        /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
         this.populateColorSelection();
@@ -126,6 +135,12 @@ class DOMHandler {
 
         this.spotifyTagSwitch.addEventListener("click", () => {
             this.spotifyTagSwitch.parentElement.classList.toggle("spotify-tag");
+        });
+
+        this.additionalBgSwitch.addEventListener("click", () => {
+            this.additionalBgSwitch.parentElement.classList.toggle(
+                "additional-bg"
+            );
         });
 
         this.downloadButton.addEventListener("click", () => {
@@ -379,17 +394,113 @@ class DOMHandler {
      * Downloads song image by generating canvas from its DOM elements
      */
     async downloadSongImage() {
-        const canvas = await html2canvas(
-            document.querySelector(".song-image"),
-            {
-                backgroundColor: null,
-                scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
-            }
-        );
+        let canvas = await html2canvas(this.songImage, {
+            backgroundColor: null,
+            scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
+        });
+
+        if (
+            this.additionalBgSwitch.parentElement.classList.contains(
+                "additional-bg"
+            )
+        ) {
+            canvas = this.addBgToDownloadCanvas(canvas);
+        }
 
         canvas.toBlob((blob) => {
             window.saveAs(blob, "download.png");
         });
+    }
+
+    /**
+     * Adds background with shadow to the canvas
+     * @param {HTMLCanvasElement} canvas
+     * @returns {HTMLCanvasElement} canvas with background and shadow
+     */
+    addBgToDownloadCanvas(canvas) {
+        const backgroundColor = this.songImage.style.backgroundColor;
+
+        const borderRadius =
+            BACKGROUND_SHADOW_BORDER_RADIUS *
+            window.devicePixelRatio *
+            DOWNLOAD_SCALING_FACTOR;
+
+        const shadowBlur =
+            BACKGROUND_SHADOW_BLUR *
+            window.devicePixelRatio *
+            DOWNLOAD_SCALING_FACTOR;
+
+        const margin = shadowBlur * BACKGROUND_TO_SHADOW_FACTOR;
+
+        const shadowOffsetX =
+            BACKGROUND_SHADOW_OFFSET_X *
+            window.devicePixelRatio *
+            DOWNLOAD_SCALING_FACTOR;
+
+        const shadowOffsetY =
+            BACKGROUND_SHADOW_OFFSET_Y *
+            window.devicePixelRatio *
+            DOWNLOAD_SCALING_FACTOR;
+
+        const shadowCanvas = document.createElement("canvas");
+        shadowCanvas.width = canvas.width + margin * 2;
+        shadowCanvas.height = canvas.height + margin * 2;
+        const shadowContext = shadowCanvas.getContext("2d");
+
+        shadowContext.fillStyle = backgroundColor;
+        shadowContext.fillRect(0, 0, shadowCanvas.width, shadowCanvas.height);
+
+        shadowContext.fillStyle = BACKGROUND_SHADOW_COLOR;
+        shadowContext.filter = `blur(${shadowBlur}px)`;
+        shadowContext.beginPath();
+        shadowContext.moveTo(
+            margin + shadowOffsetX + borderRadius,
+            margin + shadowOffsetY
+        );
+        shadowContext.lineTo(
+            margin + shadowOffsetX + canvas.width - borderRadius,
+            margin + shadowOffsetY
+        );
+        shadowContext.quadraticCurveTo(
+            margin + shadowOffsetX + canvas.width,
+            margin + shadowOffsetY,
+            margin + shadowOffsetX + canvas.width,
+            margin + shadowOffsetY + borderRadius
+        );
+        shadowContext.lineTo(
+            margin + shadowOffsetX + canvas.width,
+            margin + shadowOffsetY + canvas.height - borderRadius
+        );
+        shadowContext.quadraticCurveTo(
+            margin + shadowOffsetX + canvas.width,
+            margin + shadowOffsetY + canvas.height,
+            margin + shadowOffsetX + canvas.width - borderRadius,
+            margin + shadowOffsetY + canvas.height
+        );
+        shadowContext.lineTo(
+            margin + shadowOffsetX + borderRadius,
+            margin + shadowOffsetY + canvas.height
+        );
+        shadowContext.quadraticCurveTo(
+            margin + shadowOffsetX,
+            margin + shadowOffsetY + canvas.height,
+            margin + shadowOffsetX,
+            margin + shadowOffsetY + canvas.height - borderRadius
+        );
+        shadowContext.lineTo(margin + shadowOffsetX, margin + shadowOffsetY + borderRadius);
+        shadowContext.quadraticCurveTo(
+            margin + shadowOffsetX,
+            margin + shadowOffsetY,
+            margin + shadowOffsetX + borderRadius,
+            margin + shadowOffsetY
+        );
+        shadowContext.closePath();
+        shadowContext.fill();
+
+        shadowContext.filter = "none";
+        shadowContext.drawImage(canvas, margin, margin);
+
+        return shadowCanvas;
     }
 
     /**

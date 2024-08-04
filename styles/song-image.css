@@ -30,6 +30,7 @@
 .song-image > .header .name {
     font-size: 0.95rem;
     font-weight: 700;
+    line-height: 1.2rem;
 }
 
 .song-image > .header .authors {
