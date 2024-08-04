@@ -327,6 +327,9 @@ class DOMHandler {
                 (selectLine) => Number(selectLine.dataset.index)
             )
         );
+        this.setSongImageColor(
+            COLORS[Math.floor(Math.random() * COLORS.length)]
+        );
     }
 
     /**
