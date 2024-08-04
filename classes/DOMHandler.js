@@ -394,6 +394,9 @@ class DOMHandler {
      * Downloads song image by generating canvas from its DOM elements
      */
     async downloadSongImage() {
+        const song = this.songs[this.selectedSongIndex];
+        const downloadName = `${song.artists.map(artist => artist.name).join(', ')} - ${song.name}.png`
+
         let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
             scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
@@ -408,7 +411,7 @@ class DOMHandler {
         }
 
         canvas.toBlob((blob) => {
-            window.saveAs(blob, "download.png");
+            window.saveAs(blob, downloadName);
         });
     }
 
