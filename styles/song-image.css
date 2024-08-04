@@ -6,7 +6,7 @@
     background-color: rgba(84, 154, 171, 1);
     color: rgba(0, 0, 0, 0.95);
     border-radius: 1.5rem;
-    transition: 200ms ease-in-out;
+    transition: 200ms var(--cubic-ease-out);
 }
 
 .light-text .song-image {
@@ -36,7 +36,7 @@
     font-size: 0.75rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.6);
-    transition: 200ms ease-in-out;
+    transition: 200ms var(--cubic-ease-out);
 }
 
 .light-text .song-image > .header .authors {
@@ -55,7 +55,7 @@
     height: 0;
     padding: 0;
     overflow: hidden;
-    transition: 200ms ease-in-out;
+    transition: 200ms var(--cubic-ease-out);
 }
 
 .spotify-tag .song-image > .spotify {

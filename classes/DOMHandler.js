@@ -6,7 +6,8 @@ const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
 const NO_LYRICS_FOUND =
     "No lyrics found<br>You can still type your own lyrics by clicking here :)";
-const SPOTIFY_LOGO = "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
+const SPOTIFY_LOGO =
+    "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
 
 const COLORS = [
     "#008fd1",
@@ -78,11 +79,7 @@ class DOMHandler {
         this.populateColorSelection();
         this.setListeners();
 
-        this.setBase64Image(
-            SPOTIFY_LOGO,
-            ".song-image > .spotify > img",
-            0
-        );
+        this.setBase64Image(SPOTIFY_LOGO, ".song-image > .spotify > img", 0);
     }
 
     /**
@@ -271,7 +268,15 @@ class DOMHandler {
             }
         } catch (error) {
             this.hideSearching();
-            this.displaySongImage();
+
+            if (
+                document
+                    .querySelector(".final-options")
+                    .classList.contains("hidden")
+            ) {
+                this.displaySongImage();
+            }
+
             return console.error(error);
         }
 
