@@ -349,3 +349,9 @@
 .spotify-tag #spotify-tag .switch::after {
     left: calc(100% - 1.75rem);
 }
+
+@media screen and (max-width: 450px) {
+    .select-song {
+        width: 45%;
+    }
+}
