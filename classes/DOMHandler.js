@@ -417,8 +417,8 @@ class DOMHandler {
 
         canvas.toBlob((blob) => {
             window.saveAs(blob, downloadName);
+            this.hideSearching();
         });
-        this.hideSearching();
     }
 
     /**
