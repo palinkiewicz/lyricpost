@@ -4,6 +4,7 @@ const SELECTION_ANIMATION_DELAY = 300;
 const NEXT_LINE_ANIMATION_DELAY = 30;
 const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
+const DOWNLOADING = "Downloading lyrics image...";
 const NO_LYRICS_FOUND =
     "No lyrics found<br>You can still type your own lyrics by clicking here :)";
 const NO_LYRICS_SELECTED =
@@ -394,8 +395,12 @@ class DOMHandler {
      * Downloads song image by generating canvas from its DOM elements
      */
     async downloadSongImage() {
+        this.displaySearching(DOWNLOADING);
+
         const song = this.songs[this.selectedSongIndex];
-        const downloadName = `${song.artists.map(artist => artist.name).join(', ')} - ${song.name}.png`
+        const downloadName = `${song.artists
+            .map((artist) => artist.name)
+            .join(", ")} - ${song.name}.png`;
 
         let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
@@ -413,6 +418,7 @@ class DOMHandler {
         canvas.toBlob((blob) => {
             window.saveAs(blob, downloadName);
         });
+        this.hideSearching();
     }
 
     /**
@@ -490,7 +496,10 @@ class DOMHandler {
             margin + shadowOffsetX,
             margin + shadowOffsetY + canvas.height - borderRadius
         );
-        shadowContext.lineTo(margin + shadowOffsetX, margin + shadowOffsetY + borderRadius);
+        shadowContext.lineTo(
+            margin + shadowOffsetX,
+            margin + shadowOffsetY + borderRadius
+        );
         shadowContext.quadraticCurveTo(
             margin + shadowOffsetX,
             margin + shadowOffsetY,
