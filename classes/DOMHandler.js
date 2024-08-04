@@ -6,6 +6,8 @@ const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
 const NO_LYRICS_FOUND =
     "No lyrics found<br>You can still type your own lyrics by clicking here :)";
+const NO_LYRICS_SELECTED =
+    "No lyrics selected<br>You can still type your own lyrics by clicking here :)";
 const SPOTIFY_LOGO =
     "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
 
@@ -364,11 +366,13 @@ class DOMHandler {
      * @param {number[]} indexes
      */
     setSongLyrics(indexes) {
-        document.querySelector(".song-image > .lyrics").innerHTML =
+        const lyrics =
             this.songs[this.selectedSongIndex].lyrics
                 ?.filter((_, index) => indexes.includes(index))
                 ?.map((lyric) => lyric.text)
                 ?.join("<br>") ?? NO_LYRICS_FOUND;
+        document.querySelector(".song-image > .lyrics").innerHTML =
+            lyrics !== "" ? lyrics : NO_LYRICS_SELECTED;
     }
 
     /**
