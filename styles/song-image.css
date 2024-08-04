@@ -59,8 +59,8 @@
 }
 
 .spotify-tag .song-image > .spotify {
-    height: 3.2rem;
-    padding-top: 1rem;
+    height: 3rem;
+    padding: 1.2rem 0 0.3rem;
 }
 
 .song-image > .spotify > img {

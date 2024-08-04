@@ -6,6 +6,7 @@ const SEARCHING_FOR_SONG = "Searching for your song...";
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
 const NO_LYRICS_FOUND =
     "No lyrics found<br>You can still type your own lyrics by clicking here :)";
+const SPOTIFY_LOGO = "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
 
 const COLORS = [
     "#008fd1",
@@ -78,7 +79,7 @@ class DOMHandler {
         this.setListeners();
 
         this.setBase64Image(
-            "https://www.vectorlogo.zone/logos/spotify/spotify-ar21.svg",
+            SPOTIFY_LOGO,
             ".song-image > .spotify > img",
             0
         );
@@ -118,7 +119,7 @@ class DOMHandler {
             parent.classList.toggle("light-text");
 
             this.setBase64Image(
-                "https://www.vectorlogo.zone/logos/spotify/spotify-ar21.svg",
+                SPOTIFY_LOGO,
                 ".song-image > .spotify > img",
                 parent.classList.contains("light-text") ? 255 : 0
             );
@@ -423,7 +424,7 @@ class DOMHandler {
 
             for (let i = 0; i < data.length; i += 4) {
                 if (data[i + 3] > 0) {
-                    data[i] = data[i + 1] = data[i + 2] = 0; // Set RGB (0 = black, 255 = white)
+                    data[i] = data[i + 1] = data[i + 2] = newColor; // Set RGB (0 = black, 255 = white)
                 }
             }
 
