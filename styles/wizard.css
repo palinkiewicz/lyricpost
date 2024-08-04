@@ -273,6 +273,11 @@
     max-width: 15rem;
     width: 80%;
     padding: 2rem 1rem;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.hidden .color-selection {
+    padding: 0 1rem;
 }
 
 .color-selection > div {
@@ -286,6 +291,10 @@
 .color-selection > div:hover {
     cursor: pointer;
     scale: 1.1;
+}
+
+.hidden .color-selection > div {
+    width: 0;
 }
 
 #custom-color {
@@ -313,10 +322,16 @@
     max-width: 15rem;
     width: 80%;
     padding: 0rem 1rem 1rem;
+    transition: 200ms var(--cubic-ease-out);
 }
 
 .switch-container:hover {
     cursor: pointer;
+}
+
+.hidden .switch-container {
+    font-size: 0;
+    padding: 0;
 }
 
 .switch {
@@ -326,6 +341,11 @@
     border-radius: 1rem;
     border: 1px solid var(--background-text-color);
     margin-right: 1rem;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.hidden .switch {
+    height: 0;
 }
 
 .switch::after {
