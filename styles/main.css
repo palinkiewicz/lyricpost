@@ -111,6 +111,35 @@ header > .go-to-screen:hover, #download:hover, #last-go-back:hover {
 footer {
     text-align: center;
     padding: 2.1rem;
-    height: 6rem;
+    height: 8rem;
     font-size: 1.2rem;
+}
+
+#dark-mode-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 600;
+    padding-top: 0.5rem;
+}
+
+#dark-mode-toggle:hover {
+    cursor: pointer;
+}
+
+#dark-mode-toggle::before {
+    content: "Switch to dark";
+}
+
+.dark-mode #dark-mode-toggle::before {
+    content: "Switch to light";
+}
+
+#dark-mode-toggle > span::after {
+    content: "dark_mode";
+}
+
+.dark-mode #dark-mode-toggle > span::after {
+    content: "light_mode";
 }

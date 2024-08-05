@@ -88,10 +88,18 @@ class DOMHandler {
         /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
+        /** @type {Element} */
+        this.toggleDarkMode = document.querySelector("#dark-mode-toggle");
+
         this.populateColorSelection();
         this.setListeners();
-
         this.setBase64Image(SPOTIFY_LOGO, ".song-image > .spotify > img", 0);
+        this.setTheme(
+            localStorage.getItem("theme") ??
+                (window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ? "dark"
+                    : "light")
+        );
     }
 
     /**
@@ -158,6 +166,12 @@ class DOMHandler {
                     event.clipboardData.getData("text/plain")
                 );
             });
+        });
+
+        this.toggleDarkMode.addEventListener("click", () => {
+            this.setTheme(
+                document.body.classList.contains("dark-mode") ? "light" : "dark"
+            );
         });
     }
 
@@ -624,5 +638,19 @@ class DOMHandler {
                 screen.classList.remove("left");
             }
         });
+    }
+
+    /**
+     * Sets color theme
+     * @param {string} theme
+     */
+    setTheme(theme) {
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+            localStorage.setItem("theme", "dark");
+        } else {
+            document.body.classList.remove("dark-mode");
+            localStorage.setItem("theme", "light");
+        }
     }
 }

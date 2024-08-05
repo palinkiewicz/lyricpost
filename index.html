@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles/song-image.css">
     <title>Lyrics Image Generator</title>
 </head>
-<body>
+<body class="dark-mode">
     <main>
         <section class="lyrics-image-screen search-form" data-number="1">
             <div class="screen-wrapper">
@@ -97,8 +97,15 @@
         </section>
     </main>
     <footer class="surface">
-        Made by <a href="https://github.com/palinkiewicz" target="_blank">palinkiewicz</a>
-        | <a href="https://ko-fi.com/palinkiewicz">Buy me a coffee</a>
+        <div>
+            Made by
+            <a href="https://github.com/palinkiewicz" target="_blank">palinkiewicz</a>
+            |
+            <a href="https://ko-fi.com/palinkiewicz">Ko-Fi</a>
+        </div>
+        <div id="dark-mode-toggle">
+            <span class="material-symbols-outlined"></span>
+        </div>
     </footer>
     <script src="classes/data/Artist.js"></script>
     <script src="classes/data/Lyric.js"></script>
