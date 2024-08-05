@@ -30,7 +30,7 @@ Light mode                         | Dark mode
 
 ## Local installation
 
-1. Clone the repo <br> ```git clone https://github.com/yourusername/lyricpost.git```
+1. Clone the repo <br> ```https://github.com/palinkiewicz/lyricpost```
 2. Run index.html
 
 It's that easy!
