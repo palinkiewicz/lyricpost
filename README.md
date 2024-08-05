@@ -22,8 +22,11 @@ You can check it out [here](https://palinkiewicz.github.io/lyricpost/).
 
 ## Screenshots
 
-Light mode                 |  Dark mode
-:-------------------------:|:-------------------------:
+Light mode                         | Dark mode
+:---------------------------------:|:---------------------------------:
+![](.screenshots/light-mode-1.png) | ![](.screenshots/dark-mode-1.png)
+![](.screenshots/light-mode-2.png) | ![](.screenshots/dark-mode-2.png)
+![](.screenshots/light-mode-3.png) | ![](.screenshots/dark-mode-3.png)
 
 ## Local installation
 
