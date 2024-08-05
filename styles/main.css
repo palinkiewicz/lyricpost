@@ -17,6 +17,18 @@
     --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
+.dark-mode, .dark-mode * {
+    --background-color: rgba(20, 20, 20, 1);
+    --background-text-color: rgba(72, 220, 255, 0.8);
+    --surface-light-color: rgba(84, 154, 171, 0.1);
+    --surface-color: rgba(84, 154, 171, 0.25);
+    --surface-text-color: rgba(72, 220, 255, 0.7);
+    --primary-color: rgba(241, 128, 45, 0.95);
+    --primary-text-color: rgba(246, 246, 246, 1);
+    --error-color: rgba(240, 40, 30, 0.2);
+    --error-text-color: rgba(240, 40, 30, 1);
+}
+
 [contenteditable] {
     outline: none;
 }
@@ -81,6 +93,7 @@ header > .go-to-screen, #download, #last-go-back {
     border-radius: 0.5rem;
     padding: 0.5rem;
     background-color: var(--surface-light-color);
+    color: var(--surface-text-color);
     transition: 150ms var(--cubic-ease-out);
 }
 
