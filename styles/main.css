@@ -88,7 +88,7 @@ header > .go-to-screen, #download, #last-go-back {
     position: absolute;
     top: calc(50% + 0.2rem);
     left: -1rem;
-    translate: -100% -50%;
+    transform: translate(-100%, -50%);
     border: 0;
     border-radius: 0.5rem;
     padding: 0.5rem;
@@ -100,7 +100,7 @@ header > .go-to-screen, #download, #last-go-back {
 header > .go-to-screen.right, #download {
     right: -1rem;
     left: auto;
-    translate: 100% -50%;
+    transform: translate(100%, -50%);
 }
 
 header > .go-to-screen:hover, #download:hover, #last-go-back:hover {

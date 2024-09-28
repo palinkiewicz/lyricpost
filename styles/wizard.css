@@ -2,25 +2,25 @@
     0% {
         width: 20%;
         left: 0%;
-        translate: -200% 0;
+        transform: translate(-200%, 0);
     }
 
     33% {
         width: 50%;
         left: 20%;
-        translate: 0% 0;
+        transform: translate(0%, 0);
     }
 
     66% {
         width: 40%;
         left: 60%;
-        translate: 0% 0;
+        transform: translate(0%, 0);
     }
 
     100% {
         width: 10%;
         left: 100%;
-        translate: 100% 0;
+        transform: translate(100%, 0);
     }
 }
 
@@ -93,11 +93,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: translate 500ms ease-in-out;
+    transition: transform 500ms ease-in-out;
 }
 
 .hidden.left .screen-wrapper {
-    translate: -100% 0;
+    transform: translate(-100%, 0);
 }
 
 /* Screen 1: Search form */
@@ -362,7 +362,7 @@
     position: absolute;
     top: 50%;
     left: 0.25rem;
-    translate: 0 -50%;
+    transform: translate(0, -50%);
     height: 1.5rem;
     aspect-ratio: 1;
     background-color: var(--background-text-color);
