@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
 
     --background-color: rgba(246, 246, 246, 1);
     --background-text-color: rgba(18, 55, 64, 1);
@@ -17,7 +17,8 @@
     --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-.dark-mode, .dark-mode * {
+.dark-mode,
+.dark-mode * {
     --background-color: rgba(20, 20, 20, 1);
     --background-text-color: rgba(72, 220, 255, 0.8);
     --surface-light-color: rgba(84, 154, 171, 0.1);
@@ -34,7 +35,7 @@
 }
 
 .cloneable {
-    display: none!important;
+    display: none !important;
 }
 
 body {
@@ -47,7 +48,8 @@ body {
     color: var(--background-text-color);
 }
 
-h1, h2 {
+h1,
+h2 {
     margin: 0;
     padding: 1.5rem 0 1.1rem;
     font-size: 1.6rem;
@@ -66,7 +68,7 @@ h1, h2 {
 a {
     text-decoration: none;
     font-weight: 600;
-    color: inherit
+    color: inherit;
 }
 
 a:hover {
@@ -84,7 +86,9 @@ header {
     position: relative;
 }
 
-header > .go-to-screen, #download, #last-go-back {
+header > .go-to-screen,
+#download,
+#last-go-back {
     position: absolute;
     top: calc(50% + 0.2rem);
     left: -1rem;
@@ -97,13 +101,16 @@ header > .go-to-screen, #download, #last-go-back {
     transition: 150ms var(--cubic-ease-out);
 }
 
-header > .go-to-screen.right, #download {
+header > .go-to-screen.right,
+#download {
     right: -1rem;
     left: auto;
     transform: translate(100%, -50%);
 }
 
-header > .go-to-screen:hover, #download:hover, #last-go-back:hover {
+header > .go-to-screen:hover,
+#download:hover,
+#last-go-back:hover {
     cursor: pointer;
     background-color: var(--surface-color);
 }
@@ -129,17 +136,17 @@ footer {
 }
 
 #dark-mode-toggle::before {
-    content: "Switch to dark";
+    content: 'Switch to dark';
 }
 
 .dark-mode #dark-mode-toggle::before {
-    content: "Switch to light";
+    content: 'Switch to light';
 }
 
 #dark-mode-toggle > span::after {
-    content: "dark_mode";
+    content: 'dark_mode';
 }
 
 .dark-mode #dark-mode-toggle > span::after {
-    content: "light_mode";
+    content: 'light_mode';
 }

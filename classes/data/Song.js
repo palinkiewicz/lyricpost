@@ -9,12 +9,12 @@ class Song {
 
         /** @type {number} */
         this.durationMs = songInfo.duration_ms;
-        
+
         /** @type {string} */
         this.spotifyUrl = songInfo.external_urls.spotify;
 
         /** @type {Artist[]} */
-        this.artists = songInfo.artists.map(artist => new Artist(artist));
+        this.artists = songInfo.artists.map((artist) => new Artist(artist));
 
         /** @type {string} */
         this.albumCoverUrl = songInfo.album.images[0].url;
@@ -26,7 +26,7 @@ class Song {
         this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
             ?.replace(/\n+/g, '\n')
             ?.split('\n')
-            ?.map(lyric => new Lyric(lyric));
+            ?.map((lyric) => new Lyric(lyric));
     }
 
     /**
@@ -38,7 +38,7 @@ class Song {
         this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
             ?.replace(/\n+/g, '\n')
             ?.split('\n')
-            ?.map(lyric => new Lyric(lyric))
-            ?.filter(lyric => lyric.text !== '');
+            ?.map((lyric) => new Lyric(lyric))
+            ?.filter((lyric) => lyric.text !== '');
     }
 }

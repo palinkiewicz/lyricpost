@@ -2,17 +2,17 @@ const SONGS_TO_FETCH = 6;
 const DOWNLOAD_SCALING_FACTOR = 4;
 const SELECTION_ANIMATION_DELAY = 300;
 const NEXT_LINE_ANIMATION_DELAY = 30;
-const SEARCHING_FOR_SONG = "Searching for your song...";
+const SEARCHING_FOR_SONG = 'Searching for your song...';
 const SEARCHING_FOR_LYRICS = "Searching for song's lyrics...";
-const DOWNLOADING = "Downloading lyrics image...";
+const DOWNLOADING = 'Downloading lyrics image...';
 const NO_LYRICS_FOUND =
-    "No lyrics found<br>You can still type your own lyrics by clicking here :)";
+    'No lyrics found<br>You can still type your own lyrics by clicking here :)';
 const NO_LYRICS_SELECTED =
-    "No lyrics selected<br>You can still type your own lyrics by clicking here :)";
+    'No lyrics selected<br>You can still type your own lyrics by clicking here :)';
 const SPOTIFY_LOGO =
-    "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg";
+    'https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg';
 
-const BACKGROUND_SHADOW_COLOR = "rgba(0, 0, 0, 0.25)";
+const BACKGROUND_SHADOW_COLOR = 'rgba(0, 0, 0, 0.25)';
 const BACKGROUND_SHADOW_BORDER_RADIUS = 24;
 const BACKGROUND_SHADOW_BLUR = 12;
 const BACKGROUND_SHADOW_OFFSET_X = 0;
@@ -20,13 +20,13 @@ const BACKGROUND_SHADOW_OFFSET_Y = 4;
 const BACKGROUND_TO_SHADOW_FACTOR = 4;
 
 const COLORS = [
-    "#008fd1",
-    "#549aab",
-    "#8fc00c",
-    "#729962",
-    "#a2904e",
-    "#cd6800",
-    "#fc302f",
+    '#008fd1',
+    '#549aab',
+    '#8fc00c',
+    '#729962',
+    '#a2904e',
+    '#cd6800',
+    '#fc302f',
 ];
 
 class DOMHandler {
@@ -47,58 +47,58 @@ class DOMHandler {
          * Below all are DOM elements
          */
         /** @type {NodeListOf<Element>} */
-        this.errorTexts = document.querySelectorAll(".error");
+        this.errorTexts = document.querySelectorAll('.error');
         /** @type {NodeListOf<Element>} */
-        this.searchingTexts = document.querySelectorAll(".searching");
+        this.searchingTexts = document.querySelectorAll('.searching');
         /** @type {NodeListOf<Element>} */
-        this.screens = document.querySelectorAll(".lyrics-image-screen");
+        this.screens = document.querySelectorAll('.lyrics-image-screen');
 
         /** @type {Element} */
-        this.searchInput = document.querySelector("#song-name");
+        this.searchInput = document.querySelector('#song-name');
         /** @type {Element} */
-        this.searchButton = document.querySelector("#search");
+        this.searchButton = document.querySelector('#search');
 
         /** @type {Element} */
         this.cloneableSelectSong = document.querySelector(
-            ".select-song.cloneable"
+            '.select-song.cloneable'
         );
         /** @type {Element} */
-        this.songSelection = document.querySelector(".song-selection");
+        this.songSelection = document.querySelector('.song-selection');
         /** @type {Element} */
-        this.lineSelection = document.querySelector(".lines-selection");
+        this.lineSelection = document.querySelector('.lines-selection');
         /** @type {Element} */
         this.goToFinal = document.querySelector(
-            ".lyrics-image-screen .go-to-screen.right"
+            '.lyrics-image-screen .go-to-screen.right'
         );
 
         /** @type {Element} */
-        this.lastGoBack = document.querySelector("#last-go-back");
+        this.lastGoBack = document.querySelector('#last-go-back');
         /** @type {Element} */
-        this.downloadButton = document.querySelector("#download");
+        this.downloadButton = document.querySelector('#download');
         /** @type {Element} */
-        this.colorSelection = document.querySelector(".color-selection");
+        this.colorSelection = document.querySelector('.color-selection');
         /** @type {Element} */
-        this.customColorInput = document.querySelector("#custom-color input");
+        this.customColorInput = document.querySelector('#custom-color input');
         /** @type {Element} */
-        this.lightTextSwitch = document.querySelector("#light-text");
+        this.lightTextSwitch = document.querySelector('#light-text');
         /** @type {Element} */
-        this.spotifyTagSwitch = document.querySelector("#spotify-tag");
+        this.spotifyTagSwitch = document.querySelector('#spotify-tag');
         /** @type {Element} */
-        this.additionalBgSwitch = document.querySelector("#additional-bg");
+        this.additionalBgSwitch = document.querySelector('#additional-bg');
         /** @type {Element} */
-        this.songImage = document.querySelector(".song-image");
+        this.songImage = document.querySelector('.song-image');
 
         /** @type {Element} */
-        this.toggleDarkMode = document.querySelector("#dark-mode-toggle");
+        this.toggleDarkMode = document.querySelector('#dark-mode-toggle');
 
         this.populateColorSelection();
         this.setListeners();
-        this.setBase64Image(SPOTIFY_LOGO, ".song-image > .spotify > img", 0);
+        this.setBase64Image(SPOTIFY_LOGO, '.song-image > .spotify > img', 0);
         this.setTheme(
-            localStorage.getItem("theme") ??
-                (window.matchMedia("(prefers-color-scheme: dark)").matches
-                    ? "dark"
-                    : "light")
+            localStorage.getItem('theme') ??
+                (window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light')
         );
     }
 
@@ -106,71 +106,71 @@ class DOMHandler {
      * Sets static elements' listeners
      */
     setListeners() {
-        this.searchButton.addEventListener("click", (e) => {
+        this.searchButton.addEventListener('click', (e) => {
             e.preventDefault();
             this.findSong();
         });
 
-        this.lastGoBack.addEventListener("click", () => {
+        this.lastGoBack.addEventListener('click', () => {
             this.displayScreen(
                 this.songs[this.selectedSongIndex].lyrics === undefined ? 2 : 3
             );
         });
 
-        document.querySelectorAll(".go-to-screen").forEach((button) => {
-            button.addEventListener("click", () => {
+        document.querySelectorAll('.go-to-screen').forEach((button) => {
+            button.addEventListener('click', () => {
                 this.displayScreen(Number(button.dataset.number));
             });
         });
 
-        this.goToFinal.addEventListener("click", () => {
+        this.goToFinal.addEventListener('click', () => {
             this.displaySongImage();
         });
 
-        this.customColorInput.addEventListener("input", () => {
+        this.customColorInput.addEventListener('input', () => {
             this.setSongImageColor(this.customColorInput.value);
         });
 
-        this.lightTextSwitch.addEventListener("click", () => {
+        this.lightTextSwitch.addEventListener('click', () => {
             const parent = this.lightTextSwitch.parentElement;
-            parent.classList.toggle("light-text");
+            parent.classList.toggle('light-text');
 
             this.setBase64Image(
                 SPOTIFY_LOGO,
-                ".song-image > .spotify > img",
-                parent.classList.contains("light-text") ? 255 : 0
+                '.song-image > .spotify > img',
+                parent.classList.contains('light-text') ? 255 : 0
             );
         });
 
-        this.spotifyTagSwitch.addEventListener("click", () => {
-            this.spotifyTagSwitch.parentElement.classList.toggle("spotify-tag");
+        this.spotifyTagSwitch.addEventListener('click', () => {
+            this.spotifyTagSwitch.parentElement.classList.toggle('spotify-tag');
         });
 
-        this.additionalBgSwitch.addEventListener("click", () => {
+        this.additionalBgSwitch.addEventListener('click', () => {
             this.additionalBgSwitch.parentElement.classList.toggle(
-                "additional-bg"
+                'additional-bg'
             );
         });
 
-        this.downloadButton.addEventListener("click", () => {
+        this.downloadButton.addEventListener('click', () => {
             this.downloadSongImage();
         });
 
         // Paste into contenteditable as plain text
-        document.querySelectorAll("[contenteditable]").forEach((field) => {
-            field.addEventListener("paste", function (event) {
+        document.querySelectorAll('[contenteditable]').forEach((field) => {
+            field.addEventListener('paste', function (event) {
                 event.preventDefault();
                 document.execCommand(
-                    "inserttext",
+                    'inserttext',
                     false,
-                    event.clipboardData.getData("text/plain")
+                    event.clipboardData.getData('text/plain')
                 );
             });
         });
 
-        this.toggleDarkMode.addEventListener("click", () => {
+        this.toggleDarkMode.addEventListener('click', () => {
             this.setTheme(
-                document.body.classList.contains("dark-mode") ? "light" : "dark"
+                document.body.classList.contains('dark-mode') ? 'light' : 'dark'
             );
         });
     }
@@ -180,18 +180,18 @@ class DOMHandler {
      */
     populateColorSelection() {
         COLORS.forEach((color) => {
-            const element = document.createElement("div");
-            element.classList.add("select-color");
+            const element = document.createElement('div');
+            element.classList.add('select-color');
             element.style.backgroundColor = color;
-            element.textContent = ".";
+            element.textContent = '.';
 
-            element.addEventListener("click", () => {
+            element.addEventListener('click', () => {
                 this.setSongImageColor(color);
             });
 
             this.colorSelection.insertBefore(
                 element,
-                this.colorSelection.querySelector("#custom-color")
+                this.colorSelection.querySelector('#custom-color')
             );
         });
     }
@@ -202,18 +202,18 @@ class DOMHandler {
      */
     async findSong() {
         const name = this.searchInput.value
-            .replaceAll("\\", "")
-            .replaceAll("/", "")
+            .replaceAll('\\', '')
+            .replaceAll('/', '')
             .trim();
 
-        if (name === "") {
+        if (name === '') {
             return this.throwError(
                 `Hold on! Haven't you forgotten about something?`
             );
         }
 
-        this.searchInput.setAttribute("disabled", "true");
-        this.searchButton.setAttribute("disabled", "true");
+        this.searchInput.setAttribute('disabled', 'true');
+        this.searchButton.setAttribute('disabled', 'true');
 
         this.hideError();
         this.displaySearching(SEARCHING_FOR_SONG);
@@ -232,8 +232,8 @@ class DOMHandler {
         }
 
         this.hideSearching();
-        this.searchInput.removeAttribute("disabled");
-        this.searchButton.removeAttribute("disabled");
+        this.searchInput.removeAttribute('disabled');
+        this.searchButton.removeAttribute('disabled');
     }
 
     /**
@@ -241,32 +241,32 @@ class DOMHandler {
      */
     populateSongSelection() {
         this.songSelection
-            .querySelectorAll(".select-song:not(.cloneable)")
+            .querySelectorAll('.select-song:not(.cloneable)')
             .forEach((el) => el.remove());
 
-        this.songSelection.classList.add("hidden");
+        this.songSelection.classList.add('hidden');
 
         this.songs.forEach((song, index) => {
             const clone = this.cloneableSelectSong.cloneNode(true);
 
-            clone.querySelector("img").setAttribute("src", song.albumCoverUrl);
-            clone.querySelector(".name").textContent = song.name;
-            clone.querySelector(".authors").textContent = song.artists
+            clone.querySelector('img').setAttribute('src', song.albumCoverUrl);
+            clone.querySelector('.name').textContent = song.name;
+            clone.querySelector('.authors').textContent = song.artists
                 .map((artist) => artist.name)
-                .join(", ");
+                .join(', ');
 
-            clone.addEventListener("click", () => {
+            clone.addEventListener('click', () => {
                 this.selectedSongIndex = index;
                 this.findLyrics();
             });
 
-            clone.classList.remove("cloneable");
+            clone.classList.remove('cloneable');
 
             this.songSelection.append(clone);
         });
 
         setTimeout(() => {
-            this.songSelection.classList.remove("hidden");
+            this.songSelection.classList.remove('hidden');
         }, SELECTION_ANIMATION_DELAY);
     }
 
@@ -274,7 +274,7 @@ class DOMHandler {
      * Searches for song lyrics and prepares lines selection list
      */
     async findLyrics() {
-        this.lineSelection.innerHTML = "";
+        this.lineSelection.innerHTML = '';
 
         this.displayScreen(3);
         this.displaySearching(SEARCHING_FOR_LYRICS);
@@ -296,15 +296,15 @@ class DOMHandler {
             }
 
             if (lyrics === null) {
-                throw Error("Lyrics not found");
+                throw Error('Lyrics not found');
             }
         } catch (error) {
             this.hideSearching();
 
             if (
                 document
-                    .querySelector(".final-options")
-                    .classList.contains("hidden")
+                    .querySelector('.final-options')
+                    .classList.contains('hidden')
             ) {
                 this.displaySongImage();
             }
@@ -324,17 +324,17 @@ class DOMHandler {
         let animationDelay = SELECTION_ANIMATION_DELAY;
 
         this.songs[this.selectedSongIndex].lyrics.forEach((line, index) => {
-            const element = document.createElement("div");
-            element.classList.add("select-line", "hidden");
+            const element = document.createElement('div');
+            element.classList.add('select-line', 'hidden');
             element.textContent = line.text;
             element.dataset.index = index;
 
-            element.addEventListener("click", () => {
-                element.classList.toggle("selected");
+            element.addEventListener('click', () => {
+                element.classList.toggle('selected');
             });
 
             setTimeout(() => {
-                element.classList.remove("hidden");
+                element.classList.remove('hidden');
             }, animationDelay);
 
             animationDelay += NEXT_LINE_ANIMATION_DELAY;
@@ -357,11 +357,11 @@ class DOMHandler {
     setSongImage() {
         this.setBase64Image(
             this.songs[this.selectedSongIndex].albumCoverUrl,
-            ".song-image > .header > img"
+            '.song-image > .header > img'
         );
         this.setSongInfo();
         this.setSongLyrics(
-            Array.from(document.querySelectorAll(".select-line.selected")).map(
+            Array.from(document.querySelectorAll('.select-line.selected')).map(
                 (selectLine) => Number(selectLine.dataset.index)
             )
         );
@@ -383,12 +383,12 @@ class DOMHandler {
      * Sets song image's name and author to the name of the fetched song
      */
     setSongInfo() {
-        document.querySelector(".song-image > .header .name").textContent =
+        document.querySelector('.song-image > .header .name').textContent =
             this.songs[this.selectedSongIndex].name;
-        document.querySelector(".song-image > .header .authors").textContent =
+        document.querySelector('.song-image > .header .authors').textContent =
             this.songs[this.selectedSongIndex].artists
                 .map((artist) => artist.name)
-                .join(", ");
+                .join(', ');
     }
 
     /**
@@ -400,9 +400,9 @@ class DOMHandler {
             this.songs[this.selectedSongIndex].lyrics
                 ?.filter((_, index) => indexes.includes(index))
                 ?.map((lyric) => lyric.text)
-                ?.join("<br>") ?? NO_LYRICS_FOUND;
-        document.querySelector(".song-image > .lyrics").innerHTML =
-            lyrics !== "" ? lyrics : NO_LYRICS_SELECTED;
+                ?.join('<br>') ?? NO_LYRICS_FOUND;
+        document.querySelector('.song-image > .lyrics').innerHTML =
+            lyrics !== '' ? lyrics : NO_LYRICS_SELECTED;
     }
 
     /**
@@ -414,7 +414,7 @@ class DOMHandler {
         const song = this.songs[this.selectedSongIndex];
         const downloadName = `${song.artists
             .map((artist) => artist.name)
-            .join(", ")} - ${song.name}.png`;
+            .join(', ')} - ${song.name}.png`;
 
         let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
@@ -423,7 +423,7 @@ class DOMHandler {
 
         if (
             this.additionalBgSwitch.parentElement.classList.contains(
-                "additional-bg"
+                'additional-bg'
             )
         ) {
             canvas = this.addBgToDownloadCanvas(canvas);
@@ -465,10 +465,10 @@ class DOMHandler {
             window.devicePixelRatio *
             DOWNLOAD_SCALING_FACTOR;
 
-        const shadowCanvas = document.createElement("canvas");
+        const shadowCanvas = document.createElement('canvas');
         shadowCanvas.width = canvas.width + margin * 2;
         shadowCanvas.height = canvas.height + margin * 2;
-        const shadowContext = shadowCanvas.getContext("2d");
+        const shadowContext = shadowCanvas.getContext('2d');
 
         shadowContext.fillStyle = backgroundColor;
         shadowContext.fillRect(0, 0, shadowCanvas.width, shadowCanvas.height);
@@ -523,7 +523,7 @@ class DOMHandler {
         shadowContext.closePath();
         shadowContext.fill();
 
-        shadowContext.filter = "none";
+        shadowContext.filter = 'none';
         shadowContext.drawImage(canvas, margin, margin);
 
         return shadowCanvas;
@@ -548,14 +548,14 @@ class DOMHandler {
         if (newColor === null)
             return document
                 .querySelector(imgSelector)
-                .setAttribute("src", base64);
+                .setAttribute('src', base64);
 
         const img = new Image();
         img.src = base64;
 
         img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
@@ -577,7 +577,7 @@ class DOMHandler {
             ctx.putImageData(imageData, 0, 0);
             document
                 .querySelector(imgSelector)
-                .setAttribute("src", canvas.toDataURL());
+                .setAttribute('src', canvas.toDataURL());
         };
     }
 
@@ -588,7 +588,7 @@ class DOMHandler {
     throwError(html) {
         this.errorTexts.forEach((element) => {
             element.innerHTML = html;
-            element.classList.remove("hidden");
+            element.classList.remove('hidden');
         });
     }
 
@@ -597,7 +597,7 @@ class DOMHandler {
      */
     hideError() {
         this.errorTexts.forEach((element) => {
-            element.classList.add("hidden");
+            element.classList.add('hidden');
         });
     }
 
@@ -608,7 +608,7 @@ class DOMHandler {
     displaySearching(text) {
         this.searchingTexts.forEach((element) => {
             element.textContent = text;
-            element.classList.remove("hidden");
+            element.classList.remove('hidden');
         });
     }
 
@@ -617,7 +617,7 @@ class DOMHandler {
      */
     hideSearching() {
         this.searchingTexts.forEach((element) => {
-            element.classList.add("hidden");
+            element.classList.add('hidden');
         });
     }
 
@@ -628,14 +628,14 @@ class DOMHandler {
     displayScreen(number) {
         this.screens.forEach((screen) => {
             if (Number(screen.dataset.number) < number) {
-                screen.classList.add("hidden");
-                screen.classList.add("left");
+                screen.classList.add('hidden');
+                screen.classList.add('left');
             } else if (Number(screen.dataset.number) === number) {
-                screen.classList.remove("hidden");
-                screen.classList.remove("left");
+                screen.classList.remove('hidden');
+                screen.classList.remove('left');
             } else {
-                screen.classList.add("hidden");
-                screen.classList.remove("left");
+                screen.classList.add('hidden');
+                screen.classList.remove('left');
             }
         });
     }
@@ -645,12 +645,12 @@ class DOMHandler {
      * @param {string} theme
      */
     setTheme(theme) {
-        if (theme === "dark") {
-            document.body.classList.add("dark-mode");
-            localStorage.setItem("theme", "dark");
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
         } else {
-            document.body.classList.remove("dark-mode");
-            localStorage.setItem("theme", "light");
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
         }
     }
 }

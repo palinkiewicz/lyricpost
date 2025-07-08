@@ -1,117 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/wizard.css">
-    <link rel="stylesheet" href="styles/song-image.css">
-    <title>Lyrics Image Generator</title>
-</head>
-<body class="dark-mode">
-    <main>
-        <section class="lyrics-image-screen search-form" data-number="1">
-            <div class="screen-wrapper">
-                <header>
-                    <h1>Lyrics Image Generator</h1>
-                </header>
-                <form>
-                    <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
-                    <button class="primary" id="search">
-                        Find that song!
-                    </button>
-                </form>
-                <div class="searching hidden"></div>
-                <div class="error hidden"></div>
-            </div>
-        </section>
-        <section class="lyrics-image-screen hidden search-results" data-number="2">
-            <div class="screen-wrapper">
-                <header>
-                    <button class="go-to-screen material-symbols-outlined" data-number="1">chevron_left</button>
-                    <h2>Select a song</h2>
-                </header>
-                <div class="song-selection">
-                    <div class="select-song cloneable">
-                        <img src="" alt="album-cover">
-                        <div class="name"></div>
-                        <div class="authors"></div>
-                    </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="stylesheet" href="styles/wizard.css" />
+        <link rel="stylesheet" href="styles/song-image.css" />
+        <title>Lyrics Image Generator</title>
+    </head>
+    <body class="dark-mode">
+        <main>
+            <section class="lyrics-image-screen search-form" data-number="1">
+                <div class="screen-wrapper">
+                    <header>
+                        <h1>Lyrics Image Generator</h1>
+                    </header>
+                    <form>
+                        <input
+                            class="surface"
+                            type="text"
+                            id="song-name"
+                            placeholder="Song name and author here"
+                        />
+                        <button class="primary" id="search">
+                            Find that song!
+                        </button>
+                    </form>
+                    <div class="searching hidden"></div>
+                    <div class="error hidden"></div>
                 </div>
-            </div>
-        </section>
-        <section class="lyrics-image-screen hidden lyrics-results" data-number="3">
-            <div class="screen-wrapper">
-                <header>
-                    <button class="go-to-screen material-symbols-outlined" data-number="2">chevron_left</button>
-                    <h2>Select lines</h2>
-                    <button class="go-to-screen right material-symbols-outlined" data-number="4">chevron_right</button>
-                </header>
-                <div class="searching hidden"></div>
-                <div class="lines-selection"></div>
-            </div>
-        </section>
-        <section class="lyrics-image-screen hidden final-options" data-number="4">
-            <div class="screen-wrapper">
-                <header>
-                    <button class="material-symbols-outlined" id="last-go-back">chevron_left</button>
-                    <h2>Song image</h2>
-                    <button class="material-symbols-outlined" id="download">download</button>
-                </header>
-                <div class="searching hidden"></div>
-                <div class="song-image">
-                    <div class="header">
-                        <img src="" alt="album-cover">
-                        <div>
-                            <div class="name" contenteditable></div>
-                            <div class="authors" contenteditable></div>
+            </section>
+            <section
+                class="lyrics-image-screen hidden search-results"
+                data-number="2"
+            >
+                <div class="screen-wrapper">
+                    <header>
+                        <button
+                            class="go-to-screen material-symbols-outlined"
+                            data-number="1"
+                        >
+                            chevron_left
+                        </button>
+                        <h2>Select a song</h2>
+                    </header>
+                    <div class="song-selection">
+                        <div class="select-song cloneable">
+                            <img src="" alt="album-cover" />
+                            <div class="name"></div>
+                            <div class="authors"></div>
                         </div>
                     </div>
-                    <div class="lyrics" contenteditable="true"></div>
-                    <div class="spotify">
-                        <img src=""/>
+                </div>
+            </section>
+            <section
+                class="lyrics-image-screen hidden lyrics-results"
+                data-number="3"
+            >
+                <div class="screen-wrapper">
+                    <header>
+                        <button
+                            class="go-to-screen material-symbols-outlined"
+                            data-number="2"
+                        >
+                            chevron_left
+                        </button>
+                        <h2>Select lines</h2>
+                        <button
+                            class="go-to-screen right material-symbols-outlined"
+                            data-number="4"
+                        >
+                            chevron_right
+                        </button>
+                    </header>
+                    <div class="searching hidden"></div>
+                    <div class="lines-selection"></div>
+                </div>
+            </section>
+            <section
+                class="lyrics-image-screen hidden final-options"
+                data-number="4"
+            >
+                <div class="screen-wrapper">
+                    <header>
+                        <button
+                            class="material-symbols-outlined"
+                            id="last-go-back"
+                        >
+                            chevron_left
+                        </button>
+                        <h2>Song image</h2>
+                        <button class="material-symbols-outlined" id="download">
+                            download
+                        </button>
+                    </header>
+                    <div class="searching hidden"></div>
+                    <div class="song-image">
+                        <div class="header">
+                            <img src="" alt="album-cover" />
+                            <div>
+                                <div class="name" contenteditable></div>
+                                <div class="authors" contenteditable></div>
+                            </div>
+                        </div>
+                        <div class="lyrics" contenteditable="true"></div>
+                        <div class="spotify">
+                            <img src="" />
+                        </div>
+                    </div>
+                    <div class="color-selection">
+                        <div class="" id="custom-color">
+                            <input type="color" id="custom-color-input" />
+                            <label
+                                class="material-symbols-outlined"
+                                for="custom-color-input"
+                                >palette</label
+                            >
+                        </div>
+                    </div>
+                    <div class="switch-container" id="light-text">
+                        <div class="switch"></div>
+                        <div>Light text</div>
+                    </div>
+                    <div class="switch-container" id="spotify-tag">
+                        <div class="switch"></div>
+                        <div>Spotify tag</div>
+                    </div>
+                    <div class="switch-container" id="additional-bg">
+                        <div class="switch"></div>
+                        <div>Background</div>
                     </div>
                 </div>
-                <div class="color-selection">
-                    <div class="" id="custom-color">
-                        <input type="color" id="custom-color-input">
-                        <label class="material-symbols-outlined" for="custom-color-input">palette</label>
-                    </div>
-                </div>
-                <div class="switch-container" id="light-text">
-                    <div class="switch"></div>
-                    <div>Light text</div>
-                </div>
-                <div class="switch-container" id="spotify-tag">
-                    <div class="switch"></div>
-                    <div>Spotify tag</div>
-                </div>
-                <div class="switch-container" id="additional-bg">
-                    <div class="switch"></div>
-                    <div>Background</div>
-                </div>
+            </section>
+        </main>
+        <footer class="surface">
+            <div>
+                Made by
+                <a href="https://github.com/palinkiewicz" target="_blank"
+                    >palinkiewicz</a
+                >
+                |
+                <a href="https://ko-fi.com/palinkiewicz">Ko-Fi</a>
             </div>
-        </section>
-    </main>
-    <footer class="surface">
-        <div>
-            Made by
-            <a href="https://github.com/palinkiewicz" target="_blank">palinkiewicz</a>
-            |
-            <a href="https://ko-fi.com/palinkiewicz">Ko-Fi</a>
-        </div>
-        <div id="dark-mode-toggle">
-            <span class="material-symbols-outlined"></span>
-        </div>
-    </footer>
-    <script src="classes/data/Artist.js"></script>
-    <script src="classes/data/Lyric.js"></script>
-    <script src="classes/data/Song.js"></script>
-    <script src="classes/DataFetcher.js"></script>
-    <script src="classes/DOMHandler.js"></script>
-    <script src="index.js"></script>
-</body>
+            <div id="dark-mode-toggle">
+                <span class="material-symbols-outlined"></span>
+            </div>
+        </footer>
+        <script src="classes/data/Artist.js"></script>
+        <script src="classes/data/Lyric.js"></script>
+        <script src="classes/data/Song.js"></script>
+        <script src="classes/DataFetcher.js"></script>
+        <script src="classes/DOMHandler.js"></script>
+        <script src="index.js"></script>
+    </body>
 </html>

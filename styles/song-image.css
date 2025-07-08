@@ -55,7 +55,8 @@
 }
 
 .song-image > .spotify {
-    filter: brightness(0) saturate(100%) invert(0%) sepia(5%) saturate(22%) hue-rotate(164deg) brightness(96%) contrast(105%);
+    filter: brightness(0) saturate(100%) invert(0%) sepia(5%) saturate(22%)
+        hue-rotate(164deg) brightness(96%) contrast(105%);
     height: 0;
     padding: 0;
     overflow: hidden;
@@ -72,5 +73,6 @@
 }
 
 .light-text .song-image > .spotify {
-    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
+        hue-rotate(93deg) brightness(103%) contrast(103%);
 }

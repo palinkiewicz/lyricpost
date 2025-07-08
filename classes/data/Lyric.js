@@ -7,9 +7,9 @@ class Lyric {
 
         /** @type {number?} */
         this.time = timeMatch
-            ? (parseInt(timeMatch[1], 10) * 60 * 1000) + 
-                (parseInt(timeMatch[2], 10) * 1000) + 
-                (parseInt(timeMatch[3], 10) * 10)
+            ? parseInt(timeMatch[1], 10) * 60 * 1000 +
+              parseInt(timeMatch[2], 10) * 1000 +
+              parseInt(timeMatch[3], 10) * 10
             : null;
 
         /** @type {string} */

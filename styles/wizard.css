@@ -32,7 +32,7 @@
 }
 
 .searching::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     background-color: var(--background-text-color);
@@ -235,8 +235,7 @@
     margin: 0 auto 1rem;
     transition: padding 400ms var(--cubic-ease-out),
         margin-bottom 400ms var(--cubic-ease-out),
-        font-size 400ms var(--cubic-ease-out),
-        width 400ms var(--cubic-ease-out),
+        font-size 400ms var(--cubic-ease-out), width 400ms var(--cubic-ease-out),
         background-color 200ms var(--cubic-ease-out),
         scale 200ms var(--cubic-ease-out);
 }
@@ -357,7 +356,7 @@
 }
 
 .switch::after {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     top: 50%;
