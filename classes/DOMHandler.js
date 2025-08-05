@@ -68,7 +68,7 @@ class DOMHandler {
         this.lineSelection = document.querySelector('.lines-selection');
         /** @type {Element} */
         this.goToFinal = document.querySelector(
-            '.lyrics-image-screen .go-to-screen.right'
+            '#go-to-final'
         );
 
         /** @type {Element} */

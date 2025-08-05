@@ -21,16 +21,17 @@
             <section class="lyrics-image-screen search-form" data-number="1">
                 <div class="screen-wrapper">
                     <header>
-                        <h1>LirycPost</h1>
+                        <h1>LyricPost</h1>
                     </header>
                     <form>
                         <input
                             class="surface"
                             type="text"
                             id="song-name"
-                            placeholder="Song name and author here"
+                            placeholder="Enter your favourite song and author..."
                         />
                         <button class="primary" id="search">
+                            <span class="material-symbols-outlined">music_note</span>
                             Find that song!
                         </button>
                     </form>
@@ -80,7 +81,8 @@
                             </button>
                             <h2>Select lines</h2>
                             <button
-                                class="go-to-screen right material-symbols-outlined"
+                                class="go-to-screen material-symbols-outlined"
+                                id="go-to-final"
                                 data-number="4"
                             >
                                 chevron_right
@@ -106,7 +108,7 @@
                                 chevron_left
                             </button>
                             <h2>Song image</h2>
-                            <button class="material-symbols-outlined" id="download">
+                            <button class="material-symbols-outlined primary" id="download">
                                 download
                             </button>
                         </div>
