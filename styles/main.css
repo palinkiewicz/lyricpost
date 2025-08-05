@@ -5,6 +5,7 @@
     font-family: 'Poppins', sans-serif;
 
     --background-color: rgba(246, 246, 246, 1);
+    --background-nav-color: rgba(246, 246, 246, 0.7);
     --background-text-color: rgba(18, 55, 64, 1);
     --surface-light-color: rgba(84, 154, 171, 0.1);
     --surface-color: rgba(84, 154, 171, 0.3);
@@ -19,12 +20,13 @@
 
 .dark-mode,
 .dark-mode * {
-    --background-color: rgba(20, 20, 20, 1);
-    --background-text-color: rgba(72, 220, 255, 0.8);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
-    --surface-color: rgba(84, 154, 171, 0.25);
-    --surface-text-color: rgba(72, 220, 255, 0.7);
-    --primary-color: rgba(241, 128, 45, 0.95);
+    --background-color: rgba(16, 16, 24, 1);
+    --background-nav-color: rgba(16, 16, 24, 0.7);
+    --background-text-color: rgb(123, 158, 255);
+    --surface-light-color: rgba(75, 122, 252, 0.1);
+    --surface-color: rgba(75, 122, 252, 0.25);
+    --surface-text-color: rgba(123, 158, 255, 0.8);
+    --primary-color: rgba(241, 128, 60, 0.95);
     --primary-text-color: rgba(246, 246, 246, 1);
     --error-color: rgba(240, 40, 30, 0.2);
     --error-text-color: rgba(240, 40, 30, 1);
@@ -83,14 +85,28 @@ main {
 }
 
 header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    background-color: var(--background-nav-color);
+    backdrop-filter: blur(4px);
+}
+
+header h2 {
+    padding: 1.3rem 0;
+}
+
+.header-content-wrapper {
     position: relative;
 }
 
-header > .go-to-screen,
+.header-content-wrapper > .go-to-screen,
 #download,
 #last-go-back {
     position: absolute;
-    top: calc(50% + 0.2rem);
+    top: 50%;
     left: -1rem;
     transform: translate(-100%, -50%);
     border: 0;
@@ -101,14 +117,14 @@ header > .go-to-screen,
     transition: 150ms var(--cubic-ease-out);
 }
 
-header > .go-to-screen.right,
+.header-content-wrapper > .go-to-screen.right,
 #download {
     right: -1rem;
     left: auto;
     transform: translate(100%, -50%);
 }
 
-header > .go-to-screen:hover,
+.header-content-wrapper > .go-to-screen:hover,
 #download:hover,
 #last-go-back:hover {
     cursor: pointer;

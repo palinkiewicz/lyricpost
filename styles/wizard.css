@@ -101,6 +101,7 @@
 .screen-wrapper {
     width: 100vw;
     min-height: calc(100vh - 8rem);
+    padding: 5.5rem 0 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -162,14 +163,14 @@
 .search-results .song-selection {
     display: flex;
     justify-content: space-between;
-    row-gap: 2rem;
+    row-gap: 1.5rem;
     max-width: 50rem;
-    padding: 2rem;
+    padding: 0 1.5rem;
     flex-wrap: wrap;
 }
 
 .select-song {
-    width: 30%;
+    width: 31%;
     padding: 1rem;
     background-color: var(--surface-light-color);
     border-radius: 0.5rem;
@@ -231,8 +232,7 @@
 
 /* Screen 3: Lines selection */
 .lines-selection {
-    padding-top: 1.5rem;
-    width: 80%;
+    width: calc(100% - 3rem);
     max-width: 30rem;
 }
 
@@ -396,6 +396,6 @@
 
 @media screen and (max-width: 450px) {
     .select-song {
-        width: 45%;
+        width: 47%;
     }
 }

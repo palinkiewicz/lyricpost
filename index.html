@@ -12,15 +12,16 @@
         <link rel="stylesheet" href="styles/main.css" />
         <link rel="stylesheet" href="styles/wizard.css" />
         <link rel="stylesheet" href="styles/song-image.css" />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
         <title>LyricPost: Lyrics Image Generator</title>
-        <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
     </head>
     <body class="dark-mode">
         <main>
             <section class="lyrics-image-screen search-form" data-number="1">
                 <div class="screen-wrapper">
                     <header>
-                        <h1>Lyrics Image Generator</h1>
+                        <h1>LirycPost</h1>
                     </header>
                     <form>
                         <input
@@ -37,19 +38,22 @@
                     <div class="error hidden"></div>
                 </div>
             </section>
+
             <section
                 class="lyrics-image-screen hidden search-results"
                 data-number="2"
             >
                 <div class="screen-wrapper">
                     <header>
-                        <button
-                            class="go-to-screen material-symbols-outlined"
-                            data-number="1"
-                        >
-                            chevron_left
-                        </button>
-                        <h2>Select a song</h2>
+                        <div class="header-content-wrapper">
+                            <button
+                                class="go-to-screen material-symbols-outlined"
+                                data-number="1"
+                            >
+                                chevron_left
+                            </button>
+                            <h2>Select a song</h2>
+                        </div>
                     </header>
                     <div class="song-selection">
                         <div class="select-song cloneable">
@@ -60,46 +64,52 @@
                     </div>
                 </div>
             </section>
+
             <section
                 class="lyrics-image-screen hidden lyrics-results"
                 data-number="3"
             >
                 <div class="screen-wrapper">
                     <header>
-                        <button
-                            class="go-to-screen material-symbols-outlined"
-                            data-number="2"
-                        >
-                            chevron_left
-                        </button>
-                        <h2>Select lines</h2>
-                        <button
-                            class="go-to-screen right material-symbols-outlined"
-                            data-number="4"
-                        >
-                            chevron_right
-                        </button>
+                        <div class="header-content-wrapper">
+                            <button
+                                class="go-to-screen material-symbols-outlined"
+                                data-number="2"
+                            >
+                                chevron_left
+                            </button>
+                            <h2>Select lines</h2>
+                            <button
+                                class="go-to-screen right material-symbols-outlined"
+                                data-number="4"
+                            >
+                                chevron_right
+                            </button>
+                        </div>
                     </header>
                     <div class="searching hidden"></div>
                     <div class="lines-selection"></div>
                 </div>
             </section>
+
             <section
                 class="lyrics-image-screen hidden final-options"
                 data-number="4"
             >
                 <div class="screen-wrapper">
                     <header>
-                        <button
-                            class="material-symbols-outlined"
-                            id="last-go-back"
-                        >
-                            chevron_left
-                        </button>
-                        <h2>Song image</h2>
-                        <button class="material-symbols-outlined" id="download">
-                            download
-                        </button>
+                        <div class="header-content-wrapper">
+                            <button
+                                class="material-symbols-outlined"
+                                id="last-go-back"
+                            >
+                                chevron_left
+                            </button>
+                            <h2>Song image</h2>
+                            <button class="material-symbols-outlined" id="download">
+                                download
+                            </button>
+                        </div>
                     </header>
                     <div class="searching hidden"></div>
                     <div class="song-image">
@@ -110,7 +120,7 @@
                                 <div class="authors" contenteditable></div>
                             </div>
                         </div>
-                        <div class="lyrics" contenteditable="true"></div>
+                        <div class="lyrics" contenteditable></div>
                         <div class="spotify">
                             <img src="" />
                         </div>
@@ -140,6 +150,7 @@
                 </div>
             </section>
         </main>
+
         <footer class="surface">
             <div>
                 Made by
@@ -153,6 +164,7 @@
                 <span class="material-symbols-outlined"></span>
             </div>
         </footer>
+
         <script src="classes/data/Artist.js"></script>
         <script src="classes/data/Lyric.js"></script>
         <script src="classes/data/Song.js"></script>
