@@ -17,13 +17,14 @@
     font-family: 'Poppins', sans-serif;
 
     --background-color: rgba(246, 246, 246, 1);
+    --background-gradient: linear-gradient(90deg, rgba(246, 246, 246, 1), rgba(226, 235, 240, 1), rgba(215, 221, 230, 1), rgba(230, 238, 243, 1));
     --background-nav-color: rgba(246, 246, 246, 0.7);
     --background-text-color: rgba(18, 55, 64, 1);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
+    --surface-light-color: rgba(84, 154, 171, 0.16);
     --surface-color: rgba(84, 154, 171, 0.3);
     --surface-text-color: rgba(18, 55, 64, 0.85);
-    --primary-color: rgba(241, 128, 45, 1);
-    --primary-text-color: rgba(246, 246, 246, 1);
+    --primary-color: rgba(241, 128, 45, 0.9);
+    --primary-text-color: rgba(255, 238, 228, 1);
     --error-color: rgba(240, 40, 30, 0.3);
     --error-text-color: rgba(240, 40, 30, 1);
 
@@ -33,10 +34,11 @@
 .dark-mode,
 .dark-mode * {
     --background-color: rgba(16, 16, 24, 1);
+    --background-gradient: linear-gradient(90deg, rgba(16, 16, 24, 1), rgba(21, 21, 40, 1), rgba(25, 25, 49, 1), rgba(21, 22, 31, 1));
     --background-nav-color: rgba(16, 16, 24, 0.7);
     --background-text-color: rgb(123, 158, 255);
     --surface-light-color: rgba(75, 122, 252, 0.13);
-    --surface-color: rgba(75, 122, 252, 0.25);
+    --surface-color: rgba(75, 122, 252, 0.2);
     --surface-text-color: rgba(153, 195, 255, 0.9);
     --primary-color: rgba(239, 127, 59, 0.9);
     --primary-text-color: rgba(255, 238, 228, 1);
@@ -58,17 +60,16 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
-    background: var(--background-color);
     color: var(--background-text-color);
-    background-image:
-        linear-gradient(90deg, rgba(16, 16, 24, 1), rgba(21, 21, 40, 1), rgba(25, 25, 49, 1), rgba(21, 22, 31, 1));
+    background-color: var(--background-color);
+    background-image: var(--background-gradient);
     background-size: 140% 140%;
 }
 
 h1,
 h2 {
     margin: 0;
-    padding: 1.5rem 0 1.1rem;
+    padding: 1.3rem 0;
     font-size: 1.6rem;
 }
 
@@ -126,10 +127,6 @@ header {
     background-color: var(--background-nav-color);
     backdrop-filter: blur(4px);
     z-index: 10;
-}
-
-header h2 {
-    padding: 1.3rem 0;
 }
 
 .header-content-wrapper {
