@@ -53,6 +53,41 @@ class DataFetcher {
     }
 
     /**
+     * Gets a single track by Spotify track ID
+     *
+     * @private
+     * @param {string} trackId
+     * @returns {Song} a Song object
+     */
+    async getTrackById(trackId) {
+        if (this._accessToken === undefined) return null;
+
+        const response = await fetch(
+            `https://api.spotify.com/v1/tracks/${trackId}`,
+            {
+                method: "GET",
+                headers: { Authorization: "Bearer " + this._accessToken },
+            }
+        );
+
+        const result = await response.json();
+        return new Song(result);
+    }
+
+    /**
+     * Parses a Spotify URL to extract the track ID
+     *
+     * @private
+     * @param {string} url
+     * @returns {string|null} track ID or null if invalid
+     */
+    parseSpotifyUrl(url) {
+        const regex = /spotify\.com\/track\/([a-zA-Z0-9]+)/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    /**
      * Searches for song lyrics on lrclib
      *
      * @private

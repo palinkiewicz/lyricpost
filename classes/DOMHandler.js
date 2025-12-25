@@ -43,6 +43,9 @@ class DOMHandler {
         /** @type {number?} */
         this.selectedSongIndex = null;
 
+        /** @type {boolean} */
+        this.usedDirectLink = false;
+
         /**
          * Below all are DOM elements
          */
@@ -57,6 +60,12 @@ class DOMHandler {
         this.searchInput = document.querySelector("#song-name");
         /** @type {Element} */
         this.searchButton = document.querySelector("#search");
+        /** @type {Element} */
+        this.spotifyLinkInput = document.querySelector("#spotify-link");
+        /** @type {Element} */
+        this.loadLinkButton = document.querySelector("#load-link");
+        /** @type {NodeListOf<Element>} */
+        this.tabButtons = document.querySelectorAll(".tab-button");
 
         /** @type {Element} */
         this.cloneableSelectSong = document.querySelector(
@@ -66,6 +75,12 @@ class DOMHandler {
         this.songSelection = document.querySelector(".song-selection");
         /** @type {Element} */
         this.lineSelection = document.querySelector(".lines-selection");
+        /** @type {Element} */
+        this.songInfoCover = document.querySelector(".song-info-cover");
+        /** @type {Element} */
+        this.songInfoName = document.querySelector(".song-info-name");
+        /** @type {Element} */
+        this.songInfoArtist = document.querySelector(".song-info-artist");
         /** @type {Element} */
         this.goToFinal = document.querySelector(
             ".lyrics-image-screen .go-to-screen.right"
@@ -111,6 +126,18 @@ class DOMHandler {
             this.findSong();
         });
 
+        this.loadLinkButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.loadFromSpotifyLink();
+        });
+
+        this.tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const tab = button.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
+
         this.lastGoBack.addEventListener("click", () => {
             this.displayScreen(
                 this.songs[this.selectedSongIndex].lyrics === undefined ? 2 : 3
@@ -119,7 +146,15 @@ class DOMHandler {
 
         document.querySelectorAll(".go-to-screen").forEach((button) => {
             button.addEventListener("click", () => {
-                this.displayScreen(Number(button.dataset.number));
+                const targetScreen = Number(button.dataset.number);
+                
+                // If going back from lyrics screen and used direct link, go to screen 1
+                if (targetScreen === 2 && this.usedDirectLink) {
+                    this.displayScreen(1);
+                    this.usedDirectLink = false;
+                } else {
+                    this.displayScreen(targetScreen);
+                }
             });
         });
 
@@ -197,6 +232,65 @@ class DOMHandler {
     }
 
     /**
+     * Switches between search and link input tabs
+     * @param {string} tab
+     */
+    switchTab(tab) {
+        this.tabButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.tab === tab);
+        });
+
+        document.querySelectorAll(".tab-content").forEach((content) => {
+            content.classList.toggle("active", content.id === `${tab}-tab`);
+        });
+    }
+
+    /**
+     * Loads a song directly from Spotify link
+     */
+    async loadFromSpotifyLink() {
+        const url = this.spotifyLinkInput.value.trim();
+
+        if (url === "") {
+            return this.throwError("Please paste a Spotify link!");
+        }
+
+        const trackId = this.fetcher.parseSpotifyUrl(url);
+
+        if (!trackId) {
+            return this.throwError(
+                "Invalid Spotify link. Try the Search tab instead!"
+            );
+        }
+
+        this.spotifyLinkInput.setAttribute("disabled", "true");
+        this.loadLinkButton.setAttribute("disabled", "true");
+
+        this.hideError();
+        this.displaySearching("Loading song from Spotify...");
+
+        try {
+            const song = await this.fetcher.getTrackById(trackId);
+            this.songs = [song];
+            this.selectedSongIndex = 0;
+            this.usedDirectLink = true;
+
+            // Go directly to lyrics
+            await this.findLyrics();
+        } catch (error) {
+            console.error(error);
+
+            this.throwError(
+                "Couldn't load that song. Check the link and try again!"
+            );
+        }
+
+        this.hideSearching();
+        this.spotifyLinkInput.removeAttribute("disabled");
+        this.loadLinkButton.removeAttribute("disabled");
+    }
+
+    /**
      * Searches for a song and prepares song selection list
      * @param {string} name
      */
@@ -220,6 +314,7 @@ class DOMHandler {
 
         try {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+            this.usedDirectLink = false;
 
             this.populateSongSelection();
             this.displayScreen(2);
@@ -277,6 +372,7 @@ class DOMHandler {
         this.lineSelection.innerHTML = "";
 
         this.displayScreen(3);
+        this.displaySongInfo();
         this.displaySearching(SEARCHING_FOR_LYRICS);
 
         /** @type {Song} */
@@ -315,6 +411,19 @@ class DOMHandler {
         this.hideSearching();
         song.loadLyrics(lyrics);
         this.populateLineSelection();
+    }
+
+    /**
+     * Displays song information (cover, name, artist) on the lyrics screen
+     */
+    displaySongInfo() {
+        const song = this.songs[this.selectedSongIndex];
+        
+        this.songInfoCover.setAttribute("src", song.albumCoverUrl);
+        this.songInfoName.textContent = song.name;
+        this.songInfoArtist.textContent = song.artists
+            .map((artist) => artist.name)
+            .join(", ");
     }
 
     /**
