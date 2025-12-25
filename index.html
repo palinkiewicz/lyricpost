@@ -45,13 +45,17 @@
         </section>
         <section class="lyrics-image-screen hidden lyrics-results" data-number="3">
             <div class="screen-wrapper">
-                <header>
+                <header class="sticky-header">
                     <button class="go-to-screen material-symbols-outlined" data-number="2">chevron_left</button>
                     <h2>Select lines</h2>
                     <button class="go-to-screen right material-symbols-outlined" data-number="4">chevron_right</button>
                 </header>
+                <div class="instruction-text">Tap lines to select your favorite lyrics</div>
                 <div class="searching hidden"></div>
                 <div class="lines-selection"></div>
+                <button class="fab hidden" id="lyrics-fab">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
             </div>
         </section>
         <section class="lyrics-image-screen hidden final-options" data-number="4">
