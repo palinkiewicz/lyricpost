@@ -89,6 +89,11 @@ class DOMHandler {
         this.songImage = document.querySelector(".song-image");
 
         /** @type {Element} */
+        this.widthSlider = document.querySelector("#width-slider");
+        /** @type {Element} */
+        this.widthValue = document.querySelector("#width-value");
+
+        /** @type {Element} */
         this.toggleDarkMode = document.querySelector("#dark-mode-toggle");
 
         this.populateColorSelection();
@@ -166,6 +171,12 @@ class DOMHandler {
                     event.clipboardData.getData("text/plain")
                 );
             });
+        });
+
+        this.widthSlider.addEventListener("input", () => {
+            const width = this.widthSlider.value;
+            this.setSongImageWidth(width);
+            this.widthValue.textContent = `${width}px`;
         });
 
         this.toggleDarkMode.addEventListener("click", () => {
@@ -368,6 +379,28 @@ class DOMHandler {
         this.setSongImageColor(
             COLORS[Math.floor(Math.random() * COLORS.length)]
         );
+        
+        // Calculate and set min width based on title
+        this.calculateMinWidth();
+    }
+
+    /**
+     * Calculates minimum width based on song title length
+     */
+    calculateMinWidth() {
+        const songName = this.songs[this.selectedSongIndex].name;
+        const artistNames = this.songs[this.selectedSongIndex].artists
+            .map((artist) => artist.name)
+            .join(", ");
+        
+        // Rough calculation: ~8px per character for title
+        const titleWidth = Math.max(songName.length * 8, artistNames.length * 6);
+        const minWidth = Math.max(250, Math.min(titleWidth + 100, 400));
+        
+        this.widthSlider.setAttribute('min', minWidth);
+        this.widthSlider.value = Math.max(minWidth, parseInt(this.widthSlider.value));
+        this.widthValue.textContent = `${this.widthSlider.value}px`;
+        this.setSongImageWidth(this.widthSlider.value);
     }
 
     /**
@@ -377,6 +410,14 @@ class DOMHandler {
      */
     setSongImageColor(background) {
         this.songImage.style.backgroundColor = background;
+    }
+
+    /**
+     * Sets song image's width
+     * @param {number} width - Width in pixels
+     */
+    setSongImageWidth(width) {
+        this.songImage.style.setProperty('--song-image-width', `${width}px`);
     }
 
     /**
