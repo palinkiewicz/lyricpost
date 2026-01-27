@@ -297,7 +297,8 @@
 }
 
 .lines-selection {
-    padding-top: 1.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 5rem;
     width: 80%;
     max-width: 30rem;
 }

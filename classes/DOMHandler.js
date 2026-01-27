@@ -85,6 +85,8 @@ class DOMHandler {
         this.goToFinal = document.querySelector(
             ".lyrics-image-screen .go-to-screen.right"
         );
+        /** @type {Element} */
+        this.lyricsFab = document.querySelector("#lyrics-fab");
 
         /** @type {Element} */
         this.lastGoBack = document.querySelector("#last-go-back");
@@ -159,6 +161,10 @@ class DOMHandler {
         });
 
         this.goToFinal.addEventListener("click", () => {
+            this.displaySongImage();
+        });
+
+        this.lyricsFab.addEventListener("click", () => {
             this.displaySongImage();
         });
 
@@ -440,6 +446,7 @@ class DOMHandler {
 
             element.addEventListener("click", () => {
                 element.classList.toggle("selected");
+                this.updateFabVisibility();
             });
 
             setTimeout(() => {
@@ -453,11 +460,24 @@ class DOMHandler {
     }
 
     /**
+     * Updates FAB visibility based on selected lines
+     */
+    updateFabVisibility() {
+        const selectedLines = document.querySelectorAll(".select-line.selected");
+        if (selectedLines.length > 0) {
+            this.lyricsFab.classList.remove("hidden");
+        } else {
+            this.lyricsFab.classList.add("hidden");
+        }
+    }
+
+    /**
      * Displays song image final screen
      */
     displaySongImage() {
         this.setSongImage();
         this.displayScreen(4);
+        this.lyricsFab.classList.add("hidden");
     }
 
     /**
@@ -747,6 +767,13 @@ class DOMHandler {
                 screen.classList.remove("left");
             }
         });
+        
+        // Update FAB visibility when returning to lyrics selection screen
+        if (number === 3) {
+            this.updateFabVisibility();
+        } else {
+            this.lyricsFab.classList.add("hidden");
+        }
     }
 
     /**
