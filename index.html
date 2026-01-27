@@ -31,7 +31,9 @@
                             placeholder="Enter your favourite song and author..."
                         />
                         <button class="primary" id="search">
-                            <span class="material-symbols-outlined">music_note</span>
+                            <span class="material-symbols-outlined"
+                                >music_note</span
+                            >
                             Find that song!
                         </button>
                     </form>
@@ -108,46 +110,80 @@
                                 chevron_left
                             </button>
                             <h2>Song image</h2>
-                            <button class="material-symbols-outlined primary" id="download">
+                            <button
+                                class="material-symbols-outlined primary"
+                                id="download"
+                            >
                                 download
                             </button>
                         </div>
                     </header>
                     <div class="searching hidden"></div>
-                    <div class="song-image">
-                        <div class="header">
-                            <img src="" alt="album-cover" />
-                            <div>
-                                <div class="name" contenteditable></div>
-                                <div class="authors" contenteditable></div>
+                    <div class="image-creator">
+                        <div class="song-image">
+                            <div class="header">
+                                <img src="" alt="album-cover" />
+                                <div>
+                                    <div class="name" contenteditable></div>
+                                    <div class="authors" contenteditable></div>
+                                </div>
+                            </div>
+                            <div class="lyrics" contenteditable></div>
+                            <div class="spotify">
+                                <img src="" />
                             </div>
                         </div>
-                        <div class="lyrics" contenteditable></div>
-                        <div class="spotify">
-                            <img src="" />
+                        <div class="options">
+                            <div class="tab-selectors">
+                                <button data-number="1" class="primary">
+                                    Background
+                                </button>
+                                <button data-number="2">Text</button>
+                                <button data-number="3">Other</button>
+                            </div>
+                            <div class="tabs">
+                                <div class="panel selected">
+                                    <div class="color-selection">
+                                        <div class="" id="custom-color">
+                                            <input
+                                                type="color"
+                                                id="custom-color-input"
+                                            />
+                                            <label
+                                                class="material-symbols-outlined"
+                                                for="custom-color-input"
+                                                >palette</label
+                                            >
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="switch-container"
+                                        id="additional-bg"
+                                    >
+                                        <div class="switch"></div>
+                                        <div>Background</div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div
+                                        class="switch-container"
+                                        id="light-text"
+                                    >
+                                        <div class="switch"></div>
+                                        <div>Light text</div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div
+                                        class="switch-container"
+                                        id="spotify-tag"
+                                    >
+                                        <div class="switch"></div>
+                                        <div>Spotify tag</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="color-selection">
-                        <div class="" id="custom-color">
-                            <input type="color" id="custom-color-input" />
-                            <label
-                                class="material-symbols-outlined"
-                                for="custom-color-input"
-                                >palette</label
-                            >
-                        </div>
-                    </div>
-                    <div class="switch-container" id="light-text">
-                        <div class="switch"></div>
-                        <div>Light text</div>
-                    </div>
-                    <div class="switch-container" id="spotify-tag">
-                        <div class="switch"></div>
-                        <div>Spotify tag</div>
-                    </div>
-                    <div class="switch-container" id="additional-bg">
-                        <div class="switch"></div>
-                        <div>Background</div>
                     </div>
                 </div>
             </section>

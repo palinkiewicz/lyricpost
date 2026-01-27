@@ -67,9 +67,7 @@ class DOMHandler {
         /** @type {Element} */
         this.lineSelection = document.querySelector('.lines-selection');
         /** @type {Element} */
-        this.goToFinal = document.querySelector(
-            '#go-to-final'
-        );
+        this.goToFinal = document.querySelector('#go-to-final');
 
         /** @type {Element} */
         this.lastGoBack = document.querySelector('#last-go-back');
@@ -155,6 +153,28 @@ class DOMHandler {
         this.downloadButton.addEventListener('click', () => {
             this.downloadSongImage();
         });
+
+        // Tabs
+        document
+            .querySelectorAll('.tab-selectors > button')
+            .forEach((selector) => {
+                selector.addEventListener('click', () => {
+                    document
+                        .querySelector('.tab-selectors > .primary')
+                        .classList.remove('primary');
+                    selector.classList.add('primary');
+                    document
+                        .querySelector('.tabs > .selected')
+                        .classList.remove('selected');
+
+                    const newlySelected = document.querySelector(
+                        `.tabs > div:nth-child(${selector.dataset.number})`
+                    );
+                    newlySelected.classList.add('selected');
+                    document.querySelector('.options').style.height =
+                        newlySelected.offsetHeight + 44 + 'px';
+                });
+            });
 
         // Paste into contenteditable as plain text
         document.querySelectorAll('[contenteditable]').forEach((field) => {
