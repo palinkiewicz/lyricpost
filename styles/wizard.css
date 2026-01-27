@@ -217,23 +217,6 @@
 }
 
 /* Screen 3: Lines selection */
-.lyrics-results .sticky-header {
-    position: sticky;
-    top: 0;
-    background: var(--background-color);
-    z-index: 10;
-    padding-bottom: 0.5rem;
-}
-
-.instruction-text {
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--surface-text-color);
-    padding: 0.5rem 0 1rem;
-    opacity: 0.8;
-    font-weight: 500;
-}
-
 .lines-selection {
     padding-top: 0.5rem;
     padding-bottom: 5rem;
