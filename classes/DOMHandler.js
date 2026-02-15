@@ -102,6 +102,7 @@ class DOMHandler {
         this.spotifyTagSwitch = document.querySelector("#spotify-tag");
         /** @type {Element} */
         this.additionalBgSwitch = document.querySelector("#additional-bg");
+		this.fontLangSelect = document.querySelector("#font-lang");
         /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
@@ -208,7 +209,9 @@ class DOMHandler {
                 );
             });
         });
-
+		this.fontLangSelect.addEventListener("change", (e) => {
+			document.documentElement.lang = e.target.value;
+		});
         this.toggleDarkMode.addEventListener("click", () => {
             this.setTheme(
                 document.body.classList.contains("dark-mode") ? "light" : "dark"
