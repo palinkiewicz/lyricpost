@@ -103,6 +103,8 @@ class DOMHandler {
         /** @type {Element} */
         this.additionalBgSwitch = document.querySelector("#additional-bg");
         /** @type {Element} */
+		this.fontLangSelect = document.querySelector("#font-lang");
+        /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
         /** @type {Element} */
@@ -208,6 +210,10 @@ class DOMHandler {
                 );
             });
         });
+
+		this.fontLangSelect.addEventListener("change", (e) => {
+			document.documentElement.lang = e.target.value;
+		});
 
         this.toggleDarkMode.addEventListener("click", () => {
             this.setTheme(
