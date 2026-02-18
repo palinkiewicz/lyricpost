@@ -206,6 +206,12 @@
     scale: 1.05;
 }
 
+@media screen and (max-width: 450px) {
+    .select-song {
+        width: 45%;
+    }
+}
+
 .select-song img {
     width: 100%;
     aspect-ratio: 1;
@@ -461,13 +467,6 @@
 .additional-bg #additional-bg .switch::after {
     left: calc(100% - 1.75rem);
 }
-
-@media screen and (max-width: 450px) {
-    .select-song {
-        width: 45%;
-    }
-}
-
 
 .font-selection-container {
     display: flex;
