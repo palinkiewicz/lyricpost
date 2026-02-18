@@ -415,7 +415,6 @@
     height: 0.5rem;
     border-radius: 0.25rem;
     outline: none;
-    -webkit-appearance: none;
     background: var(--surface-color);
     cursor: pointer;
 }
