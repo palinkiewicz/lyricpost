@@ -599,25 +599,18 @@
     }
 }
 
-.font-selection-container {
+.select-container {
     display: flex;
     align-items: center;
-    max-width: 15rem;
-    width: 80%; 
-    padding: 0rem 1rem 1rem;
-    transition: 200ms var(--cubic-ease-out);
 }
 
-.font-label {
-    margin-right: 1rem;
-    min-width: 4rem; 
-    font-size: 1rem;
-    font-weight: 500;
+.select-container > div {
+    flex: 2;
 }
 
-#font-lang {
+.select-container > select {
     flex: 1; 
-    padding: 0.4rem 0.6rem;
+    padding: 0.5rem 0.6rem 0.4rem;
     border: 1px solid var(--background-text-color);
     border-radius: 0.5rem;
     outline: none;
@@ -625,5 +618,4 @@
     font-size: 0.85rem;
     color: var(--background-text-color);
     background: transparent;
-    transition: 200ms var(--cubic-ease-out);
 }
