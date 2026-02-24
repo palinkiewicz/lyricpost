@@ -379,28 +379,6 @@ class DOMHandler {
         this.setSongImageColor(
             COLORS[Math.floor(Math.random() * COLORS.length)]
         );
-        
-        // Calculate and set min width based on title
-        this.calculateMinWidth();
-    }
-
-    /**
-     * Calculates minimum width based on song title length
-     */
-    calculateMinWidth() {
-        const songName = this.songs[this.selectedSongIndex].name;
-        const artistNames = this.songs[this.selectedSongIndex].artists
-            .map((artist) => artist.name)
-            .join(", ");
-        
-        // Rough calculation: ~8px per character for title
-        const titleWidth = Math.max(songName.length * 8, artistNames.length * 6);
-        const minWidth = Math.max(250, Math.min(titleWidth + 100, 400));
-        
-        this.widthSlider.setAttribute('min', minWidth);
-        this.widthSlider.value = Math.max(minWidth, parseInt(this.widthSlider.value));
-        this.widthValue.textContent = `${this.widthSlider.value}px`;
-        this.setSongImageWidth(this.widthSlider.value);
     }
 
     /**
