@@ -12,6 +12,9 @@
     }
 }
 
+/* Fallback Asian Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+HK&family=Noto+Sans+JP&family=Noto+Sans+KR&family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
+
 * {
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
@@ -31,8 +34,27 @@
     --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-.dark-mode,
-.dark-mode * {
+:lang(zh-TW):not(.material-symbols-outlined) {
+    font-family: "Poppins", "Noto Sans TC", sans-serif;
+}
+
+:lang(zh-CN):not(.material-symbols-outlined) {
+    font-family: "Poppins", "Noto Sans SC", sans-serif;
+}
+
+:lang(zh-HK):not(.material-symbols-outlined) {
+    font-family: "Poppins", "Noto Sans HK", sans-serif;
+}
+
+:lang(ja):not(.material-symbols-outlined) {
+    font-family: "Poppins", "Noto Sans JP", sans-serif;
+}
+
+:lang(ko):not(.material-symbols-outlined) {
+    font-family: "Poppins", "Noto Sans KR", sans-serif;
+}
+
+.dark-mode, .dark-mode * {
     --background-color: rgba(16, 16, 24, 1);
     --background-gradient: linear-gradient(90deg, rgba(16, 16, 24, 1), rgba(21, 21, 40, 1), rgba(25, 25, 49, 1), rgba(21, 22, 31, 1));
     --background-nav-color: rgba(16, 16, 24, 0.7);
@@ -185,4 +207,39 @@ footer {
 
 .dark-mode #dark-mode-toggle > span::after {
     content: 'light_mode';
+}
+
+/* Floating Action Button */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--primary-text-color);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 250ms var(--cubic-ease-out);
+    z-index: 100;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.fab.hidden {
+    opacity: 0;
+    transform: scale(0);
+    pointer-events: none;
+}
+
+.fab > span {
+    font-size: 1.5rem;
 }

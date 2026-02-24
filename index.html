@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-        <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
-        />
-        <link rel="stylesheet" href="styles/main.css" />
-        <link rel="stylesheet" href="styles/wizard.css" />
-        <link rel="stylesheet" href="styles/song-image.css" />
-        <link rel="manifest" href="manifest.json" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/wizard.css">
+        <link rel="stylesheet" href="styles/song-image.css">
         <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
         <title>LyricPost: Lyrics Image Generator</title>
     </head>
@@ -23,44 +19,44 @@
                     <header>
                         <h1>LyricPost</h1>
                     </header>
-                    <form>
-                        <input
-                            class="surface"
-                            type="text"
-                            id="song-name"
-                            placeholder="Enter your favourite song and author..."
-                        />
-                        <button class="primary" id="search">
-                            <span class="material-symbols-outlined"
-                                >music_note</span
-                            >
-                            Find that song!
-                        </button>
-                    </form>
+                    <div class="input-tabs">
+                        <button class="tab-button active" data-tab="search">Search</button>
+                        <button class="tab-button" data-tab="link">Paste Link</button>
+                    </div>
+                    <div class="tab-content active" id="search-tab">
+                        <form>
+                            <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+                            <button class="primary" id="search">
+                                <span class="material-symbols-outlined">music_note</span>
+                                Find that song!
+                            </button>
+                        </form>
+                    </div>
+                    <div class="tab-content" id="link-tab">
+                        <form>
+                            <input class="surface" type="text" id="spotify-link" placeholder="https://open.spotify.com/track/...">
+                            <button class="primary" id="load-link">
+                                <span class="material-symbols-outlined">link</span>
+                                Load song!
+                            </button>
+                        </form>
+                    </div>
                     <div class="searching hidden"></div>
                     <div class="error hidden"></div>
                 </div>
             </section>
 
-            <section
-                class="lyrics-image-screen hidden search-results"
-                data-number="2"
-            >
+            <section class="lyrics-image-screen hidden search-results" data-number="2">
                 <div class="screen-wrapper">
                     <header>
                         <div class="header-content-wrapper">
-                            <button
-                                class="go-to-screen material-symbols-outlined"
-                                data-number="1"
-                            >
-                                chevron_left
-                            </button>
+                            <button class="go-to-screen material-symbols-outlined" data-number="1">chevron_left</button>
                             <h2>Select a song</h2>
                         </div>
                     </header>
                     <div class="song-selection">
                         <div class="select-song cloneable">
-                            <img src="" alt="album-cover" />
+                            <img src="" alt="album-cover">
                             <div class="name"></div>
                             <div class="authors"></div>
                         </div>
@@ -91,9 +87,19 @@
                             </button>
                         </div>
                     </header>
+                    <div class="song-info-display">
+                        <img src="" alt="album cover" class="song-info-cover">
+                        <div class="song-info-text">
+                            <div class="song-info-name"></div>
+                            <div class="song-info-artist"></div>
+                        </div>
+                    </div>
                     <div class="searching hidden"></div>
                     <div class="lines-selection"></div>
                 </div>
+                <button class="fab hidden" id="lyrics-fab">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
             </section>
 
             <section
@@ -156,12 +162,24 @@
                                             >
                                         </div>
                                     </div>
-                                    <div
-                                        class="switch-container"
-                                        id="additional-bg"
-                                    >
+                                    <div class="switch-container" id="light-text">
+                                        <div class="switch"></div>
+                                        <div>Light text</div>
+                                    </div>
+                                    <div class="switch-container" id="spotify-tag">
+                                        <div class="switch"></div>
+                                        <div>Spotify tag</div>
+                                    </div>
+                                    <div class="switch-container" id="additional-bg">
                                         <div class="switch"></div>
                                         <div>Background</div>
+                                    </div>
+                                    <div class="width-control">
+                                        <div>
+                                            <label for="width-slider">Width</label>
+                                            <span id="width-value">320px</span>
+                                        </div>
+                                        <input type="range" id="width-slider" min="200" max="600" value="320" step="10">
                                     </div>
                                 </div>
                                 <div class="panel">
@@ -181,6 +199,17 @@
                                         <div class="switch"></div>
                                         <div>Spotify tag</div>
                                     </div>
+                                    <div class="control-group font-selection-container">
+                                        <div class="font-label">Chinese Glyph Standards</div>
+                                        <select id="font-lang" class="surface">
+                                            <option value="en">Auto</option>
+                                            <option value="zh-TW">TW</option>
+                                            <option value="zh-CN">CN</option>
+                                            <option value="zh-HK">HK</option>
+                                            <option value="ja">JP</option>
+                                            <option value="ko">KR</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -188,7 +217,6 @@
                 </div>
             </section>
         </main>
-
         <footer class="surface">
             <div>
                 Made by
