@@ -1,6 +1,7 @@
 .song-image {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     padding: 1.2rem 1rem 1rem;
     width: var(--song-image-width, 20rem);
     transform: scale(var(--song-image-scale, 1));
@@ -11,7 +12,7 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.light-text .song-image {
+.song-image.light-text  {
     color: rgba(255, 255, 255, 0.95);
 }
 
@@ -44,7 +45,7 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.light-text .song-image > .header .authors {
+.song-image.light-text > .header .authors {
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -64,7 +65,7 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.spotify-tag .song-image > .spotify {
+.song-image.spotify-tag > .spotify {
     height: 3rem;
     padding: 1.2rem 0 0.3rem;
 }
@@ -73,7 +74,7 @@
     height: 100%;
 }
 
-.light-text .song-image > .spotify {
+.song-image.light-text > .spotify {
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
         hue-rotate(93deg) brightness(103%) contrast(103%);
 }

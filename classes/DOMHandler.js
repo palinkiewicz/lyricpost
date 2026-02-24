@@ -176,23 +176,28 @@ class DOMHandler {
             this.setSongImageColor(this.customColorInput.value);
         });
 
+        document.querySelectorAll('.switch-container').forEach((container) => {
+            container.addEventListener('click', () => {
+                container.classList.toggle('on');
+            });
+        });
+
         this.lightTextSwitch.addEventListener('click', () => {
-            const parent = this.lightTextSwitch.parentElement;
-            parent.classList.toggle('light-text');
+            this.songImage.classList.toggle('light-text');
 
             this.setBase64Image(
                 SPOTIFY_LOGO,
                 '.song-image > .spotify > img',
-                parent.classList.contains('light-text') ? 255 : 0
+                this.songImage.classList.contains('light-text') ? 255 : 0
             );
         });
 
         this.spotifyTagSwitch.addEventListener('click', () => {
-            this.spotifyTagSwitch.parentElement.classList.toggle('spotify-tag');
+            this.songImage.classList.toggle('spotify-tag');
         });
 
         this.additionalBgSwitch.addEventListener('click', () => {
-            this.additionalBgSwitch.parentElement.classList.toggle(
+            this.songImage.classList.toggle(
                 'additional-bg'
             );
         });
@@ -625,7 +630,7 @@ class DOMHandler {
         });
 
         if (
-            this.additionalBgSwitch.parentElement.classList.contains(
+            this.songImage.parentElement.classList.contains(
                 'additional-bg'
             )
         ) {
