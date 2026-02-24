@@ -179,6 +179,10 @@ class DOMHandler {
             this.widthValue.textContent = `${width}px`;
         });
 
+        window.addEventListener("resize", () => {
+            this.setSongImageWidth(this.widthSlider.value);
+        });
+
         this.toggleDarkMode.addEventListener("click", () => {
             this.setTheme(
                 document.body.classList.contains("dark-mode") ? "light" : "dark"
@@ -360,6 +364,8 @@ class DOMHandler {
     displaySongImage() {
         this.setSongImage();
         this.displayScreen(4);
+        this.setSongImageWidth(this.widthSlider.value);
+        this.widthValue.textContent = `${this.widthSlider.value}px`;
     }
 
     /**
@@ -395,7 +401,31 @@ class DOMHandler {
      * @param {number} width - Width in pixels
      */
     setSongImageWidth(width) {
-        this.songImage.style.setProperty('--song-image-width', `${width}px`);
+        const numericWidth = Number(width);
+        this.songImage.style.setProperty("--song-image-width", `${numericWidth}px`);
+
+        const fullHeight = this.songImage.offsetHeight;
+        const screen = this.songImage.closest(".lyrics-image-screen");
+
+        if (!screen) {
+            this.songImage.style.setProperty("--song-image-scale", 1);
+            this.songImage.style.marginBottom = "0px";
+            return;
+        }
+
+        const screenWidth = screen.clientWidth;
+        const horizontalMargin = 32;
+        const maxVisualWidth = Math.max(screenWidth - horizontalMargin, 0);
+
+        const scale =
+            numericWidth > 0 && maxVisualWidth > 0
+                ? Math.min(1, maxVisualWidth / numericWidth)
+                : 1;
+
+        this.songImage.style.setProperty("--song-image-scale", scale);
+
+        const marginBottom = fullHeight * (scale - 1);
+        this.songImage.style.marginBottom = `${marginBottom}px`;
     }
 
     /**
