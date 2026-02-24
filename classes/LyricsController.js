@@ -1,23 +1,49 @@
 class LyricsController {
     /**
-     * @param {DOMHandler} domHandler
+     * @param {AppState} state
+     * @param {DataFetcher} fetcher
+     * @param {AppShell} appShell
+     * @param {SongImageController} songImageController
      */
-    constructor(domHandler) {
-        this.dom = domHandler;
+    constructor(state, fetcher, appShell, songImageController) {
+        this.state = state;
+        this.fetcher = fetcher;
+        this.appShell = appShell;
+        this.songImageController = songImageController;
+
+        /** @type {Element | null} */
+        this.lineSelection = document.querySelector('.lines-selection');
+        /** @type {HTMLImageElement | null} */
+        this.songInfoCover = document.querySelector('.song-info-cover');
+        /** @type {Element | null} */
+        this.songInfoName = document.querySelector('.song-info-name');
+        /** @type {Element | null} */
+        this.songInfoArtist = document.querySelector('.song-info-artist');
+        /** @type {Element | null} */
+        this.lyricsFab = document.querySelector('#lyrics-fab');
     }
 
     /**
      * Searches for song lyrics and prepares lines selection list
      */
     async findLyrics() {
-        this.dom.lineSelection.innerHTML = '';
+        if (!this.lineSelection) {
+            return;
+        }
 
-        this.dom.displayScreen(3);
+        this.lineSelection.innerHTML = '';
+
+        this.appShell.displayScreen(3);
         this.displaySongInfo();
-        this.dom.displaySearching(SEARCHING_FOR_LYRICS);
+        this.appShell.displaySearching(SEARCHING_FOR_LYRICS);
 
         /** @type {Song} */
-        const song = this.dom.songs[this.dom.selectedSongIndex];
+        const song = this.state.selectedSong;
+
+        if (!song) {
+            this.appShell.hideSearching();
+            return;
+        }
 
         const artists = song.artists.map((artist) => artist.name);
         let lyrics = null;
@@ -25,7 +51,7 @@ class LyricsController {
 
         try {
             while (lyrics === null && artists.length > currentArtist) {
-                lyrics = await this.dom.fetcher.getSongLyrics(
+                lyrics = await this.fetcher.getSongLyrics(
                     artists[currentArtist],
                     song.name
                 );
@@ -36,20 +62,20 @@ class LyricsController {
                 throw Error('Lyrics not found');
             }
         } catch (error) {
-            this.dom.hideSearching();
+            this.appShell.hideSearching();
 
             if (
                 document
                     .querySelector('.final-options')
                     .classList.contains('hidden')
             ) {
-                this.dom.songImageController.displaySongImage();
+                this.songImageController.displaySongImage();
             }
 
             return console.error(error);
         }
 
-        this.dom.hideSearching();
+        this.appShell.hideSearching();
         song.loadLyrics(lyrics);
         this.populateLineSelection();
     }
@@ -58,11 +84,15 @@ class LyricsController {
      * Displays song information (cover, name, artist) on the lyrics screen
      */
     displaySongInfo() {
-        const song = this.dom.songs[this.dom.selectedSongIndex];
+        const song = this.state.selectedSong;
 
-        this.dom.songInfoCover.setAttribute('src', song.albumCoverUrl);
-        this.dom.songInfoName.textContent = song.name;
-        this.dom.songInfoArtist.textContent = song.artists
+        if (!song || !this.songInfoCover || !this.songInfoName || !this.songInfoArtist) {
+            return;
+        }
+
+        this.songInfoCover.setAttribute('src', song.albumCoverUrl);
+        this.songInfoName.textContent = song.name;
+        this.songInfoArtist.textContent = song.artists
             .map((artist) => artist.name)
             .join(', ');
     }
@@ -71,42 +101,47 @@ class LyricsController {
      * Creates line selection DOM elements from Lyric objects stored in the selected song's object
      */
     populateLineSelection() {
+        if (!this.lineSelection) {
+            return;
+        }
+
         let animationDelay = SELECTION_ANIMATION_DELAY;
 
-        this.dom.songs[this.dom.selectedSongIndex].lyrics.forEach(
-            (line, index) => {
-                const element = document.createElement('div');
-                element.classList.add('select-line', 'hidden');
-                element.textContent = line.text;
-                element.dataset.index = index;
+        this.state.selectedSong?.lyrics.forEach((line, index) => {
+            const element = document.createElement('div');
+            element.classList.add('select-line', 'hidden');
+            element.textContent = line.text;
+            element.dataset.index = index;
 
-                element.addEventListener('click', () => {
-                    element.classList.toggle('selected');
-                    this.updateFabVisibility();
-                });
+            element.addEventListener('click', () => {
+                element.classList.toggle('selected');
+                this.updateFabVisibility();
+            });
 
-                setTimeout(() => {
-                    element.classList.remove('hidden');
-                }, animationDelay);
+            setTimeout(() => {
+                element.classList.remove('hidden');
+            }, animationDelay);
 
-                animationDelay += NEXT_LINE_ANIMATION_DELAY;
+            animationDelay += NEXT_LINE_ANIMATION_DELAY;
 
-                this.dom.lineSelection.append(element);
-            }
-        );
+            this.lineSelection.append(element);
+        });
     }
 
     /**
      * Updates FAB visibility based on selected lines
      */
     updateFabVisibility() {
-        const selectedLines = document.querySelectorAll(
-            '.select-line.selected'
-        );
+        if (!this.lyricsFab || !this.lineSelection) {
+            return;
+        }
+
+        const selectedLines =
+            this.lineSelection.querySelectorAll('.select-line.selected');
         if (selectedLines.length > 0) {
-            this.dom.lyricsFab.classList.remove('hidden');
+            this.lyricsFab.classList.remove('hidden');
         } else {
-            this.dom.lyricsFab.classList.add('hidden');
+            this.lyricsFab.classList.add('hidden');
         }
     }
 }

@@ -1,9 +1,58 @@
 class SearchController {
     /**
-     * @param {DOMHandler} domHandler
+     * @param {AppState} state
+     * @param {DataFetcher} fetcher
+     * @param {AppShell} appShell
+     * @param {LyricsController} lyricsController
      */
-    constructor(domHandler) {
-        this.dom = domHandler;
+    constructor(state, fetcher, appShell, lyricsController) {
+        this.state = state;
+        this.fetcher = fetcher;
+        this.appShell = appShell;
+        this.lyricsController = lyricsController;
+
+        /** @type {HTMLInputElement | null} */
+        this.searchInput = document.querySelector('#song-name');
+        /** @type {HTMLButtonElement | null} */
+        this.searchButton = document.querySelector('#search');
+        /** @type {HTMLInputElement | null} */
+        this.spotifyLinkInput = document.querySelector('#spotify-link');
+        /** @type {HTMLButtonElement | null} */
+        this.loadLinkButton = document.querySelector('#load-link');
+        /** @type {NodeListOf<Element>} */
+        this.tabButtons = document.querySelectorAll('.tab-button');
+
+        /** @type {Element | null} */
+        this.cloneableSelectSong = document.querySelector(
+            '.select-song.cloneable'
+        );
+        /** @type {Element | null} */
+        this.songSelection = document.querySelector('.song-selection');
+
+        this.registerListeners();
+    }
+
+    registerListeners() {
+        if (this.searchButton) {
+            this.searchButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.findSong();
+            });
+        }
+
+        if (this.loadLinkButton) {
+            this.loadLinkButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.loadFromSpotifyLink();
+            });
+        }
+
+        this.tabButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const tab = button.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
     }
 
     /**
@@ -11,7 +60,7 @@ class SearchController {
      * @param {string} tab
      */
     switchTab(tab) {
-        this.dom.tabButtons.forEach((btn) => {
+        this.tabButtons.forEach((btn) => {
             btn.classList.toggle('active', btn.dataset.tab === tab);
         });
 
@@ -24,101 +73,110 @@ class SearchController {
      * Loads a song directly from Spotify link
      */
     async loadFromSpotifyLink() {
-        const url = this.dom.spotifyLinkInput.value.trim();
-
-        if (url === '') {
-            return this.dom.throwError('Please paste a Spotify link!');
+        if (!this.spotifyLinkInput || !this.loadLinkButton) {
+            return;
         }
 
-        const trackId = this.dom.fetcher.parseSpotifyUrl(url);
+        const url = this.spotifyLinkInput.value.trim();
+
+        if (url === '') {
+            return this.appShell.throwError('Please paste a Spotify link!');
+        }
+
+        const trackId = this.fetcher.parseSpotifyUrl(url);
 
         if (!trackId) {
-            return this.dom.throwError(
+            return this.appShell.throwError(
                 'Invalid Spotify link. Try the Search tab instead!'
             );
         }
 
-        this.dom.spotifyLinkInput.setAttribute('disabled', 'true');
-        this.dom.loadLinkButton.setAttribute('disabled', 'true');
+        this.spotifyLinkInput.setAttribute('disabled', 'true');
+        this.loadLinkButton.setAttribute('disabled', 'true');
 
-        this.dom.hideError();
-        this.dom.displaySearching('Loading song from Spotify...');
+        this.appShell.hideError();
+        this.appShell.displaySearching('Loading song from Spotify...');
 
         try {
-            const song = await this.dom.fetcher.getTrackById(trackId);
-            this.dom.songs = [song];
-            this.dom.selectedSongIndex = 0;
-            this.dom.usedDirectLink = true;
+            const song = await this.fetcher.getTrackById(trackId);
+            this.state.songs = [song];
+            this.state.selectedSongIndex = 0;
+            this.state.usedDirectLink = true;
 
-            await this.dom.lyricsController.findLyrics();
+            await this.lyricsController.findLyrics();
         } catch (error) {
             console.error(error);
 
-            this.dom.throwError(
+            this.appShell.throwError(
                 "Couldn't load that song. Check the link and try again!"
             );
         }
 
-        this.dom.hideSearching();
-        this.dom.spotifyLinkInput.removeAttribute('disabled');
-        this.dom.loadLinkButton.removeAttribute('disabled');
+        this.appShell.hideSearching();
+        this.spotifyLinkInput.removeAttribute('disabled');
+        this.loadLinkButton.removeAttribute('disabled');
     }
 
     /**
      * Searches for a song and prepares song selection list
      */
     async findSong() {
-        const name = this.dom.searchInput.value
+        if (!this.searchInput || !this.searchButton) {
+            return;
+        }
+
+        const name = this.searchInput.value
             .replaceAll('\\', '')
             .replaceAll('/', '')
             .trim();
 
         if (name === '') {
-            return this.dom.throwError(
+            return this.appShell.throwError(
                 `Hold on! Haven't you forgotten about something?`
             );
         }
 
-        this.dom.searchInput.setAttribute('disabled', 'true');
-        this.dom.searchButton.setAttribute('disabled', 'true');
+        this.searchInput.setAttribute('disabled', 'true');
+        this.searchButton.setAttribute('disabled', 'true');
 
-        this.dom.hideError();
-        this.dom.displaySearching(SEARCHING_FOR_SONG);
+        this.appShell.hideError();
+        this.appShell.displaySearching(SEARCHING_FOR_SONG);
 
         try {
-            this.dom.songs = await this.dom.fetcher.getSongInfos(
-                name,
-                SONGS_TO_FETCH
-            );
-            this.dom.usedDirectLink = false;
+            this.state.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+            this.state.usedDirectLink = false;
 
             this.populateSongSelection();
-            this.dom.displayScreen(2);
+            this.appShell.displayScreen(2);
         } catch (error) {
             console.error(error);
 
-            this.dom.throwError(
+            this.appShell.throwError(
                 `Oops! Looks like we couldn't find any songs for \"${name}\".`
             );
         }
 
-        this.dom.hideSearching();
-        this.dom.searchInput.removeAttribute('disabled');
-        this.dom.searchButton.removeAttribute('disabled');
+        this.appShell.hideSearching();
+        this.searchInput.removeAttribute('disabled');
+        this.searchButton.removeAttribute('disabled');
     }
 
     /**
      * Creates song selection DOM elements from Song objects stored in songs variable
      */
     populateSongSelection() {
-        this.dom.songSelection
+        if (!this.songSelection || !this.cloneableSelectSong) {
+            return;
+        }
+
+        this.songSelection
             .querySelectorAll('.select-song:not(.cloneable)')
             .forEach((el) => el.remove());
 
-        this.dom.songSelection.classList.add('hidden');
+        this.songSelection.classList.add('hidden');
 
-        this.dom.songs.forEach((song, index) => {
-            const clone = this.dom.cloneableSelectSong.cloneNode(true);
+        this.state.songs.forEach((song, index) => {
+            const clone = this.cloneableSelectSong.cloneNode(true);
 
             clone.querySelector('img').setAttribute('src', song.albumCoverUrl);
             clone.querySelector('.name').textContent = song.name;
@@ -127,17 +185,17 @@ class SearchController {
                 .join(', ');
 
             clone.addEventListener('click', () => {
-                this.dom.selectedSongIndex = index;
-                this.dom.lyricsController.findLyrics();
+                this.state.selectedSongIndex = index;
+                this.lyricsController.findLyrics();
             });
 
             clone.classList.remove('cloneable');
 
-            this.dom.songSelection.append(clone);
+            this.songSelection.append(clone);
         });
 
         setTimeout(() => {
-            this.dom.songSelection.classList.remove('hidden');
+            this.songSelection.classList.remove('hidden');
         }, SELECTION_ANIMATION_DELAY);
     }
 }

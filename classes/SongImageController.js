@@ -1,15 +1,152 @@
 class SongImageController {
     /**
-     * @param {DOMHandler} domHandler
+     * @param {AppState} state
+     * @param {AppShell} appShell
      */
-    constructor(domHandler) {
-        this.dom = domHandler;
+    constructor(state, appShell) {
+        this.state = state;
+        this.appShell = appShell;
+
+        /** @type {HTMLElement | null} */
+        this.songImage = document.querySelector('.song-image');
+        /** @type {HTMLElement | null} */
+        this.colorSelection = document.querySelector('.color-selection');
+        /** @type {HTMLInputElement | null} */
+        this.customColorInput = document.querySelector('#custom-color input');
+        /** @type {HTMLInputElement | null} */
+        this.widthSlider = document.querySelector('#width-slider');
+        /** @type {HTMLElement | null} */
+        this.widthValue = document.querySelector('#width-value');
+        /** @type {HTMLElement | null} */
+        this.downloadButton = document.querySelector('#download');
+        /** @type {HTMLElement | null} */
+        this.lightTextSwitch = document.querySelector('#light-text');
+        /** @type {HTMLElement | null} */
+        this.spotifyTagSwitch = document.querySelector('#spotify-tag');
+        /** @type {HTMLElement | null} */
+        this.additionalBgSwitch = document.querySelector('#additional-bg');
+        /** @type {HTMLElement | null} */
+        this.lyricsFab = document.querySelector('#lyrics-fab');
+
+        this.populateColorSelection();
+        this.registerListeners();
+        this.setBase64Image(
+            SPOTIFY_LOGO,
+            '.song-image > .spotify > img',
+            0
+        );
+    }
+
+    registerListeners() {
+        if (this.customColorInput) {
+            this.customColorInput.addEventListener('input', () => {
+                this.setSongImageColor(this.customColorInput.value);
+            });
+        }
+
+        document.querySelectorAll('.switch-container').forEach((container) => {
+            container.addEventListener('click', () => {
+                container.classList.toggle('on');
+            });
+        });
+
+        if (this.lightTextSwitch && this.songImage) {
+            this.lightTextSwitch.addEventListener('click', () => {
+                this.songImage.classList.toggle('light-text');
+
+                this.setBase64Image(
+                    SPOTIFY_LOGO,
+                    '.song-image > .spotify > img',
+                    this.songImage.classList.contains('light-text') ? 255 : 0
+                );
+            });
+        }
+
+        if (this.spotifyTagSwitch && this.songImage) {
+            this.spotifyTagSwitch.addEventListener('click', () => {
+                this.songImage.classList.toggle('spotify-tag');
+            });
+        }
+
+        if (this.additionalBgSwitch && this.songImage) {
+            this.additionalBgSwitch.addEventListener('click', () => {
+                this.songImage.classList.toggle('additional-bg');
+            });
+        }
+
+        if (this.downloadButton) {
+            this.downloadButton.addEventListener('click', () => {
+                this.downloadSongImage();
+            });
+        }
+
+        if (this.widthSlider && this.widthValue) {
+            this.widthSlider.addEventListener('input', () => {
+                const width = this.widthSlider.value;
+                this.setSongImageWidth(width);
+                this.widthValue.textContent = `${width}px`;
+            });
+
+            window.addEventListener('resize', () => {
+                this.setSongImageWidth(this.widthSlider.value);
+            });
+        }
+
+        // Tabs inside final options
+        document
+            .querySelectorAll('.tab-selectors > button')
+            .forEach((selector) => {
+                selector.addEventListener('click', () => {
+                    const currentPrimary = document.querySelector(
+                        '.tab-selectors > .primary'
+                    );
+                    if (currentPrimary) {
+                        currentPrimary.classList.remove('primary');
+                    }
+                    selector.classList.add('primary');
+
+                    const currentPanel = document.querySelector(
+                        '.tabs > .selected'
+                    );
+                    if (currentPanel) {
+                        currentPanel.classList.remove('selected');
+                    }
+
+                    const newlySelected = document.querySelector(
+                        `.tabs > div:nth-child(${selector.dataset.number})`
+                    );
+                    if (newlySelected) {
+                        newlySelected.classList.add('selected');
+                        const options = document.querySelector('.options');
+                        if (options) {
+                            options.style.height =
+                                newlySelected.offsetHeight + 44 + 'px';
+                        }
+                    }
+                });
+            });
+
+        // Paste into contenteditable as plain text
+        document.querySelectorAll('[contenteditable]').forEach((field) => {
+            field.addEventListener('paste', function (event) {
+                event.preventDefault();
+                document.execCommand(
+                    'inserttext',
+                    false,
+                    event.clipboardData.getData('text/plain')
+                );
+            });
+        });
     }
 
     /**
      * Creates color selection DOM elements
      */
     populateColorSelection() {
+        if (!this.colorSelection) {
+            return;
+        }
+
         COLORS.forEach((color) => {
             const element = document.createElement('div');
             element.classList.add('select-color');
@@ -20,9 +157,9 @@ class SongImageController {
                 this.setSongImageColor(color);
             });
 
-            this.dom.colorSelection.insertBefore(
+            this.colorSelection.insertBefore(
                 element,
-                this.dom.colorSelection.querySelector('#custom-color')
+                this.colorSelection.querySelector('#custom-color')
             );
         });
     }
@@ -32,19 +169,29 @@ class SongImageController {
      */
     displaySongImage() {
         this.setSongImage();
-        this.dom.displayScreen(4);
-        const width = this.dom.widthSlider.value;
-        this.setSongImageWidth(width);
-        this.dom.widthValue.textContent = `${width}px`;
-        this.dom.lyricsFab.classList.add('hidden');
+        this.appShell.displayScreen(4);
+
+        if (this.widthSlider && this.widthValue) {
+            const width = this.widthSlider.value;
+            this.setSongImageWidth(width);
+            this.widthValue.textContent = `${width}px`;
+        }
+
+        if (this.lyricsFab) {
+            this.lyricsFab.classList.add('hidden');
+        }
     }
 
     /**
      * Prepares song image DOM element
      */
     setSongImage() {
+        if (!this.state.selectedSong) {
+            return;
+        }
+
         this.setBase64Image(
-            this.dom.songs[this.dom.selectedSongIndex].albumCoverUrl,
+            this.state.selectedSong.albumCoverUrl,
             '.song-image > .header > img'
         );
         this.setSongInfo();
@@ -63,7 +210,9 @@ class SongImageController {
      * @param {string} background
      */
     setSongImageColor(background) {
-        this.dom.songImage.style.backgroundColor = background;
+        if (this.songImage) {
+            this.songImage.style.backgroundColor = background;
+        }
     }
 
     /**
@@ -71,18 +220,22 @@ class SongImageController {
      * @param {number} width - Width in pixels
      */
     setSongImageWidth(width) {
+        if (!this.songImage) {
+            return;
+        }
+
         const numericWidth = Number(width);
-        this.dom.songImage.style.setProperty(
+        this.songImage.style.setProperty(
             '--song-image-width',
             `${numericWidth}px`
         );
 
-        const fullHeight = this.dom.songImage.offsetHeight;
-        const screen = this.dom.songImage.closest('.lyrics-image-screen');
+        const fullHeight = this.songImage.offsetHeight;
+        const screen = this.songImage.closest('.lyrics-image-screen');
 
         if (!screen) {
-            this.dom.songImage.style.setProperty('--song-image-scale', 1);
-            this.dom.songImage.style.marginBottom = '0px';
+            this.songImage.style.setProperty('--song-image-scale', 1);
+            this.songImage.style.marginBottom = '0px';
             return;
         }
 
@@ -95,20 +248,24 @@ class SongImageController {
                 ? Math.min(1, maxVisualWidth / numericWidth)
                 : 1;
 
-        this.dom.songImage.style.setProperty('--song-image-scale', scale);
+        this.songImage.style.setProperty('--song-image-scale', scale);
 
         const marginBottom = fullHeight * (scale - 1);
-        this.dom.songImage.style.marginBottom = `${marginBottom}px`;
+        this.songImage.style.marginBottom = `${marginBottom}px`;
     }
 
     /**
      * Sets song image's name and author to the name of the fetched song
      */
     setSongInfo() {
+        if (!this.state.selectedSong) {
+            return;
+        }
+
         document.querySelector('.song-image > .header .name').textContent =
-            this.dom.songs[this.dom.selectedSongIndex].name;
+            this.state.selectedSong.name;
         document.querySelector('.song-image > .header .authors').textContent =
-            this.dom.songs[this.dom.selectedSongIndex].artists
+            this.state.selectedSong.artists
                 .map((artist) => artist.name)
                 .join(', ');
     }
@@ -118,8 +275,12 @@ class SongImageController {
      * @param {number[]} indexes
      */
     setSongLyrics(indexes) {
+        if (!this.state.selectedSong) {
+            return;
+        }
+
         const lyrics =
-            this.dom.songs[this.dom.selectedSongIndex].lyrics
+            this.state.selectedSong.lyrics
                 ?.filter((_, index) => indexes.includes(index))
                 ?.map((lyric) => lyric.text)
                 ?.join('<br>') ?? NO_LYRICS_FOUND;
@@ -131,20 +292,30 @@ class SongImageController {
      * Downloads song image by generating canvas from its DOM elements
      */
     async downloadSongImage() {
-        this.dom.displaySearching(DOWNLOADING);
+        if (!this.songImage) {
+            return;
+        }
 
-        const song = this.dom.songs[this.dom.selectedSongIndex];
+        this.appShell.displaySearching(DOWNLOADING);
+
+        const song = this.state.selectedSong;
+
+        if (!song) {
+            this.appShell.hideSearching();
+            return;
+        }
+
         const downloadName = `${song.artists
             .map((artist) => artist.name)
             .join(', ')} - ${song.name}.png`;
 
-        let canvas = await html2canvas(this.dom.songImage, {
+        let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
             scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
         });
 
         if (
-            this.dom.songImage.classList.contains(
+            this.songImage.classList.contains(
                 'additional-bg'
             )
         ) {
@@ -153,7 +324,7 @@ class SongImageController {
 
         canvas.toBlob((blob) => {
             window.saveAs(blob, downloadName);
-            this.dom.hideSearching();
+            this.appShell.hideSearching();
         });
     }
 
@@ -163,7 +334,9 @@ class SongImageController {
      * @returns {HTMLCanvasElement} canvas with background and shadow
      */
     addBgToDownloadCanvas(canvas) {
-        const backgroundColor = this.dom.songImage.style.backgroundColor;
+        const backgroundColor = this.songImage
+            ? this.songImage.style.backgroundColor
+            : 'transparent';
 
         const borderRadius =
             BACKGROUND_SHADOW_BORDER_RADIUS *
