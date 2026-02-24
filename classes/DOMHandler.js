@@ -43,6 +43,9 @@ class DOMHandler {
         /** @type {number?} */
         this.selectedSongIndex = null;
 
+        /** @type {boolean} */
+        this.usedDirectLink = false;
+
         /**
          * Below all are DOM elements
          */
@@ -57,6 +60,12 @@ class DOMHandler {
         this.searchInput = document.querySelector("#song-name");
         /** @type {Element} */
         this.searchButton = document.querySelector("#search");
+        /** @type {Element} */
+        this.spotifyLinkInput = document.querySelector("#spotify-link");
+        /** @type {Element} */
+        this.loadLinkButton = document.querySelector("#load-link");
+        /** @type {NodeListOf<Element>} */
+        this.tabButtons = document.querySelectorAll(".tab-button");
 
         /** @type {Element} */
         this.cloneableSelectSong = document.querySelector(
@@ -67,9 +76,17 @@ class DOMHandler {
         /** @type {Element} */
         this.lineSelection = document.querySelector(".lines-selection");
         /** @type {Element} */
+        this.songInfoCover = document.querySelector(".song-info-cover");
+        /** @type {Element} */
+        this.songInfoName = document.querySelector(".song-info-name");
+        /** @type {Element} */
+        this.songInfoArtist = document.querySelector(".song-info-artist");
+        /** @type {Element} */
         this.goToFinal = document.querySelector(
             ".lyrics-image-screen .go-to-screen.right"
         );
+        /** @type {Element} */
+        this.lyricsFab = document.querySelector("#lyrics-fab");
 
         /** @type {Element} */
         this.lastGoBack = document.querySelector("#last-go-back");
@@ -85,6 +102,8 @@ class DOMHandler {
         this.spotifyTagSwitch = document.querySelector("#spotify-tag");
         /** @type {Element} */
         this.additionalBgSwitch = document.querySelector("#additional-bg");
+        /** @type {Element} */
+		this.fontLangSelect = document.querySelector("#font-lang");
         /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
@@ -116,6 +135,18 @@ class DOMHandler {
             this.findSong();
         });
 
+        this.loadLinkButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.loadFromSpotifyLink();
+        });
+
+        this.tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const tab = button.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
+
         this.lastGoBack.addEventListener("click", () => {
             this.displayScreen(
                 this.songs[this.selectedSongIndex].lyrics === undefined ? 2 : 3
@@ -124,11 +155,23 @@ class DOMHandler {
 
         document.querySelectorAll(".go-to-screen").forEach((button) => {
             button.addEventListener("click", () => {
-                this.displayScreen(Number(button.dataset.number));
+                const targetScreen = Number(button.dataset.number);
+                
+                // If going back from lyrics screen and used direct link, go to screen 1
+                if (targetScreen === 2 && this.usedDirectLink) {
+                    this.displayScreen(1);
+                    this.usedDirectLink = false;
+                } else {
+                    this.displayScreen(targetScreen);
+                }
             });
         });
 
         this.goToFinal.addEventListener("click", () => {
+            this.displaySongImage();
+        });
+
+        this.lyricsFab.addEventListener("click", () => {
             this.displaySongImage();
         });
 
@@ -183,6 +226,10 @@ class DOMHandler {
             this.setSongImageWidth(this.widthSlider.value);
         });
 
+        this.fontLangSelect.addEventListener("change", (e) => {
+            document.documentElement.lang = e.target.value;
+        });
+
         this.toggleDarkMode.addEventListener("click", () => {
             this.setTheme(
                 document.body.classList.contains("dark-mode") ? "light" : "dark"
@@ -212,6 +259,65 @@ class DOMHandler {
     }
 
     /**
+     * Switches between search and link input tabs
+     * @param {string} tab
+     */
+    switchTab(tab) {
+        this.tabButtons.forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.tab === tab);
+        });
+
+        document.querySelectorAll(".tab-content").forEach((content) => {
+            content.classList.toggle("active", content.id === `${tab}-tab`);
+        });
+    }
+
+    /**
+     * Loads a song directly from Spotify link
+     */
+    async loadFromSpotifyLink() {
+        const url = this.spotifyLinkInput.value.trim();
+
+        if (url === "") {
+            return this.throwError("Please paste a Spotify link!");
+        }
+
+        const trackId = this.fetcher.parseSpotifyUrl(url);
+
+        if (!trackId) {
+            return this.throwError(
+                "Invalid Spotify link. Try the Search tab instead!"
+            );
+        }
+
+        this.spotifyLinkInput.setAttribute("disabled", "true");
+        this.loadLinkButton.setAttribute("disabled", "true");
+
+        this.hideError();
+        this.displaySearching("Loading song from Spotify...");
+
+        try {
+            const song = await this.fetcher.getTrackById(trackId);
+            this.songs = [song];
+            this.selectedSongIndex = 0;
+            this.usedDirectLink = true;
+
+            // Go directly to lyrics
+            await this.findLyrics();
+        } catch (error) {
+            console.error(error);
+
+            this.throwError(
+                "Couldn't load that song. Check the link and try again!"
+            );
+        }
+
+        this.hideSearching();
+        this.spotifyLinkInput.removeAttribute("disabled");
+        this.loadLinkButton.removeAttribute("disabled");
+    }
+
+    /**
      * Searches for a song and prepares song selection list
      * @param {string} name
      */
@@ -235,6 +341,7 @@ class DOMHandler {
 
         try {
             this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+            this.usedDirectLink = false;
 
             this.populateSongSelection();
             this.displayScreen(2);
@@ -292,6 +399,7 @@ class DOMHandler {
         this.lineSelection.innerHTML = "";
 
         this.displayScreen(3);
+        this.displaySongInfo();
         this.displaySearching(SEARCHING_FOR_LYRICS);
 
         /** @type {Song} */
@@ -333,6 +441,19 @@ class DOMHandler {
     }
 
     /**
+     * Displays song information (cover, name, artist) on the lyrics screen
+     */
+    displaySongInfo() {
+        const song = this.songs[this.selectedSongIndex];
+        
+        this.songInfoCover.setAttribute("src", song.albumCoverUrl);
+        this.songInfoName.textContent = song.name;
+        this.songInfoArtist.textContent = song.artists
+            .map((artist) => artist.name)
+            .join(", ");
+    }
+
+    /**
      * Creates line selection DOM elements from Lyric objects stored in the selected song's object
      */
     populateLineSelection() {
@@ -346,6 +467,7 @@ class DOMHandler {
 
             element.addEventListener("click", () => {
                 element.classList.toggle("selected");
+                this.updateFabVisibility();
             });
 
             setTimeout(() => {
@@ -359,6 +481,18 @@ class DOMHandler {
     }
 
     /**
+     * Updates FAB visibility based on selected lines
+     */
+    updateFabVisibility() {
+        const selectedLines = document.querySelectorAll(".select-line.selected");
+        if (selectedLines.length > 0) {
+            this.lyricsFab.classList.remove("hidden");
+        } else {
+            this.lyricsFab.classList.add("hidden");
+        }
+    }
+
+    /**
      * Displays song image final screen
      */
     displaySongImage() {
@@ -366,6 +500,7 @@ class DOMHandler {
         this.displayScreen(4);
         this.setSongImageWidth(this.widthSlider.value);
         this.widthValue.textContent = `${this.widthSlider.value}px`;
+        this.lyricsFab.classList.add("hidden");
     }
 
     /**
@@ -687,6 +822,13 @@ class DOMHandler {
                 screen.classList.remove("left");
             }
         });
+        
+        // Update FAB visibility when returning to lyrics selection screen
+        if (number === 3) {
+            this.updateFabVisibility();
+        } else {
+            this.lyricsFab.classList.add("hidden");
+        }
     }
 
     /**

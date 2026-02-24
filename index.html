@@ -18,12 +18,26 @@
                 <header>
                     <h1>Lyrics Image Generator</h1>
                 </header>
-                <form>
-                    <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
-                    <button class="primary" id="search">
-                        Find that song!
-                    </button>
-                </form>
+                <div class="input-tabs">
+                    <button class="tab-button active" data-tab="search">Search</button>
+                    <button class="tab-button" data-tab="link">Paste Link</button>
+                </div>
+                <div class="tab-content active" id="search-tab">
+                    <form>
+                        <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+                        <button class="primary" id="search">
+                            Find that song!
+                        </button>
+                    </form>
+                </div>
+                <div class="tab-content" id="link-tab">
+                    <form>
+                        <input class="surface" type="text" id="spotify-link" placeholder="https://open.spotify.com/track/...">
+                        <button class="primary" id="load-link">
+                            Load song!
+                        </button>
+                    </form>
+                </div>
                 <div class="searching hidden"></div>
                 <div class="error hidden"></div>
             </div>
@@ -50,9 +64,19 @@
                     <h2>Select lines</h2>
                     <button class="go-to-screen right material-symbols-outlined" data-number="4">chevron_right</button>
                 </header>
+                <div class="song-info-display">
+                    <img src="" alt="album cover" class="song-info-cover">
+                    <div class="song-info-text">
+                        <div class="song-info-name"></div>
+                        <div class="song-info-artist"></div>
+                    </div>
+                </div>
                 <div class="searching hidden"></div>
                 <div class="lines-selection"></div>
             </div>
+            <button class="fab hidden" id="lyrics-fab">
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
         </section>
         <section class="lyrics-image-screen hidden final-options" data-number="4">
             <div class="screen-wrapper">
@@ -99,6 +123,17 @@
                         <span id="width-value">320px</span>
                     </div>
                     <input type="range" id="width-slider" min="200" max="600" value="320" step="10">
+                </div>
+                <div class="control-group font-selection-container">
+                    <div class="font-label">Chinese Glyph Standards</div>
+                    <select id="font-lang" class="surface">
+                        <option value="en">Auto</option>
+                        <option value="zh-TW">TW</option>
+                        <option value="zh-CN">CN</option>
+                        <option value="zh-HK">HK</option>
+                        <option value="ja">JP</option>
+                        <option value="ko">KR</option>
+                    </select>
                 </div>
             </div>
         </section>
