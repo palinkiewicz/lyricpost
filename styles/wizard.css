@@ -468,6 +468,83 @@
     left: calc(100% - 1.75rem);
 }
 
+.width-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0rem 1rem 1rem;
+    font-size: 0.9rem;
+    max-width: 15rem;
+    width: 80%;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.hidden .width-control {
+    font-size: 0;
+    padding: 0;
+}
+
+.width-control > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.width-control label {
+    font-weight: 600;
+}
+
+.width-control input[type="range"] {
+    width: 100%;
+    height: 0.5rem;
+    border-radius: 0.25rem;
+    outline: none;
+    background: var(--surface-color);
+    cursor: pointer;
+}
+
+.width-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: 150ms var(--cubic-ease-out);
+}
+
+.width-control input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.width-control input[type="range"]::-moz-range-thumb {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: none;
+    transition: 150ms var(--cubic-ease-out);
+}
+
+.width-control input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+.width-control #width-value {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+@media screen and (max-width: 450px) {
+    .select-song {
+        width: 45%;
+    }
+}
+
 .font-selection-container {
     display: flex;
     align-items: center;

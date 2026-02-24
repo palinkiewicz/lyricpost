@@ -108,6 +108,11 @@ class DOMHandler {
         this.songImage = document.querySelector(".song-image");
 
         /** @type {Element} */
+        this.widthSlider = document.querySelector("#width-slider");
+        /** @type {Element} */
+        this.widthValue = document.querySelector("#width-value");
+
+        /** @type {Element} */
         this.toggleDarkMode = document.querySelector("#dark-mode-toggle");
 
         this.populateColorSelection();
@@ -211,9 +216,19 @@ class DOMHandler {
             });
         });
 
-		this.fontLangSelect.addEventListener("change", (e) => {
-			document.documentElement.lang = e.target.value;
-		});
+        this.widthSlider.addEventListener("input", () => {
+            const width = this.widthSlider.value;
+            this.setSongImageWidth(width);
+            this.widthValue.textContent = `${width}px`;
+        });
+
+        window.addEventListener("resize", () => {
+            this.setSongImageWidth(this.widthSlider.value);
+        });
+
+        this.fontLangSelect.addEventListener("change", (e) => {
+            document.documentElement.lang = e.target.value;
+        });
 
         this.toggleDarkMode.addEventListener("click", () => {
             this.setTheme(
@@ -483,6 +498,8 @@ class DOMHandler {
     displaySongImage() {
         this.setSongImage();
         this.displayScreen(4);
+        this.setSongImageWidth(this.widthSlider.value);
+        this.widthValue.textContent = `${this.widthSlider.value}px`;
         this.lyricsFab.classList.add("hidden");
     }
 
@@ -512,6 +529,38 @@ class DOMHandler {
      */
     setSongImageColor(background) {
         this.songImage.style.backgroundColor = background;
+    }
+
+    /**
+     * Sets song image's width
+     * @param {number} width - Width in pixels
+     */
+    setSongImageWidth(width) {
+        const numericWidth = Number(width);
+        this.songImage.style.setProperty("--song-image-width", `${numericWidth}px`);
+
+        const fullHeight = this.songImage.offsetHeight;
+        const screen = this.songImage.closest(".lyrics-image-screen");
+
+        if (!screen) {
+            this.songImage.style.setProperty("--song-image-scale", 1);
+            this.songImage.style.marginBottom = "0px";
+            return;
+        }
+
+        const screenWidth = screen.clientWidth;
+        const horizontalMargin = 32;
+        const maxVisualWidth = Math.max(screenWidth - horizontalMargin, 0);
+
+        const scale =
+            numericWidth > 0 && maxVisualWidth > 0
+                ? Math.min(1, maxVisualWidth / numericWidth)
+                : 1;
+
+        this.songImage.style.setProperty("--song-image-scale", scale);
+
+        const marginBottom = fullHeight * (scale - 1);
+        this.songImage.style.marginBottom = `${marginBottom}px`;
     }
 
     /**

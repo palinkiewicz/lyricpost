@@ -117,7 +117,14 @@
                     <div class="switch"></div>
                     <div>Background</div>
                 </div>
-                 <div class="control-group font-selection-container">
+                <div class="width-control">
+                    <div>
+                        <label for="width-slider">Width</label>
+                        <span id="width-value">320px</span>
+                    </div>
+                    <input type="range" id="width-slider" min="200" max="600" value="320" step="10">
+                </div>
+                <div class="control-group font-selection-container">
                     <div class="font-label">Chinese Glyph Standards</div>
                     <select id="font-lang" class="surface">
                         <option value="en">Auto</option>
@@ -127,7 +134,7 @@
                         <option value="ja">JP</option>
                         <option value="ko">KR</option>
                     </select>
-                 </div>
+                </div>
             </div>
         </section>
     </main>
