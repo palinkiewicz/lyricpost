@@ -148,6 +148,7 @@
                                 <button data-number="3">Other</button>
                             </div>
                             <div class="tabs">
+                                <!-- Background tab -->
                                 <div class="panel selected">
                                     <div class="color-selection">
                                         <div class="" id="custom-color">
@@ -162,6 +163,71 @@
                                             >
                                         </div>
                                     </div>
+                                    <div class="slider-container radius-control">
+                                        <div>
+                                            <label for="corner-radius-slider"
+                                                >Corner radius</label
+                                            >
+                                            <span id="corner-radius-value"
+                                                >24px</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="corner-radius-slider"
+                                            min="8"
+                                            max="48"
+                                            value="24"
+                                            step="1"
+                                        />
+                                    </div>
+                                    <div
+                                        class="switch-container"
+                                        id="background-blur-toggle"
+                                    >
+                                        <div>Blurred background</div>
+                                        <div class="switch"></div>
+                                    </div>
+                                    <div class="slider-container">
+                                        <div>
+                                            <label
+                                                for="background-transparency-slider"
+                                                >Background color
+                                                transparency</label
+                                            >
+                                            <span
+                                                id="background-transparency-value"
+                                                >25%</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="background-transparency-slider"
+                                            min="0"
+                                            max="100"
+                                            value="25"
+                                            step="1"
+                                        />
+                                    </div>
+                                    <div class="slider-container">
+                                        <div>
+                                            <label
+                                                for="background-blur-slider"
+                                                >Blur level</label
+                                            >
+                                            <span id="background-blur-value"
+                                                >12px</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="background-blur-slider"
+                                            min="0"
+                                            max="32"
+                                            value="12"
+                                            step="1"
+                                        />
+                                    </div>
                                     <div class="switch-container" id="additional-bg">
                                         <div>Double background</div>
                                         <div class="switch"></div>
@@ -171,28 +237,160 @@
                                             <label for="width-slider">Width</label>
                                             <span id="width-value">320px</span>
                                         </div>
-                                        <input type="range" id="width-slider" min="200" max="600" value="320" step="10">
+                                        <input
+                                            type="range"
+                                            id="width-slider"
+                                            min="200"
+                                            max="600"
+                                            value="320"
+                                            step="10"
+                                        />
                                     </div>
                                 </div>
+
+                                <!-- Text tab -->
                                 <div class="panel">
+                                    <div class="slider-container">
+                                        <div>
+                                            <label for="text-color-input"
+                                                >Text color</label
+                                            >
+                                        </div>
+                                        <div
+                                            class="color-input-inline"
+                                        >
+                                            <input
+                                                type="color"
+                                                id="text-color-input"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="select-container">
+                                        <div>Font type</div>
+                                        <select id="text-font-family">
+                                            <option value="default">
+                                                Default
+                                            </option>
+                                            <option value="sans">
+                                                Clean sans-serif
+                                            </option>
+                                            <option value="serif">
+                                                Classic serif
+                                            </option>
+                                            <option value="mono">
+                                                Monospace
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="slider-container">
+                                        <div>
+                                            <label for="font-size-slider"
+                                                >Font size</label
+                                            >
+                                            <span id="font-size-value"
+                                                >19px</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="font-size-slider"
+                                            min="12"
+                                            max="32"
+                                            value="19"
+                                            step="1"
+                                        />
+                                    </div>
+                                    <div class="slider-container">
+                                        <div>
+                                            <label
+                                                for="letter-spacing-slider"
+                                                >Character spacing</label
+                                            >
+                                            <span id="letter-spacing-value"
+                                                >0px</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="letter-spacing-slider"
+                                            min="0"
+                                            max="8"
+                                            value="0"
+                                            step="1"
+                                        />
+                                    </div>
+                                    <div class="slider-container">
+                                        <div>
+                                            <label
+                                                for="line-spacing-slider"
+                                                >Line spacing</label
+                                            >
+                                            <span id="line-spacing-value"
+                                                >150%</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="line-spacing-slider"
+                                            min="100"
+                                            max="220"
+                                            value="150"
+                                            step="5"
+                                        />
+                                    </div>
                                     <div
                                         class="switch-container"
                                         id="light-text"
                                     >
-                                        <div>Light text</div>
+                                        <div>Light text preset</div>
                                         <div class="switch"></div>
                                     </div>
                                 </div>
+
+                                <!-- Other tab -->
                                 <div class="panel">
-                                    <div
-                                        class="switch-container"
-                                        id="spotify-tag"
-                                    >
-                                        <div>Spotify tag</div>
-                                        <div class="switch"></div>
+                                    <div class="select-container">
+                                        <div>Layout style</div>
+                                        <select id="layout-style">
+                                            <option value="spotify">
+                                                Spotify (title at top)
+                                            </option>
+                                            <option value="apple">
+                                                Apple (title at bottom)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="select-container tag-select-container">
+                                        <div>Service tag</div>
+                                        <select id="service-tag">
+                                            <option value="none">None</option>
+                                            <option value="spotify">
+                                                Spotify
+                                            </option>
+                                            <option value="apple">
+                                                Apple Music
+                                            </option>
+                                            <option value="custom">
+                                                Custom image
+                                            </option>
+                                        </select>
+                                        <label
+                                            class="material-symbols-outlined"
+                                            for="service-tag-file"
+                                        >
+                                            upload
+                                        </label>
+                                        <input
+                                            type="file"
+                                            id="service-tag-file"
+                                            accept="image/*"
+                                            hidden
+                                        />
                                     </div>
                                     <div class="select-container font-selection-container">
-                                        <div class="font-label">Chinese Glyph Standards</div>
+                                        <div class="font-label">
+                                            Chinese Glyph Standards
+                                        </div>
                                         <select id="font-lang">
                                             <option value="en">Auto</option>
                                             <option value="zh-TW">TW</option>

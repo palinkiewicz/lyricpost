@@ -7,13 +7,13 @@
     transform: scale(var(--song-image-scale, 1));
     transform-origin: top center;
     background-color: rgba(84, 154, 171, 1);
-    color: rgba(0, 0, 0, 0.95);
-    border-radius: 1.5rem;
+    color: var(--song-text-color, rgba(0, 0, 0, 0.95));
+    border-radius: var(--song-border-radius, 1.5rem);
     transition: 200ms var(--cubic-ease-out);
 }
 
 .song-image.light-text  {
-    color: rgba(255, 255, 255, 0.95);
+    --song-text-color: rgba(255, 255, 255, 0.95);
 }
 
 .song-image > .header {
@@ -41,19 +41,25 @@
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--song-author-color, rgba(0, 0, 0, 0.6));
     transition: 200ms var(--cubic-ease-out);
 }
 
 .song-image.light-text > .header .authors {
-    color: rgba(255, 255, 255, 0.7);
+    --song-author-color: rgba(255, 255, 255, 0.7);
 }
 
 .song-image > .lyrics {
-    font-size: 1.2rem;
+    font-size: var(--song-lyrics-font-size, 1.2rem);
     font-weight: 700;
-    line-height: 1.5rem;
+    line-height: var(--song-line-height, 1.5rem);
     padding-bottom: 0.2rem;
+    letter-spacing: var(--song-letter-spacing, 0);
+}
+
+.song-image > .header .name,
+.song-image > .header .authors {
+    letter-spacing: var(--song-letter-spacing, 0);
 }
 
 .song-image > .spotify {
@@ -78,3 +84,36 @@
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
         hue-rotate(93deg) brightness(103%) contrast(103%);
 }
+
+/* Layout variants */
+.song-image.layout-apple > .lyrics {
+    order: 1;
+}
+
+.song-image.layout-apple > .header {
+    order: 2;
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.song-image.layout-apple > .spotify {
+    order: 3;
+}
+
+/* Apple-style service tag */
+.song-image.apple-tag > .spotify {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.song-image.apple-tag > .spotify::before {
+    content: '';
+}
+
+.song-image.apple-tag > .spotify > img {
+    display: none;
+}
+

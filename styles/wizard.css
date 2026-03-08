@@ -573,6 +573,22 @@
     transform: scale(1.1);
 }
 
+.color-input-inline {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.color-input-inline input[type="color"] {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--background-text-color);
+    background: transparent;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 450px) {
     .select-song {
         width: 47%;
@@ -599,4 +615,22 @@
     font-size: 0.85rem;
     color: var(--background-text-color);
     background: transparent;
+}
+
+.tag-select-container {
+    gap: 0.25rem;
+}
+
+.tag-select-container > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--background-text-color);
+    cursor: pointer;
+}
+
+.tag-select-container > label:hover {
+    background: var(--surface-light-color);
 }

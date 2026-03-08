@@ -22,19 +22,79 @@ class SongImageController {
         /** @type {HTMLElement | null} */
         this.lightTextSwitch = document.querySelector('#light-text');
         /** @type {HTMLElement | null} */
-        this.spotifyTagSwitch = document.querySelector('#spotify-tag');
-        /** @type {HTMLElement | null} */
         this.additionalBgSwitch = document.querySelector('#additional-bg');
         /** @type {HTMLElement | null} */
         this.lyricsFab = document.querySelector('#lyrics-fab');
 
+        // Background controls
+        /** @type {HTMLInputElement | null} */
+        this.cornerRadiusSlider = document.querySelector(
+            '#corner-radius-slider'
+        );
+        /** @type {HTMLElement | null} */
+        this.cornerRadiusValue = document.querySelector(
+            '#corner-radius-value'
+        );
+        /** @type {HTMLElement | null} */
+        this.backgroundBlurToggle = document.querySelector(
+            '#background-blur-toggle'
+        );
+        /** @type {HTMLInputElement | null} */
+        this.backgroundTransparencySlider = document.querySelector(
+            '#background-transparency-slider'
+        );
+        /** @type {HTMLElement | null} */
+        this.backgroundTransparencyValue = document.querySelector(
+            '#background-transparency-value'
+        );
+        /** @type {HTMLInputElement | null} */
+        this.backgroundBlurSlider = document.querySelector(
+            '#background-blur-slider'
+        );
+        /** @type {HTMLElement | null} */
+        this.backgroundBlurValue = document.querySelector(
+            '#background-blur-value'
+        );
+
+        // Text controls
+        /** @type {HTMLInputElement | null} */
+        this.textColorInput = document.querySelector('#text-color-input');
+        /** @type {HTMLSelectElement | null} */
+        this.fontFamilySelect = document.querySelector('#text-font-family');
+        /** @type {HTMLInputElement | null} */
+        this.fontSizeSlider = document.querySelector('#font-size-slider');
+        /** @type {HTMLElement | null} */
+        this.fontSizeValue = document.querySelector('#font-size-value');
+        /** @type {HTMLInputElement | null} */
+        this.letterSpacingSlider = document.querySelector(
+            '#letter-spacing-slider'
+        );
+        /** @type {HTMLElement | null} */
+        this.letterSpacingValue = document.querySelector(
+            '#letter-spacing-value'
+        );
+        /** @type {HTMLInputElement | null} */
+        this.lineSpacingSlider = document.querySelector(
+            '#line-spacing-slider'
+        );
+        /** @type {HTMLElement | null} */
+        this.lineSpacingValue = document.querySelector('#line-spacing-value');
+
+        // Other tab
+        /** @type {HTMLSelectElement | null} */
+        this.layoutStyleSelect = document.querySelector('#layout-style');
+        /** @type {HTMLSelectElement | null} */
+        this.serviceTagSelect = document.querySelector('#service-tag');
+        /** @type {HTMLInputElement | null} */
+        this.serviceTagFileInput = document.querySelector('#service-tag-file');
+
+        // Dynamic background state (for download and preview)
+        this.shadowCornerRadius = BACKGROUND_SHADOW_BORDER_RADIUS;
+        this.shadowBlur = BACKGROUND_SHADOW_BLUR;
+        this.shadowOpacity = 0.25;
+
         this.populateColorSelection();
         this.registerListeners();
-        this.setBase64Image(
-            SPOTIFY_LOGO,
-            '.song-image > .spotify > img',
-            0
-        );
     }
 
     registerListeners() {
@@ -50,28 +110,175 @@ class SongImageController {
             });
         });
 
-        if (this.lightTextSwitch && this.songImage) {
-            this.lightTextSwitch.addEventListener('click', () => {
-                this.songImage.classList.toggle('light-text');
-
-                this.setBase64Image(
-                    SPOTIFY_LOGO,
-                    '.song-image > .spotify > img',
-                    this.songImage.classList.contains('light-text') ? 255 : 0
-                );
-            });
-        }
-
-        if (this.spotifyTagSwitch && this.songImage) {
-            this.spotifyTagSwitch.addEventListener('click', () => {
-                this.songImage.classList.toggle('spotify-tag');
-            });
-        }
-
         if (this.additionalBgSwitch && this.songImage) {
             this.additionalBgSwitch.addEventListener('click', () => {
                 this.songImage.classList.toggle('additional-bg');
             });
+        }
+
+        if (this.backgroundBlurToggle && this.songImage) {
+            this.backgroundBlurToggle.addEventListener('click', () => {
+                this.updateBackgroundBlurVisual();
+            });
+        }
+
+        if (
+            this.cornerRadiusSlider &&
+            this.cornerRadiusValue &&
+            this.songImage
+        ) {
+            const applyCornerRadius = () => {
+                const radius = Number(this.cornerRadiusSlider.value);
+                this.shadowCornerRadius = radius;
+                this.songImage.style.setProperty(
+                    '--song-border-radius',
+                    `${radius}px`
+                );
+                this.cornerRadiusValue.textContent = `${radius}px`;
+            };
+
+            applyCornerRadius();
+            this.cornerRadiusSlider.addEventListener('input', applyCornerRadius);
+        }
+
+        if (
+            this.backgroundTransparencySlider &&
+            this.backgroundTransparencyValue
+        ) {
+            const applyTransparency = () => {
+                const value = Number(this.backgroundTransparencySlider.value);
+                this.shadowOpacity = value / 100;
+                this.backgroundTransparencyValue.textContent = `${value}%`;
+                this.updateBackgroundBlurVisual();
+            };
+
+            applyTransparency();
+            this.backgroundTransparencySlider.addEventListener(
+                'input',
+                applyTransparency
+            );
+        }
+
+        if (this.backgroundBlurSlider && this.backgroundBlurValue) {
+            const applyBlur = () => {
+                const value = Number(this.backgroundBlurSlider.value);
+                this.shadowBlur = value;
+                this.backgroundBlurValue.textContent = `${value}px`;
+                this.updateBackgroundBlurVisual();
+            };
+
+            applyBlur();
+            this.backgroundBlurSlider.addEventListener('input', applyBlur);
+        }
+
+        if (this.lightTextSwitch && this.songImage) {
+            this.lightTextSwitch.addEventListener('click', () => {
+                const isOn =
+                    this.lightTextSwitch.classList.contains('on') ?? false;
+
+                this.songImage.classList.toggle('light-text', isOn);
+
+                const textColor = isOn ? '#ffffff' : '#000000';
+                if (this.textColorInput) {
+                    this.textColorInput.value = textColor;
+                }
+                this.songImage.style.setProperty(
+                    '--song-text-color',
+                    textColor
+                );
+
+                this.updateServiceTag();
+            });
+        }
+
+        if (this.textColorInput && this.songImage) {
+            this.textColorInput.addEventListener('input', () => {
+                this.songImage.style.setProperty(
+                    '--song-text-color',
+                    this.textColorInput.value
+                );
+            });
+        }
+
+        if (this.fontFamilySelect && this.songImage) {
+            const applyFontFamily = () => {
+                const value = this.fontFamilySelect.value;
+                let family = '';
+
+                if (value === 'sans') {
+                    family =
+                        "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+                } else if (value === 'serif') {
+                    family = "Georgia, 'Times New Roman', serif";
+                } else if (value === 'mono') {
+                    family =
+                        "Menlo, Monaco, 'Courier New', monospace";
+                } else {
+                    family = '';
+                }
+
+                if (family) {
+                    this.songImage.style.fontFamily = family;
+                } else {
+                    this.songImage.style.removeProperty('font-family');
+                }
+            };
+
+            applyFontFamily();
+            this.fontFamilySelect.addEventListener('change', applyFontFamily);
+        }
+
+        if (this.fontSizeSlider && this.fontSizeValue && this.songImage) {
+            const applyFontSize = () => {
+                const value = Number(this.fontSizeSlider.value);
+                this.songImage.style.setProperty(
+                    '--song-lyrics-font-size',
+                    `${value}px`
+                );
+                this.fontSizeValue.textContent = `${value}px`;
+            };
+
+            applyFontSize();
+            this.fontSizeSlider.addEventListener('input', applyFontSize);
+        }
+
+        if (
+            this.letterSpacingSlider &&
+            this.letterSpacingValue &&
+            this.songImage
+        ) {
+            const applyLetterSpacing = () => {
+                const value = Number(this.letterSpacingSlider.value);
+                this.songImage.style.setProperty(
+                    '--song-letter-spacing',
+                    `${value}px`
+                );
+                this.letterSpacingValue.textContent = `${value}px`;
+            };
+
+            applyLetterSpacing();
+            this.letterSpacingSlider.addEventListener(
+                'input',
+                applyLetterSpacing
+            );
+        }
+
+        if (this.lineSpacingSlider && this.lineSpacingValue && this.songImage) {
+            const applyLineSpacing = () => {
+                const value = Number(this.lineSpacingSlider.value);
+                const lineHeight = value / 100;
+                this.songImage.style.setProperty(
+                    '--song-line-height',
+                    `${lineHeight}em`
+                );
+                this.lineSpacingValue.textContent = `${value}%`;
+            };
+
+            applyLineSpacing();
+            this.lineSpacingSlider.addEventListener(
+                'input',
+                applyLineSpacing
+            );
         }
 
         if (this.downloadButton) {
@@ -86,9 +293,40 @@ class SongImageController {
                 this.setSongImageWidth(width);
                 this.widthValue.textContent = `${width}px`;
             });
-
             window.addEventListener('resize', () => {
                 this.setSongImageWidth(this.widthSlider.value);
+            });
+        }
+
+        if (this.layoutStyleSelect && this.songImage) {
+            const applyLayoutStyle = () => {
+                const value = this.layoutStyleSelect.value;
+                this.songImage.classList.remove('layout-spotify', 'layout-apple');
+                if (value === 'apple') {
+                    this.songImage.classList.add('layout-apple');
+                } else {
+                    this.songImage.classList.add('layout-spotify');
+                }
+            };
+
+            applyLayoutStyle();
+            this.layoutStyleSelect.addEventListener('change', applyLayoutStyle);
+        }
+
+        if (this.serviceTagSelect) {
+            this.serviceTagSelect.addEventListener('change', () => {
+                this.updateServiceTag();
+            });
+        }
+
+        if (this.serviceTagFileInput) {
+            this.serviceTagFileInput.addEventListener('change', () => {
+                if (
+                    this.serviceTagSelect &&
+                    this.serviceTagSelect.value === 'custom'
+                ) {
+                    this.updateServiceTag();
+                }
             });
         }
 
@@ -215,6 +453,28 @@ class SongImageController {
         }
     }
 
+    updateBackgroundBlurVisual() {
+        if (!this.songImage || !this.backgroundBlurToggle) {
+            return;
+        }
+
+        const enabled =
+            this.backgroundBlurToggle.classList.contains('on') ?? false;
+
+        if (!enabled) {
+            this.songImage.style.boxShadow = 'none';
+            return;
+        }
+
+        const blur = this.shadowBlur ?? BACKGROUND_SHADOW_BLUR;
+        const opacity = this.shadowOpacity ?? 0.25;
+
+        const shadowColor = `rgba(0, 0, 0, ${opacity})`;
+        const offsetY = Math.round(blur / 2);
+
+        this.songImage.style.boxShadow = `0 ${offsetY}px ${blur}px ${shadowColor}`;
+    }
+
     /**
      * Sets song image's width
      * @param {number} width - Width in pixels
@@ -288,6 +548,74 @@ class SongImageController {
             lyrics !== '' ? lyrics : NO_LYRICS_SELECTED;
     }
 
+    updateServiceTag() {
+        if (!this.songImage || !this.serviceTagSelect) {
+            return;
+        }
+
+        const tagContainer = this.songImage.querySelector('.spotify');
+        const img = tagContainer
+            ? tagContainer.querySelector('img')
+            : null;
+
+        const value = this.serviceTagSelect.value;
+
+        this.songImage.classList.remove('spotify-tag', 'apple-tag');
+
+        if (!img) {
+            return;
+        }
+
+        if (value === 'none') {
+            img.setAttribute('src', '');
+            return;
+        }
+
+        this.songImage.classList.add('spotify-tag');
+
+        if (value === 'spotify') {
+            const isLight =
+                this.songImage.classList.contains('light-text');
+            this.songImage.classList.remove('apple-tag');
+
+            this.setBase64Image(
+                SPOTIFY_LOGO,
+                '.song-image > .spotify > img',
+                isLight ? 255 : 0
+            );
+        } else if (value === 'apple') {
+            this.songImage.classList.add('apple-tag');
+            img.setAttribute('src', '');
+        } else if (value === 'custom') {
+            this.songImage.classList.remove('apple-tag');
+            this.applyCustomServiceTagImage();
+        }
+    }
+
+    applyCustomServiceTagImage() {
+        if (!this.songImage || !this.serviceTagFileInput) {
+            return;
+        }
+
+        const tagContainer = this.songImage.querySelector('.spotify');
+        const img = tagContainer
+            ? tagContainer.querySelector('img')
+            : null;
+
+        if (!img || !this.serviceTagFileInput.files?.length) {
+            return;
+        }
+
+        const file = this.serviceTagFileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result === 'string') {
+                img.setAttribute('src', reader.result);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
     /**
      * Downloads song image by generating canvas from its DOM elements
      */
@@ -339,12 +667,12 @@ class SongImageController {
             : 'transparent';
 
         const borderRadius =
-            BACKGROUND_SHADOW_BORDER_RADIUS *
+            (this.shadowCornerRadius ?? BACKGROUND_SHADOW_BORDER_RADIUS) *
             window.devicePixelRatio *
             DOWNLOAD_SCALING_FACTOR;
 
         const shadowBlur =
-            BACKGROUND_SHADOW_BLUR *
+            (this.shadowBlur ?? BACKGROUND_SHADOW_BLUR) *
             window.devicePixelRatio *
             DOWNLOAD_SCALING_FACTOR;
 
@@ -368,7 +696,8 @@ class SongImageController {
         shadowContext.fillStyle = backgroundColor;
         shadowContext.fillRect(0, 0, shadowCanvas.width, shadowCanvas.height);
 
-        shadowContext.fillStyle = BACKGROUND_SHADOW_COLOR;
+        const opacity = this.shadowOpacity ?? 0.25;
+        shadowContext.fillStyle = `rgba(0, 0, 0, ${opacity})`;
         shadowContext.filter = `blur(${shadowBlur}px)`;
         shadowContext.beginPath();
         shadowContext.moveTo(
