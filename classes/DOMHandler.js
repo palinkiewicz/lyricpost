@@ -59,6 +59,8 @@ class DOMHandler {
         /** @type {Element} */
         this.searchInput = document.querySelector("#song-name");
         /** @type {Element} */
+        this.artistInput = document.querySelector("#song-artist");
+        /** @type {Element} */
         this.searchButton = document.querySelector("#search");
         /** @type {Element} */
         this.spotifyLinkInput = document.querySelector("#spotify-link");
@@ -103,7 +105,7 @@ class DOMHandler {
         /** @type {Element} */
         this.additionalBgSwitch = document.querySelector("#additional-bg");
         /** @type {Element} */
-		this.fontLangSelect = document.querySelector("#font-lang");
+        this.fontLangSelect = document.querySelector("#font-lang");
         /** @type {Element} */
         this.songImage = document.querySelector(".song-image");
 
@@ -120,9 +122,9 @@ class DOMHandler {
         this.setBase64Image(SPOTIFY_LOGO, ".song-image > .spotify > img", 0);
         this.setTheme(
             localStorage.getItem("theme") ??
-                (window.matchMedia("(prefers-color-scheme: dark)").matches
-                    ? "dark"
-                    : "light")
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light")
         );
     }
 
@@ -156,7 +158,7 @@ class DOMHandler {
         document.querySelectorAll(".go-to-screen").forEach((button) => {
             button.addEventListener("click", () => {
                 const targetScreen = Number(button.dataset.number);
-                
+
                 // If going back from lyrics screen and used direct link, go to screen 1
                 if (targetScreen === 2 && this.usedDirectLink) {
                     this.displayScreen(1);
@@ -327,20 +329,26 @@ class DOMHandler {
             .replaceAll("/", "")
             .trim();
 
-        if (name === "") {
+        const artist = this.artistInput.value
+            .replaceAll("\\", "")
+            .replaceAll("/", "")
+            .trim();
+
+        if (name === "" && artist === "") {
             return this.throwError(
                 `Hold on! Haven't you forgotten about something?`
             );
         }
 
         this.searchInput.setAttribute("disabled", "true");
+        this.artistInput.setAttribute("disabled", "true");
         this.searchButton.setAttribute("disabled", "true");
 
         this.hideError();
         this.displaySearching(SEARCHING_FOR_SONG);
 
         try {
-            this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
+            this.songs = await this.fetcher.getSongInfos(name, artist, SONGS_TO_FETCH);
             this.usedDirectLink = false;
 
             this.populateSongSelection();
@@ -349,12 +357,13 @@ class DOMHandler {
             console.error(error);
 
             this.throwError(
-                `Oops! Looks like we couldn't find any songs for \"${name}\".`
+                `Oops! Looks like we couldn't find any songs for \"${name}\" by \"${artist}\".`
             );
         }
 
         this.hideSearching();
         this.searchInput.removeAttribute("disabled");
+        this.artistInput.removeAttribute("disabled");
         this.searchButton.removeAttribute("disabled");
     }
 
@@ -445,7 +454,7 @@ class DOMHandler {
      */
     displaySongInfo() {
         const song = this.songs[this.selectedSongIndex];
-        
+
         this.songInfoCover.setAttribute("src", song.albumCoverUrl);
         this.songInfoName.textContent = song.name;
         this.songInfoArtist.textContent = song.artists
@@ -822,7 +831,7 @@ class DOMHandler {
                 screen.classList.remove("left");
             }
         });
-        
+
         // Update FAB visibility when returning to lyrics selection screen
         if (number === 3) {
             this.updateFabVisibility();

@@ -1,90 +1,99 @@
 class DataFetcher {
     constructor() {
-        this._accessToken = undefined;
-
-        this.setAccessToken();
-    }
-
-    async setAccessToken() {
-        const params = new URLSearchParams();
-
-        params.append("grant_type", "client_credentials");
-        /**
-         * Yeah, I know this should never be just left here,
-         * but I wanted to make it really cost-free (front-end only),
-         * and I decided I didn't care about those keys
-         */
-        params.append("client_id", "4d6b7066ac2443cf82a29b79e9920e88");
-        params.append("client_secret", "cddfc0b1c87e4131ae0f3622bdc5b731");
-
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params,
-        })
-        
-        const json = await response.json()
-        
-        this._accessToken = json.access_token;
     }
 
     /**
-     * Searches for songs on Spotify
+     * Searches for songs on MusicBrainz
      *
      * @private
      * @param {string} name
+     * @param {string} artist
      * @param {number} limit
      * @returns {Song[]} an array of Song objects
      */
-    async getSongInfos(name, limit = 1) {
-        if (this._accessToken === undefined) return {};
+    async getSongInfos(name, artist, limit = 9) {
+        let query = "";
+        if (name && artist) {
+            query = `${name} AND artist:${artist}`;
+        } else if (name) {
+            query = name;
+        } else if (artist) {
+            query = `artist:${artist}`;
+        }
 
-        const response = await fetch(
-            `https://api.spotify.com/v1/search?q=${name}&type=track&limit=${limit}`,
-            {
-                method: "GET",
-                headers: { Authorization: "Bearer " + this._accessToken },
-            }
-        );
+        const requestUrl = `https://musicbrainz.org/ws/2/recording?query=${query}&limit=${limit}&fmt=json`;
+
+        const response = await fetch(requestUrl, {
+            headers: {
+                'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
+            },
+        });
 
         const result = await response.json();
 
-        return result.tracks.items.map((song) => new Song(song));
+        const recordings = result.recordings;
+
+        const songs = await Promise.all(recordings.map(async (recording) => {
+            let albumCoverUrl = null;
+            if (recording.releases && recording.releases.length > 0) {
+                const mbid = recording.releases[0].id;
+                try {
+                    const coverResponse = await fetch(`https://coverartarchive.org/release/${mbid}`);
+                    if (coverResponse.ok) {
+                        const coverData = await coverResponse.json();
+                        if (coverData.images && coverData.images.length > 0) {
+                            albumCoverUrl = coverData.images[0].thumbnails['250'] || coverData.images[0].image;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch cover art for', mbid, err);
+                }
+            }
+            recording.albumCoverUrl = albumCoverUrl?.replace('http://', 'https://');
+            return new Song(recording);
+        }));
+
+        return songs;
     }
 
     /**
-     * Gets a single track by Spotify track ID
+     * Gets a single track by MusicBrainz recording ID
      *
      * @private
      * @param {string} trackId
-     * @returns {Song} a Song object
+     * @returns {Song|null} a Song object
      */
     async getTrackById(trackId) {
-        if (this._accessToken === undefined) return null;
+        const requestUrl = `https://musicbrainz.org/ws/2/recording/${trackId}?inc=artist-credits+releases&fmt=json`;
 
-        const response = await fetch(
-            `https://api.spotify.com/v1/tracks/${trackId}`,
-            {
-                method: "GET",
-                headers: { Authorization: "Bearer " + this._accessToken },
+        const response = await fetch(requestUrl, {
+            headers: {
+                'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
+            },
+        });
+
+        if (!response.ok) return null;
+        const recording = await response.json();
+
+        let albumCoverUrl = null;
+        if (recording.releases && recording.releases.length > 0) {
+            const mbid = recording.releases[0].id;
+            try {
+                const coverResponse = await fetch(`https://coverartarchive.org/release/${mbid}`);
+                if (coverResponse.ok) {
+                    const coverData = await coverResponse.json();
+                    if (coverData.images && coverData.images.length > 0) {
+                        albumCoverUrl = coverData.images[0].thumbnails['250'] || coverData.images[0].image;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch cover art for', mbid, err);
             }
-        );
+        }
 
-        const result = await response.json();
-        return new Song(result);
-    }
+        recording.albumCoverUrl = albumCoverUrl;
 
-    /**
-     * Parses a Spotify URL to extract the track ID
-     *
-     * @private
-     * @param {string} url
-     * @returns {string|null} track ID or null if invalid
-     */
-    parseSpotifyUrl(url) {
-        const regex = /spotify\.com\/track\/([a-zA-Z0-9]+)/;
-        const match = url.match(regex);
-        return match ? match[1] : null;
+        return new Song(recording);
     }
 
     /**

@@ -15,28 +15,32 @@
     color: rgba(255, 255, 255, 0.95);
 }
 
-.song-image > .header {
+.song-image>.header {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding-bottom: 1.5rem;
 }
 
-.song-image > .header > img {
+.song-image>.header>img {
     height: 2.4rem;
-    aspect-ratio: 1;
+    width: 2.4rem;
     border-radius: 0.5rem;
     object-fit: cover;
+    background-image: url("https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png");
+    background-size: cover;
+    background-position: center;
+    color: transparent;
 }
 
-.song-image > .header .name {
+.song-image>.header .name {
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.2rem;
     padding-bottom: 0.1rem;
 }
 
-.song-image > .header .authors {
+.song-image>.header .authors {
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 600;
@@ -44,18 +48,18 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.light-text .song-image > .header .authors {
+.light-text .song-image>.header .authors {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.song-image > .lyrics {
+.song-image>.lyrics {
     font-size: 1.2rem;
     font-weight: 700;
     line-height: 1.5rem;
     padding-bottom: 0.2rem;
 }
 
-.song-image > .spotify {
+.song-image>.spotify {
     filter: brightness(0) saturate(100%) invert(0%) sepia(5%) saturate(22%) hue-rotate(164deg) brightness(96%) contrast(105%);
     height: 0;
     padding: 0;
@@ -63,15 +67,15 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.spotify-tag .song-image > .spotify {
+.spotify-tag .song-image>.spotify {
     height: 3rem;
     padding: 1.2rem 0 0.3rem;
 }
 
-.song-image > .spotify > img {
+.song-image>.spotify>img {
     height: 100%;
 }
 
-.light-text .song-image > .spotify {
+.light-text .song-image>.spotify {
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
 }
