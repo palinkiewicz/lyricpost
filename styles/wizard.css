@@ -187,6 +187,7 @@
     justify-content: space-between;
     row-gap: 2rem;
     width: 50rem;
+    max-width: 100%;
     padding: 2rem;
     flex-wrap: wrap;
 }
