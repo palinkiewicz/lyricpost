@@ -329,26 +329,20 @@ class DOMHandler {
             .replaceAll("/", "")
             .trim();
 
-        const artist = this.artistInput.value
-            .replaceAll("\\", "")
-            .replaceAll("/", "")
-            .trim();
-
-        if (name === "" && artist === "") {
+        if (name === "") {
             return this.throwError(
                 `Hold on! Haven't you forgotten about something?`
             );
         }
 
         this.searchInput.setAttribute("disabled", "true");
-        this.artistInput.setAttribute("disabled", "true");
         this.searchButton.setAttribute("disabled", "true");
 
         this.hideError();
         this.displaySearching(SEARCHING_FOR_SONG);
 
         try {
-            this.songs = await this.fetcher.getSongInfos(name, artist, SONGS_TO_FETCH);
+            this.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
             this.usedDirectLink = false;
 
             this.populateSongSelection();
@@ -357,13 +351,12 @@ class DOMHandler {
             console.error(error);
 
             this.throwError(
-                `Oops! Looks like we couldn't find any songs for \"${name}\" by \"${artist}\".`
+                `Oops! Looks like we couldn't find any songs for \"${name}\".`
             );
         }
 
         this.hideSearching();
         this.searchInput.removeAttribute("disabled");
-        this.artistInput.removeAttribute("disabled");
         this.searchButton.removeAttribute("disabled");
     }
 

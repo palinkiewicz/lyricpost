@@ -5,16 +5,16 @@ class Song {
      */
     constructor(songInfo, lyrics = null) {
         /** @type {string} */
-        this.name = songInfo.title;
+        this.name = songInfo.name;
 
         /** @type {number} */
-        this.durationMs = songInfo.length;
+        this.durationMs = songInfo.duration ? Number(songInfo.duration) : 0;
 
         /** @type {Artist[]} */
-        this.artists = songInfo['artist-credit'].map(artist => new Artist(artist));
+        this.artists = songInfo.artist ? [new Artist({ name: songInfo.artist.name })] : [];
 
         /** @type {string} */
-        this.albumCoverUrl = songInfo.albumCoverUrl || null;
+        this.albumCoverUrl = songInfo.album?.image?.[2]?.['#text'] || songInfo.album?.image?.[1]?.['#text'] || songInfo.album?.image?.[0]?.['#text'] || null;
 
         /** @type {bool} */
         this.hasSyncedLyrics = lyrics?.syncedLyrics ? true : false;

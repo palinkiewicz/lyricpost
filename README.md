@@ -5,12 +5,12 @@
 ## Introduction
 
 LyricPost is a web application that allows users to generate Spotify-like lyrics images.
-By entering the name of a song, users can fetch songs from MusicBrainz, select one, and then fetch the corresponding lyrics from lrclib.
+By entering the name of a song, users can fetch songs from [Last.fm](https://www.last.fm/), select one, and then fetch the corresponding lyrics from [lrclib](https://lrclib.net/docs).
 Users can then select lines from the lyrics and generate a stylish image with customizable colors and other settings.
 
 ## Features
 
-- Finding a song using [MusicBrainz](https://musicbrainz.org/)
+- Finding a song using [Last.fm](https://www.last.fm/)
 - Fetching album cover from [CoverArtArchive](https://coverartarchive.org/)
 - Fetching the lyrics from [lrclib](https://lrclib.net/docs)
 - Generating a share-ready lyrics image with selected lyrics

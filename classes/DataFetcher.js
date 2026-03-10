@@ -3,68 +3,56 @@ class DataFetcher {
     }
 
     /**
-     * Searches for songs on MusicBrainz
+     * Searches for songs on Last.fm
      *
      * @private
      * @param {string} name
-     * @param {string} artist
      * @param {number} limit
      * @returns {Song[]} an array of Song objects
      */
-    async getSongInfos(name, artist, limit = 9) {
-        let query = "";
-        if (name && artist) {
-            query = `${name} AND artist:${artist}`;
-        } else if (name) {
-            query = name;
-        } else if (artist) {
-            query = `artist:${artist}`;
-        }
+    async getSongInfos(name, limit = 1) {
+        const query = name;
 
-        const requestUrl = `https://musicbrainz.org/ws/2/recording?query=${query}&limit=${limit}&fmt=json`;
+        const apiKey = 'b362b9a7f5f0c5a7f749d568b68bc32a';
+        const searchUrl = `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${encodeURIComponent(query)}&api_key=${apiKey}&format=json&limit=${limit}`;
 
-        const response = await fetch(requestUrl, {
-            headers: {
-                'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
-            },
-        });
+        const response = await fetch(searchUrl);
 
         const result = await response.json();
+        const tracks = result?.results?.trackmatches?.track || [];
 
-        const recordings = result.recordings;
+        const songs = await Promise.all(tracks.map(async (searchTrack) => {
+            try {
+                const infoUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(searchTrack.artist)}&track=${encodeURIComponent(searchTrack.name)}&format=json`;
+                const infoResponse = await fetch(infoUrl, {
+                    headers: {
+                        'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
+                    },
+                });
+                const infoResult = await infoResponse.json();
 
-        const songs = await Promise.all(recordings.map(async (recording) => {
-            let albumCoverUrl = null;
-            if (recording.releases && recording.releases.length > 0) {
-                const mbid = recording.releases[0].id;
-                try {
-                    const coverResponse = await fetch(`https://coverartarchive.org/release/${mbid}`);
-                    if (coverResponse.ok) {
-                        const coverData = await coverResponse.json();
-                        if (coverData.images && coverData.images.length > 0) {
-                            albumCoverUrl = coverData.images[0].thumbnails['250'] || coverData.images[0].image;
-                        }
-                    }
-                } catch (err) {
-                    console.error('Failed to fetch cover art for', mbid, err);
+                if (infoResult.track) {
+                    return new Song(infoResult.track);
                 }
+            } catch (err) {
+                console.error('Failed to fetch track info for', searchTrack.name, err);
             }
-            recording.albumCoverUrl = albumCoverUrl?.replace('http://', 'https://');
-            return new Song(recording);
+            return null;
         }));
 
-        return songs;
+        return songs.filter(song => song !== null);
     }
 
     /**
-     * Gets a single track by MusicBrainz recording ID
+     * Gets a single track by Last.fm track MBID
      *
      * @private
-     * @param {string} trackId
+     * @param {string} mbid
      * @returns {Song|null} a Song object
      */
-    async getTrackById(trackId) {
-        const requestUrl = `https://musicbrainz.org/ws/2/recording/${trackId}?inc=artist-credits+releases&fmt=json`;
+    async getTrackById(mbid) {
+        const apiKey = 'b362b9a7f5f0c5a7f749d568b68bc32a';
+        const requestUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&mbid=${mbid}&format=json`;
 
         const response = await fetch(requestUrl, {
             headers: {
@@ -73,27 +61,13 @@ class DataFetcher {
         });
 
         if (!response.ok) return null;
-        const recording = await response.json();
+        const result = await response.json();
 
-        let albumCoverUrl = null;
-        if (recording.releases && recording.releases.length > 0) {
-            const mbid = recording.releases[0].id;
-            try {
-                const coverResponse = await fetch(`https://coverartarchive.org/release/${mbid}`);
-                if (coverResponse.ok) {
-                    const coverData = await coverResponse.json();
-                    if (coverData.images && coverData.images.length > 0) {
-                        albumCoverUrl = coverData.images[0].thumbnails['250'] || coverData.images[0].image;
-                    }
-                }
-            } catch (err) {
-                console.error('Failed to fetch cover art for', mbid, err);
-            }
+        if (result.track) {
+            return new Song(result.track);
         }
 
-        recording.albumCoverUrl = albumCoverUrl;
-
-        return new Song(recording);
+        return null;
     }
 
     /**
