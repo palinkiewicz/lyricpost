@@ -36,6 +36,25 @@ Light mode                         | Dark mode
 
 It's that easy!
 
+## Local development
+
+LyricPost now ships with a small Node.js (Express) backend that proxies the
+Last.fm and lrclib APIs so that no API keys are exposed in the browser.
+
+1. Install dependencies: `npm install`
+2. (Optional) Copy `.env.example` to `.env` and set your own `LASTFM_API_KEY`.
+   If `.env` is missing, the server falls back to the bundled key and prints a
+   warning.
+3. Start the server: `npm start`
+4. Open `http://localhost:3000` in your browser.
+
+The Express server serves the static frontend (`index.html`, `classes/`,
+`styles/`, `.screenshots/`) and exposes the following endpoints:
+
+- `GET /api/songs/search?name=<query>&limit=<n>`
+- `GET /api/songs/track/:mbid`
+- `GET /api/lyrics?artist=<a>&track=<t>`
+
 ## Disclaimer
 
 This project is not affiliated with or endorsed by Spotify.

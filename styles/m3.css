@@ -1,0 +1,172 @@
+/* =====================================================================
+   Material 3 Expressive — Design Tokens
+   Defines color, typography, shape, motion, elevation tokens used
+   across the LyricPost UI. Light + dark mode handled via .dark-mode.
+   ===================================================================== */
+
+:root {
+    /* ---------- Typography ---------- */
+    --font-display: "Funnel Display", "Inter", "Poppins", system-ui, sans-serif;
+    --font-body:    "Inter", "Poppins", system-ui, sans-serif;
+
+    /* Fluid type scale */
+    --text-xs:   clamp(0.75rem, 0.72rem + 0.15vw, 0.85rem);
+    --text-sm:   clamp(0.85rem, 0.82rem + 0.2vw,  0.95rem);
+    --text-base: clamp(0.95rem, 0.92rem + 0.25vw, 1.05rem);
+    --text-md:   clamp(1.05rem, 1rem    + 0.3vw,  1.2rem);
+    --text-lg:   clamp(1.2rem,  1.1rem  + 0.5vw,  1.45rem);
+    --text-xl:   clamp(1.45rem, 1.3rem  + 1vw,    2rem);
+    --text-2xl:  clamp(1.8rem,  1.5rem  + 2vw,    2.6rem);
+
+    /* ---------- Shape (M3 Expressive — bigger radii) ---------- */
+    --shape-xs:   8px;
+    --shape-sm:   12px;
+    --shape-md:   16px;
+    --shape-lg:   24px;
+    --shape-xl:   28px;
+    --shape-2xl:  36px;
+    --shape-full: 9999px;
+
+    /* ---------- Spacing ---------- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+
+    /* ---------- Motion ---------- */
+    --motion-easing-standard:               cubic-bezier(0.2, 0, 0, 1);
+    --motion-easing-emphasized:             cubic-bezier(0.3, 0, 0, 1);
+    --motion-easing-emphasized-decelerate:  cubic-bezier(0.05, 0.7, 0.1, 1);
+    --motion-easing-emphasized-accelerate:  cubic-bezier(0.3, 0, 0.8, 0.15);
+    --motion-easing-spring:                 cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --motion-duration-short:  150ms;
+    --motion-duration-medium: 250ms;
+    --motion-duration-long:   400ms;
+    --motion-duration-xlong:  600ms;
+
+    /* Backwards-compat alias used by existing stylesheet rules */
+    --cubic-ease-out: var(--motion-easing-emphasized);
+
+    /* ---------- Color tokens (Light) ----------
+       Vibrant indigo / violet primary, pink-coral secondary, mint tertiary.
+       Tuned for M3 Expressive — saturated but soft. */
+    --primary:                 #5b4bff;
+    --on-primary:              #ffffff;
+    --primary-container:       #e3deff;
+    --on-primary-container:    #16005c;
+
+    --secondary:               #ff5d8f;
+    --on-secondary:            #ffffff;
+    --secondary-container:     #ffd9e3;
+    --on-secondary-container:  #3f0019;
+
+    --tertiary:                #009b8a;
+    --on-tertiary:             #ffffff;
+    --tertiary-container:      #b8f3e7;
+    --on-tertiary-container:   #00201c;
+
+    --error:                   #ba1a1a;
+    --on-error:                #ffffff;
+    --error-container:         #ffdad6;
+    --on-error-container:      #410002;
+
+    --background:              #f6f3ff;
+    --on-background:           #1c1b22;
+    --surface:                 #fbf8ff;
+    --on-surface:              #1c1b22;
+    --on-surface-variant:      #48464f;
+    --surface-container-lowest:#ffffff;
+    --surface-container-low:   #f3f0fa;
+    --surface-container:       #ede9f5;
+    --surface-container-high:  #e7e2f0;
+    --surface-container-highest:#e1dceb;
+
+    --outline:                 #79767f;
+    --outline-variant:         #cac5d0;
+
+    /* Glass surface tokens — tuned for backdrop-filter blur */
+    --glass-bg:                rgba(255, 255, 255, 0.55);
+    --glass-bg-strong:         rgba(255, 255, 255, 0.7);
+    --glass-bg-soft:           rgba(255, 255, 255, 0.35);
+    --glass-border:            rgba(255, 255, 255, 0.7);
+    --glass-shadow:            0 8px 32px rgba(31, 22, 92, 0.12),
+                               0 2px 8px rgba(31, 22, 92, 0.06);
+    --glass-blur:              blur(20px) saturate(180%);
+
+    /* State layer overlays (M3) */
+    --state-hover:    rgba(91, 75, 255, 0.08);
+    --state-focus:    rgba(91, 75, 255, 0.12);
+    --state-pressed:  rgba(91, 75, 255, 0.16);
+
+    /* Decorative gradient blobs */
+    --blob-1: radial-gradient(closest-side, #8b7dff 0%, rgba(139, 125, 255, 0) 70%);
+    --blob-2: radial-gradient(closest-side, #ff8fb1 0%, rgba(255, 143, 177, 0) 70%);
+    --blob-3: radial-gradient(closest-side, #5beadf 0%, rgba(91, 234, 223, 0) 70%);
+
+    /* ---------- Legacy variables (so existing rules keep working) ---------- */
+    --background-color:       var(--background);
+    --background-text-color:  var(--on-background);
+    --surface-light-color:    var(--surface-container-low);
+    --surface-color:          var(--surface-container-high);
+    --surface-text-color:     var(--on-surface-variant);
+    --primary-color:          var(--primary);
+    --primary-text-color:     var(--on-primary);
+    --error-color:            var(--error-container);
+    --error-text-color:       var(--on-error-container);
+}
+
+/* ---------- Dark mode tokens ---------- */
+.dark-mode {
+    --primary:                 #c4bcff;
+    --on-primary:              #1f0a96;
+    --primary-container:       #3c25d6;
+    --on-primary-container:    #e3deff;
+
+    --secondary:               #ffb1c5;
+    --on-secondary:            #62002e;
+    --secondary-container:     #8a1947;
+    --on-secondary-container:  #ffd9e3;
+
+    --tertiary:                #6cdfd0;
+    --on-tertiary:             #003731;
+    --tertiary-container:      #005048;
+    --on-tertiary-container:   #b8f3e7;
+
+    --error:                   #ffb4ab;
+    --on-error:                #690005;
+    --error-container:         #93000a;
+    --on-error-container:      #ffdad6;
+
+    --background:              #13111c;
+    --on-background:           #e6e1ee;
+    --surface:                 #15131e;
+    --on-surface:              #e6e1ee;
+    --on-surface-variant:      #cac5d0;
+    --surface-container-lowest:#0e0c17;
+    --surface-container-low:   #1c1a25;
+    --surface-container:       #211f2a;
+    --surface-container-high:  #2c2935;
+    --surface-container-highest:#373440;
+
+    --outline:                 #948f9b;
+    --outline-variant:         #48464f;
+
+    --glass-bg:                rgba(28, 26, 45, 0.55);
+    --glass-bg-strong:         rgba(28, 26, 45, 0.72);
+    --glass-bg-soft:           rgba(28, 26, 45, 0.35);
+    --glass-border:            rgba(255, 255, 255, 0.08);
+    --glass-shadow:            0 8px 32px rgba(0, 0, 0, 0.45),
+                               0 2px 8px rgba(0, 0, 0, 0.25);
+
+    --state-hover:    rgba(196, 188, 255, 0.10);
+    --state-focus:    rgba(196, 188, 255, 0.14);
+    --state-pressed:  rgba(196, 188, 255, 0.20);
+
+    --blob-1: radial-gradient(closest-side, #5b4bff 0%, rgba(91, 75, 255, 0) 70%);
+    --blob-2: radial-gradient(closest-side, #ff5d8f 0%, rgba(255, 93, 143, 0) 70%);
+    --blob-3: radial-gradient(closest-side, #009b8a 0%, rgba(0, 155, 138, 0) 70%);
+}

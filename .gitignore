@@ -1,1 +1,3 @@
 temp/
+node_modules/
+.env

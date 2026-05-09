@@ -1,63 +1,43 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+/* =====================================================================
+   LyricPost — Material 3 Expressive + Glassmorphism
+   Core layout, header, footer, FAB, decorative background.
+   Tokens live in m3.css; wizard-specific styles live in wizard.css.
+   ===================================================================== */
 
-/* Fallback Asian Fonts */
+/* Fallback Asian fonts (kept for CJK lang attribute support) */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+HK&family=Noto+Sans+JP&family=Noto+Sans+KR&family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
 
-* {
+/* ---------- Base reset ---------- */
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
-
-    --background-color: rgba(246, 246, 246, 1);
-    --background-text-color: rgba(18, 55, 64, 1);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
-    --surface-color: rgba(84, 154, 171, 0.3);
-    --surface-text-color: rgba(18, 55, 64, 0.85);
-    --primary-color: rgba(241, 128, 45, 1);
-    --primary-text-color: rgba(246, 246, 246, 1);
-    --error-color: rgba(240, 40, 30, 0.3);
-    --error-text-color: rgba(240, 40, 30, 1);
-
-    --cubic-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+    font-family: var(--font-body);
 }
 
-:lang(zh-TW):not(.material-symbols-outlined) {
-    font-family: "Poppins", "Noto Sans TC", sans-serif;
-}
-
-:lang(zh-CN):not(.material-symbols-outlined) {
-    font-family: "Poppins", "Noto Sans SC", sans-serif;
-}
-
-:lang(zh-HK):not(.material-symbols-outlined) {
-    font-family: "Poppins", "Noto Sans HK", sans-serif;
-}
-
-:lang(ja):not(.material-symbols-outlined) {
-    font-family: "Poppins", "Noto Sans JP", sans-serif;
-}
-
-:lang(ko):not(.material-symbols-outlined) {
-    font-family: "Poppins", "Noto Sans KR", sans-serif;
-}
-
-.dark-mode, .dark-mode * {
-    --background-color: rgba(20, 20, 20, 1);
-    --background-text-color: rgba(72, 220, 255, 0.8);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
-    --surface-color: rgba(84, 154, 171, 0.25);
-    --surface-text-color: rgba(72, 220, 255, 0.7);
-    --primary-color: rgba(241, 128, 45, 0.95);
-    --primary-text-color: rgba(246, 246, 246, 1);
-    --error-color: rgba(240, 40, 30, 0.2);
-    --error-text-color: rgba(240, 40, 30, 1);
-}
+/* CJK font fallbacks */
+:lang(zh-TW):not(.material-symbols-outlined) { font-family: var(--font-body), "Noto Sans TC", sans-serif; }
+:lang(zh-CN):not(.material-symbols-outlined) { font-family: var(--font-body), "Noto Sans SC", sans-serif; }
+:lang(zh-HK):not(.material-symbols-outlined) { font-family: var(--font-body), "Noto Sans HK", sans-serif; }
+:lang(ja):not(.material-symbols-outlined)    { font-family: var(--font-body), "Noto Sans JP", sans-serif; }
+:lang(ko):not(.material-symbols-outlined)    { font-family: var(--font-body), "Noto Sans KR", sans-serif; }
 
 [contenteditable] {
     outline: none;
 }
 
+[contenteditable]:focus-visible {
+    outline: 2px dashed rgba(0, 0, 0, 0.25);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
 .cloneable {
-    display: none!important;
+    display: none !important;
+}
+
+html, body {
+    overflow-x: hidden;
 }
 
 body {
@@ -66,89 +46,320 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
-    background: var(--background-color);
-    color: var(--background-text-color);
+    background: var(--background);
+    color: var(--on-background);
+    font-size: var(--text-base);
+    line-height: 1.5;
+    transition: background-color var(--motion-duration-medium) var(--motion-easing-standard),
+                color var(--motion-duration-medium) var(--motion-easing-standard);
+    position: relative;
+    isolation: isolate;
 }
 
+/* ---------- Decorative animated backdrop ---------- */
+.bg-decor {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-blob {
+    position: absolute;
+    width: 55vmax;
+    height: 55vmax;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.85;
+    will-change: transform;
+}
+
+.bg-blob-1 {
+    background: var(--blob-1);
+    top: -20vmax;
+    left: -15vmax;
+    animation: blob-drift-1 22s ease-in-out infinite alternate;
+}
+
+.bg-blob-2 {
+    background: var(--blob-2);
+    bottom: -25vmax;
+    right: -15vmax;
+    animation: blob-drift-2 27s ease-in-out infinite alternate;
+}
+
+.bg-blob-3 {
+    background: var(--blob-3);
+    top: 30%;
+    left: 40%;
+    width: 40vmax;
+    height: 40vmax;
+    opacity: 0.55;
+    animation: blob-drift-3 32s ease-in-out infinite alternate;
+}
+
+.dark-mode .bg-blob {
+    opacity: 0.55;
+}
+
+.dark-mode .bg-blob-3 {
+    opacity: 0.4;
+}
+
+.bg-grain {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+.dark-mode .bg-grain {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    opacity: 0.5;
+}
+
+@keyframes blob-drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(8vw, 6vh) scale(1.15); }
+}
+
+@keyframes blob-drift-2 {
+    0%   { transform: translate(0, 0) scale(1.05); }
+    100% { transform: translate(-6vw, -8vh) scale(0.95); }
+}
+
+@keyframes blob-drift-3 {
+    0%   { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    100% { transform: translate(-40%, -55%) scale(1.2) rotate(45deg); }
+}
+
+/* ---------- Typography ---------- */
 h1, h2 {
     margin: 0;
     padding: 1.5rem 0 1.1rem;
-    font-size: 1.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--on-background);
 }
 
-.surface {
-    background: var(--surface-color);
-    color: var(--surface-text-color);
+h1 {
+    font-size: var(--text-2xl);
+    background: linear-gradient(135deg, var(--primary), var(--secondary) 70%, var(--tertiary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
-.primary {
-    background: var(--primary-color);
-    color: var(--primary-text-color);
+h2 {
+    font-size: var(--text-xl);
 }
 
 a {
     text-decoration: none;
     font-weight: 600;
-    color: inherit
+    color: var(--primary);
+    transition: color var(--motion-duration-short) var(--motion-easing-standard);
 }
 
 a:hover {
     text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
+/* ---------- Generic surface / primary helpers (kept for class compat) ---------- */
+.surface {
+    background: var(--surface-container-low);
+    color: var(--on-surface);
+}
+
+.primary {
+    background: var(--primary);
+    color: var(--on-primary);
+}
+
+/* ---------- Main layout ---------- */
 main {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    width: 100%;
 }
 
+/* ---------- Header & nav buttons ---------- */
 header {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 32rem;
+    padding: 0 1rem;
 }
 
-header > .go-to-screen, #download, #last-go-back {
+header > h1,
+header > h2 {
+    flex: 1;
+    text-align: center;
+}
+
+/* Pill-shaped icon nav buttons (chevrons / download) — glass-styled */
+header > .go-to-screen,
+#download,
+#last-go-back {
     position: absolute;
     top: calc(50% + 0.2rem);
     left: -1rem;
     transform: translate(-100%, -50%);
-    border: 0;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    background-color: var(--surface-light-color);
-    color: var(--surface-text-color);
-    transition: 150ms var(--cubic-ease-out);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--shape-full);
+    padding: 0;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: var(--on-surface);
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--glass-shadow);
+    transition:
+        transform var(--motion-duration-medium) var(--motion-easing-spring),
+        background-color var(--motion-duration-short) var(--motion-easing-standard),
+        box-shadow var(--motion-duration-medium) var(--motion-easing-standard);
 }
 
-header > .go-to-screen.right, #download {
+header > .go-to-screen.right,
+#download {
     right: -1rem;
     left: auto;
     transform: translate(100%, -50%);
 }
 
-header > .go-to-screen:hover, #download:hover, #last-go-back:hover {
-    cursor: pointer;
-    background-color: var(--surface-color);
+header > .go-to-screen:hover,
+#download:hover,
+#last-go-back:hover {
+    background: var(--glass-bg-strong);
+    transform: translate(-100%, -50%) scale(1.08);
 }
 
+header > .go-to-screen.right:hover,
+#download:hover {
+    transform: translate(100%, -50%) scale(1.08);
+}
+
+header > .go-to-screen:active,
+#download:active,
+#last-go-back:active {
+    transform: translate(-100%, -50%) scale(0.94);
+}
+
+header > .go-to-screen.right:active,
+#download:active {
+    transform: translate(100%, -50%) scale(0.94);
+}
+
+header > .go-to-screen:focus-visible,
+#download:focus-visible,
+#last-go-back:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* On narrower viewports, inline chevrons inside the header so they don't clip. */
+@media screen and (max-width: 600px) {
+    header {
+        padding: 0 0.5rem;
+        gap: 0.4rem;
+    }
+
+    header > .go-to-screen,
+    #download,
+    #last-go-back {
+        position: static;
+        transform: none;
+        flex: 0 0 auto;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    header > .go-to-screen:hover,
+    #download:hover,
+    #last-go-back:hover,
+    header > .go-to-screen.right:hover {
+        transform: scale(1.08);
+    }
+
+    header > .go-to-screen:active,
+    #download:active,
+    #last-go-back:active,
+    header > .go-to-screen.right:active {
+        transform: scale(0.94);
+    }
+}
+
+/* ---------- Footer (glass) ---------- */
 footer {
     text-align: center;
-    padding: 2.1rem;
-    height: 8rem;
-    font-size: 1.2rem;
+    padding: 1.5rem 1rem 1.6rem;
+    min-height: 8rem;
+    font-size: var(--text-sm);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+    color: var(--on-surface-variant);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+}
+
+footer.surface {
+    /* Override the legacy .surface declarations so footer keeps glass look */
+    background: var(--glass-bg);
+    color: var(--on-surface-variant);
+}
+
+footer a {
+    color: var(--primary);
 }
 
 #dark-mode-toggle {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
     font-weight: 600;
-    padding-top: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--shape-full);
+    background: transparent;
+    transition:
+        background-color var(--motion-duration-short) var(--motion-easing-standard),
+        transform var(--motion-duration-medium) var(--motion-easing-spring);
 }
 
 #dark-mode-toggle:hover {
     cursor: pointer;
+    background: var(--state-hover);
+    transform: scale(1.04);
+}
+
+#dark-mode-toggle:active {
+    transform: scale(0.96);
 }
 
 #dark-mode-toggle::before {
@@ -167,29 +378,56 @@ footer {
     content: "light_mode";
 }
 
-/* Floating Action Button */
+/* ---------- Floating Action Button (M3 Expressive, glass-tinted) ---------- */
 .fab {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 50%;
-    background: var(--primary-color);
-    color: var(--primary-text-color);
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--shape-lg);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--on-primary);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        0 8px 24px rgba(91, 75, 255, 0.4),
+        0 2px 6px rgba(91, 75, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 250ms var(--cubic-ease-out);
     z-index: 100;
+    transition:
+        transform var(--motion-duration-medium) var(--motion-easing-spring),
+        opacity var(--motion-duration-medium) var(--motion-easing-emphasized),
+        box-shadow var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+.dark-mode .fab {
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.5),
+        0 2px 6px rgba(91, 75, 255, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .fab:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1) rotate(-4deg);
+    box-shadow:
+        0 12px 30px rgba(91, 75, 255, 0.55),
+        0 4px 10px rgba(91, 75, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+.fab:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
 }
 
 .fab.hidden {
@@ -199,5 +437,32 @@ footer {
 }
 
 .fab > span {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+}
+
+@media screen and (max-width: 600px) {
+    .fab {
+        bottom: 1rem;
+        right: 1rem;
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+    .fab > span {
+        font-size: 1.5rem;
+    }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    .bg-blob {
+        animation: none !important;
+    }
 }
