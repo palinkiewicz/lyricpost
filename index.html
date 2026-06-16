@@ -151,7 +151,7 @@
                                 <!-- Background tab -->
                                 <div class="panel selected">
                                     <div class="color-selection">
-                                        <div class="" id="custom-color">
+                                        <div class="custom-color" id="custom-color">
                                             <input
                                                 type="color"
                                                 id="custom-color-input"
@@ -181,18 +181,11 @@
                                             step="1"
                                         />
                                     </div>
-                                    <div
-                                        class="switch-container"
-                                        id="background-blur-toggle"
-                                    >
-                                        <div>Blurred background</div>
-                                        <div class="switch"></div>
-                                    </div>
                                     <div class="slider-container">
                                         <div>
                                             <label
                                                 for="background-transparency-slider"
-                                                >Background color
+                                                >Background image
                                                 transparency</label
                                             >
                                             <span
@@ -250,36 +243,38 @@
 
                                 <!-- Text tab -->
                                 <div class="panel">
-                                    <div class="slider-container">
-                                        <div>
-                                            <label for="text-color-input"
-                                                >Text color</label
-                                            >
-                                        </div>
-                                        <div
-                                            class="color-input-inline"
-                                        >
-                                            <input
-                                                type="color"
-                                                id="text-color-input"
-                                            />
+                                    <div>
+                                        <div>Text color</div>
+                                        <div class="color-selection" id="text-color-selection">
+                                            <div class="custom-color" id="text-custom-color">
+                                                <input
+                                                    type="color"
+                                                    id="text-custom-color-input"
+                                                />
+                                                <label
+                                                    class="material-symbols-outlined"
+                                                    for="text-custom-color-input"
+                                                    >palette</label
+                                                >
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="select-container">
                                         <div>Font type</div>
                                         <select id="text-font-family">
-                                            <option value="default">
-                                                Default
-                                            </option>
-                                            <option value="sans">
-                                                Clean sans-serif
-                                            </option>
-                                            <option value="serif">
-                                                Classic serif
-                                            </option>
-                                            <option value="mono">
-                                                Monospace
-                                            </option>
+                                            <option value="default">Default</option>
+                                            <option value="system">System UI</option>
+                                            <option value="helvetica">Helvetica Neue</option>
+                                            <option value="arial">Arial</option>
+                                            <option value="verdana">Verdana</option>
+                                            <option value="tahoma">Tahoma</option>
+                                            <option value="trebuchet">Trebuchet MS</option>
+                                            <option value="georgia">Georgia</option>
+                                            <option value="times">Times New Roman</option>
+                                            <option value="palatino">Palatino</option>
+                                            <option value="garamond">Garamond</option>
+                                            <option value="courier">Courier New</option>
+                                            <option value="menlo">Menlo / Consolas</option>
                                         </select>
                                     </div>
                                     <div class="slider-container">
@@ -338,13 +333,6 @@
                                             step="5"
                                         />
                                     </div>
-                                    <div
-                                        class="switch-container"
-                                        id="light-text"
-                                    >
-                                        <div>Light text preset</div>
-                                        <div class="switch"></div>
-                                    </div>
                                 </div>
 
                                 <!-- Other tab -->
@@ -352,27 +340,16 @@
                                     <div class="select-container">
                                         <div>Layout style</div>
                                         <select id="layout-style">
-                                            <option value="spotify">
-                                                Spotify (title at top)
-                                            </option>
-                                            <option value="apple">
-                                                Apple (title at bottom)
-                                            </option>
+                                            <option value="spotify">Title on top</option>
+                                            <option value="apple">Title on bottom</option>
                                         </select>
                                     </div>
                                     <div class="select-container tag-select-container">
                                         <div>Service tag</div>
                                         <select id="service-tag">
                                             <option value="none">None</option>
-                                            <option value="spotify">
-                                                Spotify
-                                            </option>
-                                            <option value="apple">
-                                                Apple Music
-                                            </option>
-                                            <option value="custom">
-                                                Custom image
-                                            </option>
+                                            <option value="spotify">Spotify</option>
+                                            <option value="apple">Apple Music</option>
                                         </select>
                                         <label
                                             class="material-symbols-outlined"
@@ -386,19 +363,6 @@
                                             accept="image/*"
                                             hidden
                                         />
-                                    </div>
-                                    <div class="select-container font-selection-container">
-                                        <div class="font-label">
-                                            Chinese Glyph Standards
-                                        </div>
-                                        <select id="font-lang">
-                                            <option value="en">Auto</option>
-                                            <option value="zh-TW">TW</option>
-                                            <option value="zh-CN">CN</option>
-                                            <option value="zh-HK">HK</option>
-                                            <option value="ja">JP</option>
-                                            <option value="ko">KR</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>

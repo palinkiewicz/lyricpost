@@ -9,9 +9,6 @@ class AppShell {
 
         /** @type {Element | null} */
         this.toggleDarkMode = document.querySelector('#dark-mode-toggle');
-        /** @type {HTMLSelectElement | null} */
-        this.fontLangSelect = document.querySelector('#font-lang');
-
         this.registerGlobalListeners();
         this.bootstrapTheme();
     }
@@ -26,11 +23,7 @@ class AppShell {
             });
         }
 
-        if (this.fontLangSelect) {
-            this.fontLangSelect.addEventListener('change', (e) => {
-                document.documentElement.lang = e.target.value;
-            });
-        }
+
     }
 
     bootstrapTheme() {

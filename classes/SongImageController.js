@@ -12,7 +12,11 @@ class SongImageController {
         /** @type {HTMLElement | null} */
         this.colorSelection = document.querySelector('.color-selection');
         /** @type {HTMLInputElement | null} */
-        this.customColorInput = document.querySelector('#custom-color input');
+        this.customColorInput = document.querySelector('#custom-color-input');
+        /** @type {HTMLElement | null} */
+        this.textColorSelection = document.querySelector('#text-color-selection');
+        /** @type {HTMLInputElement | null} */
+        this.textCustomColorInput = document.querySelector('#text-custom-color-input');
         /** @type {HTMLInputElement | null} */
         this.widthSlider = document.querySelector('#width-slider');
         /** @type {HTMLElement | null} */
@@ -20,25 +24,15 @@ class SongImageController {
         /** @type {HTMLElement | null} */
         this.downloadButton = document.querySelector('#download');
         /** @type {HTMLElement | null} */
-        this.lightTextSwitch = document.querySelector('#light-text');
-        /** @type {HTMLElement | null} */
         this.additionalBgSwitch = document.querySelector('#additional-bg');
         /** @type {HTMLElement | null} */
         this.lyricsFab = document.querySelector('#lyrics-fab');
 
         // Background controls
         /** @type {HTMLInputElement | null} */
-        this.cornerRadiusSlider = document.querySelector(
-            '#corner-radius-slider'
-        );
+        this.cornerRadiusSlider = document.querySelector('#corner-radius-slider');
         /** @type {HTMLElement | null} */
-        this.cornerRadiusValue = document.querySelector(
-            '#corner-radius-value'
-        );
-        /** @type {HTMLElement | null} */
-        this.backgroundBlurToggle = document.querySelector(
-            '#background-blur-toggle'
-        );
+        this.cornerRadiusValue = document.querySelector('#corner-radius-value');
         /** @type {HTMLInputElement | null} */
         this.backgroundTransparencySlider = document.querySelector(
             '#background-transparency-slider'
@@ -48,17 +42,11 @@ class SongImageController {
             '#background-transparency-value'
         );
         /** @type {HTMLInputElement | null} */
-        this.backgroundBlurSlider = document.querySelector(
-            '#background-blur-slider'
-        );
+        this.backgroundBlurSlider = document.querySelector('#background-blur-slider');
         /** @type {HTMLElement | null} */
-        this.backgroundBlurValue = document.querySelector(
-            '#background-blur-value'
-        );
+        this.backgroundBlurValue = document.querySelector('#background-blur-value');
 
         // Text controls
-        /** @type {HTMLInputElement | null} */
-        this.textColorInput = document.querySelector('#text-color-input');
         /** @type {HTMLSelectElement | null} */
         this.fontFamilySelect = document.querySelector('#text-font-family');
         /** @type {HTMLInputElement | null} */
@@ -66,17 +54,11 @@ class SongImageController {
         /** @type {HTMLElement | null} */
         this.fontSizeValue = document.querySelector('#font-size-value');
         /** @type {HTMLInputElement | null} */
-        this.letterSpacingSlider = document.querySelector(
-            '#letter-spacing-slider'
-        );
+        this.letterSpacingSlider = document.querySelector('#letter-spacing-slider');
         /** @type {HTMLElement | null} */
-        this.letterSpacingValue = document.querySelector(
-            '#letter-spacing-value'
-        );
+        this.letterSpacingValue = document.querySelector('#letter-spacing-value');
         /** @type {HTMLInputElement | null} */
-        this.lineSpacingSlider = document.querySelector(
-            '#line-spacing-slider'
-        );
+        this.lineSpacingSlider = document.querySelector('#line-spacing-slider');
         /** @type {HTMLElement | null} */
         this.lineSpacingValue = document.querySelector('#line-spacing-value');
 
@@ -88,22 +70,32 @@ class SongImageController {
         /** @type {HTMLInputElement | null} */
         this.serviceTagFileInput = document.querySelector('#service-tag-file');
 
-        // Dynamic background state (for download and preview)
+        // Dynamic background state
         this.shadowCornerRadius = BACKGROUND_SHADOW_BORDER_RADIUS;
         this.shadowBlur = BACKGROUND_SHADOW_BLUR;
         this.shadowOpacity = 0.25;
 
-        this.populateColorSelection();
+        // Image background state
+        this.coverBase64 = null;
+        this.currentBgColor = COLORS[0];
+        this.currentTextColor = '#000000';
+        this.customTagActive = false;
+        this._bgRenderTimer = null;
+
+        this.buildColorPalette(
+            this.colorSelection,
+            (c) => this.setSongImageColor(c),
+            this.customColorInput
+        );
+        this.buildColorPalette(
+            this.textColorSelection,
+            (c) => this.setSongTextColor(c),
+            this.textCustomColorInput
+        );
         this.registerListeners();
     }
 
     registerListeners() {
-        if (this.customColorInput) {
-            this.customColorInput.addEventListener('input', () => {
-                this.setSongImageColor(this.customColorInput.value);
-            });
-        }
-
         document.querySelectorAll('.switch-container').forEach((container) => {
             container.addEventListener('click', () => {
                 container.classList.toggle('on');
@@ -113,20 +105,11 @@ class SongImageController {
         if (this.additionalBgSwitch && this.songImage) {
             this.additionalBgSwitch.addEventListener('click', () => {
                 this.songImage.classList.toggle('additional-bg');
+                this.songImage.classList.toggle('additional-bg-preview');
             });
         }
 
-        if (this.backgroundBlurToggle && this.songImage) {
-            this.backgroundBlurToggle.addEventListener('click', () => {
-                this.updateBackgroundBlurVisual();
-            });
-        }
-
-        if (
-            this.cornerRadiusSlider &&
-            this.cornerRadiusValue &&
-            this.songImage
-        ) {
+        if (this.cornerRadiusSlider && this.cornerRadiusValue && this.songImage) {
             const applyCornerRadius = () => {
                 const radius = Number(this.cornerRadiusSlider.value);
                 this.shadowCornerRadius = radius;
@@ -149,7 +132,7 @@ class SongImageController {
                 const value = Number(this.backgroundTransparencySlider.value);
                 this.shadowOpacity = value / 100;
                 this.backgroundTransparencyValue.textContent = `${value}%`;
-                this.updateBackgroundBlurVisual();
+                this._debouncedRenderBg();
             };
 
             applyTransparency();
@@ -164,63 +147,21 @@ class SongImageController {
                 const value = Number(this.backgroundBlurSlider.value);
                 this.shadowBlur = value;
                 this.backgroundBlurValue.textContent = `${value}px`;
-                this.updateBackgroundBlurVisual();
+                this._debouncedRenderBg();
             };
 
             applyBlur();
             this.backgroundBlurSlider.addEventListener('input', applyBlur);
         }
 
-        if (this.lightTextSwitch && this.songImage) {
-            this.lightTextSwitch.addEventListener('click', () => {
-                const isOn =
-                    this.lightTextSwitch.classList.contains('on') ?? false;
-
-                this.songImage.classList.toggle('light-text', isOn);
-
-                const textColor = isOn ? '#ffffff' : '#000000';
-                if (this.textColorInput) {
-                    this.textColorInput.value = textColor;
-                }
-                this.songImage.style.setProperty(
-                    '--song-text-color',
-                    textColor
-                );
-
-                this.updateServiceTag();
-            });
-        }
-
-        if (this.textColorInput && this.songImage) {
-            this.textColorInput.addEventListener('input', () => {
-                this.songImage.style.setProperty(
-                    '--song-text-color',
-                    this.textColorInput.value
-                );
-            });
-        }
-
         if (this.fontFamilySelect && this.songImage) {
             const applyFontFamily = () => {
                 const value = this.fontFamilySelect.value;
-                let family = '';
-
-                if (value === 'sans') {
-                    family =
-                        "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-                } else if (value === 'serif') {
-                    family = "Georgia, 'Times New Roman', serif";
-                } else if (value === 'mono') {
-                    family =
-                        "Menlo, Monaco, 'Courier New', monospace";
+                const stack = FONT_STACKS[value] ?? '';
+                if (stack) {
+                    this.songImage.style.setProperty('--song-font-family', stack);
                 } else {
-                    family = '';
-                }
-
-                if (family) {
-                    this.songImage.style.fontFamily = family;
-                } else {
-                    this.songImage.style.removeProperty('font-family');
+                    this.songImage.style.removeProperty('--song-font-family');
                 }
             };
 
@@ -242,11 +183,7 @@ class SongImageController {
             this.fontSizeSlider.addEventListener('input', applyFontSize);
         }
 
-        if (
-            this.letterSpacingSlider &&
-            this.letterSpacingValue &&
-            this.songImage
-        ) {
+        if (this.letterSpacingSlider && this.letterSpacingValue && this.songImage) {
             const applyLetterSpacing = () => {
                 const value = Number(this.letterSpacingSlider.value);
                 this.songImage.style.setProperty(
@@ -257,10 +194,7 @@ class SongImageController {
             };
 
             applyLetterSpacing();
-            this.letterSpacingSlider.addEventListener(
-                'input',
-                applyLetterSpacing
-            );
+            this.letterSpacingSlider.addEventListener('input', applyLetterSpacing);
         }
 
         if (this.lineSpacingSlider && this.lineSpacingValue && this.songImage) {
@@ -275,10 +209,7 @@ class SongImageController {
             };
 
             applyLineSpacing();
-            this.lineSpacingSlider.addEventListener(
-                'input',
-                applyLineSpacing
-            );
+            this.lineSpacingSlider.addEventListener('input', applyLineSpacing);
         }
 
         if (this.downloadButton) {
@@ -315,17 +246,16 @@ class SongImageController {
 
         if (this.serviceTagSelect) {
             this.serviceTagSelect.addEventListener('change', () => {
+                this.customTagActive = false;
                 this.updateServiceTag();
             });
         }
 
         if (this.serviceTagFileInput) {
             this.serviceTagFileInput.addEventListener('change', () => {
-                if (
-                    this.serviceTagSelect &&
-                    this.serviceTagSelect.value === 'custom'
-                ) {
-                    this.updateServiceTag();
+                if (this.serviceTagFileInput.files?.length) {
+                    this.customTagActive = true;
+                    this.applyCustomServiceTagImage();
                 }
             });
         }
@@ -378,28 +308,26 @@ class SongImageController {
     }
 
     /**
-     * Creates color selection DOM elements
+     * Builds a color swatch palette inside container, wired to onSelect.
+     * @param {HTMLElement | null} container
+     * @param {(color: string) => void} onSelect
+     * @param {HTMLInputElement | null} customInput
      */
-    populateColorSelection() {
-        if (!this.colorSelection) {
-            return;
-        }
+    buildColorPalette(container, onSelect, customInput) {
+        if (!container) return;
 
         COLORS.forEach((color) => {
-            const element = document.createElement('div');
-            element.classList.add('select-color');
-            element.style.backgroundColor = color;
-            element.textContent = '.';
-
-            element.addEventListener('click', () => {
-                this.setSongImageColor(color);
-            });
-
-            this.colorSelection.insertBefore(
-                element,
-                this.colorSelection.querySelector('#custom-color')
-            );
+            const el = document.createElement('div');
+            el.classList.add('select-color');
+            el.style.backgroundColor = color;
+            el.textContent = '.';
+            el.addEventListener('click', () => onSelect(color));
+            container.insertBefore(el, container.querySelector('.custom-color'));
         });
+
+        if (customInput) {
+            customInput.addEventListener('input', () => onSelect(customInput.value));
+        }
     }
 
     /**
@@ -423,56 +351,117 @@ class SongImageController {
     /**
      * Prepares song image DOM element
      */
-    setSongImage() {
+    async setSongImage() {
         if (!this.state.selectedSong) {
             return;
         }
 
-        this.setBase64Image(
-            this.state.selectedSong.albumCoverUrl,
-            '.song-image > .header > img'
-        );
+        this.coverBase64 = null;
+        if (this.state.selectedSong.albumCoverUrl) {
+            try {
+                this.coverBase64 = await this.setBase64Image(
+                    this.state.selectedSong.albumCoverUrl,
+                    '.song-image > .header > img'
+                );
+            } catch (err) {
+                console.error('Failed to load album cover', err);
+            }
+        }
         this.setSongInfo();
         this.setSongLyrics(
             Array.from(document.querySelectorAll('.select-line.selected')).map(
                 (selectLine) => Number(selectLine.dataset.index)
             )
         );
-        this.setSongImageColor(
-            COLORS[Math.floor(Math.random() * COLORS.length)]
-        );
+        const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.setSongImageColor(randomColor);
+        this.renderImageBackground();
     }
 
     /**
-     * Set's song image's colors
+     * Sets song image's background color and second-layer color variable.
      * @param {string} background
      */
     setSongImageColor(background) {
+        this.currentBgColor = background;
         if (this.songImage) {
             this.songImage.style.backgroundColor = background;
+            this.songImage.style.setProperty('--song-bg-second', background);
         }
+        this.renderImageBackground();
     }
 
-    updateBackgroundBlurVisual() {
-        if (!this.songImage || !this.backgroundBlurToggle) {
+    /**
+     * Sets song image's text color and author color.
+     * @param {string} color
+     */
+    setSongTextColor(color) {
+        this.currentTextColor = color;
+        if (!this.songImage) return;
+        this.songImage.style.setProperty('--song-text-color', color);
+        this.songImage.style.setProperty('--song-author-color', hexToRgba(color, 0.6));
+        this.updateServiceTag();
+    }
+
+    /**
+     * Renders album cover as a blurred + tinted background image.
+     * Pre-renders to an offscreen canvas so html2canvas exports a static raster.
+     */
+    renderImageBackground() {
+        if (!this.songImage) return;
+
+        if (!this.coverBase64) {
+            this.songImage.style.backgroundImage = '';
             return;
         }
 
-        const enabled =
-            this.backgroundBlurToggle.classList.contains('on') ?? false;
+        const img = new Image();
+        img.src = this.coverBase64;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
 
-        if (!enabled) {
-            this.songImage.style.boxShadow = 'none';
-            return;
-        }
+            const cardW = this.songImage.offsetWidth || img.width;
+            const blurPx = (this.shadowBlur ?? 0) * (img.width / cardW);
+            if (blurPx > 0) {
+                ctx.filter = `blur(${blurPx}px)`;
+            }
 
-        const blur = this.shadowBlur ?? BACKGROUND_SHADOW_BLUR;
-        const opacity = this.shadowOpacity ?? 0.25;
+            // Draw the cover zoomed ~10% and centered so it overflows the
+            // canvas edges — this keeps the blur sampling real pixels instead
+            // of the transparent border, avoiding the glitchy faded edges.
+            const zoom = 1.1;
+            const dw = img.width * zoom;
+            const dh = img.height * zoom;
+            ctx.drawImage(
+                img,
+                (img.width - dw) / 2,
+                (img.height - dh) / 2,
+                dw,
+                dh
+            );
+            ctx.filter = 'none';
 
-        const shadowColor = `rgba(0, 0, 0, ${opacity})`;
-        const offsetY = Math.round(blur / 2);
+            const opacity = this.shadowOpacity ?? 0;
+            if (opacity > 0) {
+                ctx.fillStyle = hexToRgba(this.currentBgColor, opacity);
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
-        this.songImage.style.boxShadow = `0 ${offsetY}px ${blur}px ${shadowColor}`;
+            this.songImage.style.backgroundImage = `url("${canvas.toDataURL()}")`;
+            this.songImage.style.backgroundSize = 'cover';
+            this.songImage.style.backgroundPosition = 'center';
+        };
+    }
+
+    /**
+     * Debounced wrapper around renderImageBackground for slider events.
+     */
+    _debouncedRenderBg() {
+        clearTimeout(this._bgRenderTimer);
+        this._bgRenderTimer = setTimeout(() => this.renderImageBackground(), 80);
     }
 
     /**
@@ -553,6 +542,10 @@ class SongImageController {
             return;
         }
 
+        if (this.customTagActive) {
+            return;
+        }
+
         const tagContainer = this.songImage.querySelector('.spotify');
         const img = tagContainer
             ? tagContainer.querySelector('img')
@@ -573,11 +566,10 @@ class SongImageController {
 
         this.songImage.classList.add('spotify-tag');
 
-        if (value === 'spotify') {
-            const isLight =
-                this.songImage.classList.contains('light-text');
-            this.songImage.classList.remove('apple-tag');
+        const isLight = isLightColor(this.currentTextColor ?? '#000000');
 
+        if (value === 'spotify') {
+            this.songImage.classList.remove('apple-tag');
             this.setBase64Image(
                 SPOTIFY_LOGO,
                 '.song-image > .spotify > img',
@@ -585,10 +577,11 @@ class SongImageController {
             );
         } else if (value === 'apple') {
             this.songImage.classList.add('apple-tag');
-            img.setAttribute('src', '');
-        } else if (value === 'custom') {
-            this.songImage.classList.remove('apple-tag');
-            this.applyCustomServiceTagImage();
+            this.setBase64Image(
+                APPLE_MUSIC_LOGO,
+                '.song-image > .spotify > img',
+                isLight ? 255 : 0
+            );
         }
     }
 
@@ -611,6 +604,8 @@ class SongImageController {
         reader.onload = () => {
             if (typeof reader.result === 'string') {
                 img.setAttribute('src', reader.result);
+                this.songImage.classList.add('spotify-tag');
+                this.songImage.classList.remove('apple-tag');
             }
         };
         reader.readAsDataURL(file);
@@ -637,16 +632,22 @@ class SongImageController {
             .map((artist) => artist.name)
             .join(', ')} - ${song.name}.png`;
 
+        // Strip preview-only class so it doesn't contaminate the export
+        const hadPreview = this.songImage.classList.contains('additional-bg-preview');
+        if (hadPreview) {
+            this.songImage.classList.remove('additional-bg-preview');
+        }
+
         let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
             scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
         });
 
-        if (
-            this.songImage.classList.contains(
-                'additional-bg'
-            )
-        ) {
+        if (hadPreview) {
+            this.songImage.classList.add('additional-bg-preview');
+        }
+
+        if (this.songImage.classList.contains('additional-bg')) {
             canvas = this.addBgToDownloadCanvas(canvas);
         }
 
@@ -754,10 +755,12 @@ class SongImageController {
     }
 
     /**
-     * Converts cover image to base64 and sets it as image's source in order to avoid canvas CORS policy
+     * Fetches url, converts to base64, optionally recolors all opaque pixels to newColor,
+     * and sets the result as src on imgSelector. Returns the raw base64 if newColor is null.
      * @param {string} url
      * @param {string} imgSelector
-     * @param {number?} newColor
+     * @param {number | null} newColor
+     * @returns {Promise<string | undefined>}
      */
     async setBase64Image(url, imgSelector, newColor = null) {
         const response = await fetch(url);
@@ -770,10 +773,12 @@ class SongImageController {
             reader.readAsDataURL(blob);
         });
 
-        if (newColor === null)
-            return document
+        if (newColor === null) {
+            document
                 .querySelector(imgSelector)
                 .setAttribute('src', base64);
+            return base64;
+        }
 
         const img = new Image();
         img.src = base64;
@@ -806,4 +811,3 @@ class SongImageController {
         };
     }
 }
-

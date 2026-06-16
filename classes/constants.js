@@ -11,6 +11,46 @@ const NO_LYRICS_SELECTED =
     'No lyrics selected<br>You can still type your own lyrics by clicking here :)';
 const SPOTIFY_LOGO =
     'https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg';
+const APPLE_MUSIC_LOGO =
+    'https://upload.wikimedia.org/wikipedia/commons/9/9d/AppleMusic_2019.svg';
+
+const FONT_STACKS = {
+    default: '',
+    system: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    helvetica: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+    arial: "Arial, 'Helvetica Neue', sans-serif",
+    verdana: 'Verdana, Geneva, sans-serif',
+    tahoma: 'Tahoma, Geneva, sans-serif',
+    trebuchet: "'Trebuchet MS', Helvetica, sans-serif",
+    georgia: "Georgia, 'Times New Roman', serif",
+    times: "'Times New Roman', Times, serif",
+    palatino: "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+    garamond: "Garamond, 'Times New Roman', serif",
+    courier: "'Courier New', Courier, monospace",
+    menlo: "Menlo, Monaco, Consolas, 'Courier New', monospace",
+};
+
+function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const full = h.length === 3
+        ? h.split('').map((c) => c + c).join('')
+        : h;
+    return {
+        r: parseInt(full.slice(0, 2), 16),
+        g: parseInt(full.slice(2, 4), 16),
+        b: parseInt(full.slice(4, 6), 16),
+    };
+}
+
+function hexToRgba(hex, alpha) {
+    const { r, g, b } = hexToRgb(hex);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function isLightColor(hex) {
+    const { r, g, b } = hexToRgb(hex);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140;
+}
 
 const BACKGROUND_SHADOW_COLOR = 'rgba(0, 0, 0, 0.25)';
 const BACKGROUND_SHADOW_BORDER_RADIUS = 24;

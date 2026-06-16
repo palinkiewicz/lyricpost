@@ -462,7 +462,7 @@
     width: 0;
 }
 
-#custom-color {
+.color-selection > .custom-color {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -470,14 +470,14 @@
     border: 1px solid var(--background-text-color);
 }
 
-#custom-color>input {
+.custom-color>input {
     height: 0;
     width: 0;
     padding: 0;
     border: none;
 }
 
-#custom-color>label:hover {
+.custom-color>label:hover {
     cursor: pointer;
 }
 

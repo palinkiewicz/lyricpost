@@ -7,13 +7,13 @@
     transform: scale(var(--song-image-scale, 1));
     transform-origin: top center;
     background-color: rgba(84, 154, 171, 1);
+    background-size: cover;
+    background-position: center;
     color: var(--song-text-color, rgba(0, 0, 0, 0.95));
     border-radius: var(--song-border-radius, 1.5rem);
-    transition: 200ms var(--cubic-ease-out);
-}
-
-.song-image.light-text  {
-    --song-text-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 0 var(--song-bg-second, currentColor);
+    transition: 200ms var(--cubic-ease-out),
+                box-shadow 450ms var(--cubic-ease-out);
 }
 
 .song-image>.header {
@@ -49,10 +49,6 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.song-image.light-text > .header .authors {
-    --song-author-color: rgba(255, 255, 255, 0.7);
-}
-
 .song-image > .lyrics {
     font-size: var(--song-lyrics-font-size, 1.2rem);
     font-weight: 700;
@@ -61,14 +57,14 @@
     letter-spacing: var(--song-letter-spacing, 0);
 }
 
+.song-image > .lyrics,
 .song-image > .header .name,
 .song-image > .header .authors {
+    font-family: var(--song-font-family, 'Poppins', sans-serif);
     letter-spacing: var(--song-letter-spacing, 0);
 }
 
 .song-image > .spotify {
-    filter: brightness(0) saturate(100%) invert(0%) sepia(5%) saturate(22%)
-        hue-rotate(164deg) brightness(96%) contrast(105%);
     height: 0;
     padding: 0;
     overflow: hidden;
@@ -82,11 +78,6 @@
 
 .song-image>.spotify>img {
     height: 100%;
-}
-
-.song-image.light-text > .spotify {
-    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
-        hue-rotate(93deg) brightness(103%) contrast(103%);
 }
 
 /* Layout variants */
@@ -104,19 +95,11 @@
     order: 3;
 }
 
-/* Apple-style service tag */
-.song-image.apple-tag > .spotify {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.song-image.apple-tag > .spotify::before {
-    content: '';
-}
-
-.song-image.apple-tag > .spotify > img {
-    display: none;
+/* Double background — preview only (export uses addBgToDownloadCanvas).
+   A colored halo sits BEHIND the card (box-shadow never covers the element):
+   rock-solid selected color for ~50px out, then a slow gradient merging into
+   the app background. Grows out on toggle ON, shrinks in on toggle OFF (the
+   one-time animation comes from the box-shadow transition on .song-image). */
+.song-image.additional-bg-preview {
+    box-shadow: 0 0 100px 100px var(--song-bg-second, currentColor);
 }
