@@ -151,7 +151,7 @@
     width: 100%;
 }
 
-.search-form form > input {
+.search-form form>input {
     padding: 1rem;
     border: none;
     border-radius: 0.5rem;
@@ -168,12 +168,12 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.search-form form > button:hover {
+.search-form form>button:hover {
     cursor: pointer;
     padding: 1rem 3rem;
 }
 
-.search-form form > button:disabled {
+.search-form form>button:disabled {
     font-size: 0;
     padding: 0;
     opacity: 0;
@@ -211,12 +211,17 @@
 }
 
 .select-song img {
+    display: block;
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
     object-position: center 0;
     opacity: 1;
     border-radius: 0.5rem;
+    background-image: url("https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png");
+    background-size: cover;
+    background-position: center;
+    color: transparent;
     transition: scale 150ms var(--cubic-ease-out),
         aspect-ratio 400ms var(--cubic-ease-out),
         opacity 600ms var(--cubic-ease-out);
@@ -274,6 +279,10 @@
     height: 4rem;
     border-radius: 0.5rem;
     object-fit: cover;
+    background-image: url("https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png");
+    background-size: cover;
+    background-position: center;
+    color: transparent;
 }
 
 .song-info-text {
@@ -436,7 +445,7 @@
     padding: 0 1rem;
 }
 
-.color-selection > div {
+.color-selection>div {
     width: 21%;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -444,12 +453,12 @@
     transition: 150ms var(--cubic-ease-out);
 }
 
-.color-selection > div:hover {
+.color-selection>div:hover {
     cursor: pointer;
     scale: 1.1;
 }
 
-.hidden .color-selection > div {
+.hidden .color-selection>div {
     width: 0;
 }
 
@@ -461,14 +470,14 @@
     border: 1px solid var(--background-text-color);
 }
 
-#custom-color > input {
+#custom-color>input {
     height: 0;
     width: 0;
     padding: 0;
     border: none;
 }
 
-#custom-color > label:hover {
+#custom-color>label:hover {
     cursor: pointer;
 }
 

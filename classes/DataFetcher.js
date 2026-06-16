@@ -1,35 +1,9 @@
 class DataFetcher {
     constructor() {
-        this._accessToken = undefined;
-
-        this.setAccessToken();
-    }
-
-    async setAccessToken() {
-        const params = new URLSearchParams();
-
-        params.append('grant_type', 'client_credentials');
-        /**
-         * Yeah, I know this should never be just left here,
-         * but I wanted to make it really cost-free (front-end only),
-         * and I decided I didn't care about those keys
-         */
-        params.append('client_id', '4d6b7066ac2443cf82a29b79e9920e88');
-        params.append('client_secret', 'cddfc0b1c87e4131ae0f3622bdc5b731');
-
-        const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params,
-        });
-
-        const json = await response.json();
-
-        this._accessToken = json.access_token;
     }
 
     /**
-     * Searches for songs on Spotify
+     * Searches for songs on Last.fm
      *
      * @private
      * @param {string} name
@@ -37,54 +11,63 @@ class DataFetcher {
      * @returns {Song[]} an array of Song objects
      */
     async getSongInfos(name, limit = 1) {
-        if (this._accessToken === undefined) return {};
+        const query = name;
 
-        const response = await fetch(
-            `https://api.spotify.com/v1/search?q=${name}&type=track&limit=${limit}`,
-            {
-                method: 'GET',
-                headers: { Authorization: 'Bearer ' + this._accessToken },
-            }
-        );
+        const apiKey = 'b362b9a7f5f0c5a7f749d568b68bc32a';
+        const searchUrl = `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${encodeURIComponent(query)}&api_key=${apiKey}&format=json&limit=${limit}`;
+
+        const response = await fetch(searchUrl);
 
         const result = await response.json();
+        const tracks = result?.results?.trackmatches?.track || [];
 
-        return result.tracks.items.map((song) => new Song(song));
+        const songs = await Promise.all(tracks.map(async (searchTrack) => {
+            try {
+                const infoUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(searchTrack.artist)}&track=${encodeURIComponent(searchTrack.name)}&format=json`;
+                const infoResponse = await fetch(infoUrl, {
+                    headers: {
+                        'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
+                    },
+                });
+                const infoResult = await infoResponse.json();
+
+                if (infoResult.track) {
+                    return new Song(infoResult.track);
+                }
+            } catch (err) {
+                console.error('Failed to fetch track info for', searchTrack.name, err);
+            }
+            return null;
+        }));
+
+        return songs.filter(song => song !== null);
     }
 
     /**
-     * Gets a single track by Spotify track ID
+     * Gets a single track by Last.fm track MBID
      *
      * @private
-     * @param {string} trackId
-     * @returns {Song} a Song object
+     * @param {string} mbid
+     * @returns {Song|null} a Song object
      */
-    async getTrackById(trackId) {
-        if (this._accessToken === undefined) return null;
+    async getTrackById(mbid) {
+        const apiKey = 'b362b9a7f5f0c5a7f749d568b68bc32a';
+        const requestUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&mbid=${mbid}&format=json`;
 
-        const response = await fetch(
-            `https://api.spotify.com/v1/tracks/${trackId}`,
-            {
-                method: "GET",
-                headers: { Authorization: "Bearer " + this._accessToken },
-            }
-        );
+        const response = await fetch(requestUrl, {
+            headers: {
+                'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
+            },
+        });
 
+        if (!response.ok) return null;
         const result = await response.json();
-        return new Song(result);
-    }
 
-    /**
-     * Parses a Spotify URL to extract the track ID
-     *
-     * @private
-     * @param {string} url
-     * @returns {string|null} track ID or null if invalid
-     */
-    parseSpotifyUrl(url) {
-        const regex = /spotify\.com\/track\/([a-zA-Z0-9]+)/;
-        const match = url.match(regex);
-        return match ? match[1] : null;
+        if (result.track) {
+            return new Song(result.track);
+        }
+
+        return null;
     }
 
     /**

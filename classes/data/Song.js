@@ -8,16 +8,13 @@ class Song {
         this.name = songInfo.name;
 
         /** @type {number} */
-        this.durationMs = songInfo.duration_ms;
-
-        /** @type {string} */
-        this.spotifyUrl = songInfo.external_urls.spotify;
+        this.durationMs = songInfo.duration ? Number(songInfo.duration) : 0;
 
         /** @type {Artist[]} */
-        this.artists = songInfo.artists.map((artist) => new Artist(artist));
+        this.artists = songInfo.artist ? [new Artist({ name: songInfo.artist.name })] : [];
 
         /** @type {string} */
-        this.albumCoverUrl = songInfo.album.images[0].url;
+        this.albumCoverUrl = songInfo.album?.image?.[2]?.['#text'] || songInfo.album?.image?.[1]?.['#text'] || songInfo.album?.image?.[0]?.['#text'] || null;
 
         /** @type {bool} */
         this.hasSyncedLyrics = lyrics?.syncedLyrics ? true : false;
