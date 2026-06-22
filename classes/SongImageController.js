@@ -69,6 +69,10 @@ class SongImageController {
         this.serviceTagSelect = document.querySelector('#service-tag');
         /** @type {HTMLInputElement | null} */
         this.serviceTagFileInput = document.querySelector('#service-tag-file');
+        /** @type {HTMLInputElement | null} */
+        this.tagHeightSlider = document.querySelector('#tag-height-slider');
+        /** @type {HTMLElement | null} */
+        this.tagHeightValue = document.querySelector('#tag-height-value');
 
         // Dynamic background state
         this.shadowCornerRadius = BACKGROUND_SHADOW_BORDER_RADIUS;
@@ -260,6 +264,20 @@ class SongImageController {
             });
         }
 
+        if (this.tagHeightSlider && this.tagHeightValue && this.songImage) {
+            const applyTagHeight = () => {
+                const value = Number(this.tagHeightSlider.value);
+                this.songImage.style.setProperty(
+                    '--song-tag-height',
+                    `${value}px`
+                );
+                this.tagHeightValue.textContent = `${value}px`;
+            };
+
+            applyTagHeight();
+            this.tagHeightSlider.addEventListener('input', applyTagHeight);
+        }
+
         // Tabs inside final options
         document
             .querySelectorAll('.tab-selectors > button')
@@ -285,11 +303,7 @@ class SongImageController {
                     );
                     if (newlySelected) {
                         newlySelected.classList.add('selected');
-                        const options = document.querySelector('.options');
-                        if (options) {
-                            options.style.height =
-                                newlySelected.offsetHeight + 44 + 'px';
-                        }
+                        this.updateOptionsHeight();
                     }
                 });
             });
@@ -331,6 +345,27 @@ class SongImageController {
     }
 
     /**
+     * Sizes the .options box to the currently selected tab panel so the panel
+     * isn't mispositioned (the CSS default height is otherwise only corrected
+     * once the user switches tabs).
+     */
+    updateOptionsHeight() {
+        const options = document.querySelector('.options');
+        const selectors = document.querySelector('.tab-selectors');
+        const selected = document.querySelector('.tabs > .selected');
+        if (!options || !selected) {
+            return;
+        }
+
+        const selectorsHeight = selectors ? selectors.offsetHeight : 0;
+        const marginTop =
+            parseFloat(getComputedStyle(selected).marginTop) || 0;
+
+        options.style.height =
+            selectorsHeight + marginTop + selected.offsetHeight + 'px';
+    }
+
+    /**
      * Displays song image final screen
      */
     displaySongImage() {
@@ -345,6 +380,16 @@ class SongImageController {
 
         if (this.lyricsFab) {
             this.lyricsFab.classList.add('hidden');
+        }
+
+        // Recompute across the screen-entry animation: once immediately, and
+        // again after the transition settles, since measuring mid-animation
+        // yields a short height that leaves the panel mispositioned.
+        this.updateOptionsHeight();
+        requestAnimationFrame(() => this.updateOptionsHeight());
+        setTimeout(() => this.updateOptionsHeight(), 550);
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => this.updateOptionsHeight());
         }
     }
 
