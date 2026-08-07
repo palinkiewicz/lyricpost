@@ -90,7 +90,11 @@ class LyricsController {
             return;
         }
 
-        this.songInfoCover.setAttribute('src', song.albumCoverUrl);
+        song.getCoverObjectUrl().then((src) => {
+            if (src) {
+                this.songInfoCover.setAttribute('src', src);
+            }
+        });
         this.songInfoName.textContent = song.name;
         this.songInfoArtist.textContent = song.artists
             .map((artist) => artist.name)

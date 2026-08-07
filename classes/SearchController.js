@@ -96,7 +96,7 @@ class SearchController {
         this.state.songs.forEach((song, index) => {
             const clone = this.cloneableSelectSong.cloneNode(true);
 
-            clone.querySelector('img').setAttribute('src', song.albumCoverUrl);
+            this.loadCoverImage(clone.querySelector('img'), song);
             clone.querySelector('.name').textContent = song.name;
             clone.querySelector('.authors').textContent = song.artists
                 .map((artist) => artist.name)
@@ -115,6 +115,26 @@ class SearchController {
         setTimeout(() => {
             this.songSelection.classList.remove('hidden');
         }, SELECTION_ANIMATION_DELAY);
+    }
+
+    /**
+     * Loads a song's album cover into an img element using the Song's cached
+     * cors-fetched object URL (see Song.getCoverObjectUrl), avoiding the no-cors
+     * <img> request that Firefox's Opaque Response Blocking can abort.
+     *
+     * @param {HTMLImageElement | null} img
+     * @param {Song} song
+     */
+    async loadCoverImage(img, song) {
+        if (!img) {
+            return;
+        }
+
+        const src = await song.getCoverObjectUrl();
+
+        if (src) {
+            img.setAttribute('src', src);
+        }
     }
 }
 
