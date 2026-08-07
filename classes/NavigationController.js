@@ -36,13 +36,7 @@ class NavigationController {
         this.goToButtons.forEach((button) => {
             button.addEventListener('click', () => {
                 const targetScreen = Number(button.dataset.number);
-
-                if (targetScreen === 2 && this.state.usedDirectLink) {
-                    this.changeScreen(1);
-                    this.state.usedDirectLink = false;
-                } else {
-                    this.changeScreen(targetScreen);
-                }
+                this.changeScreen(targetScreen);
             });
         });
 

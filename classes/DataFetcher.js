@@ -44,33 +44,6 @@ class DataFetcher {
     }
 
     /**
-     * Gets a single track by Last.fm track MBID
-     *
-     * @private
-     * @param {string} mbid
-     * @returns {Song|null} a Song object
-     */
-    async getTrackById(mbid) {
-        const apiKey = 'b362b9a7f5f0c5a7f749d568b68bc32a';
-        const requestUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&mbid=${mbid}&format=json`;
-
-        const response = await fetch(requestUrl, {
-            headers: {
-                'User-Agent': 'Application LyricPost/1.0 (pogromca.ap@gmail.com)',
-            },
-        });
-
-        if (!response.ok) return null;
-        const result = await response.json();
-
-        if (result.track) {
-            return new Song(result.track);
-        }
-
-        return null;
-    }
-
-    /**
      * Searches for song lyrics on lrclib
      *
      * @private

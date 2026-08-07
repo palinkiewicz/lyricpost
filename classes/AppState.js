@@ -5,9 +5,6 @@ class AppState {
 
         /** @type {number | null} */
         this.selectedSongIndex = null;
-
-        /** @type {boolean} */
-        this.usedDirectLink = false;
     }
 
     /**

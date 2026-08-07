@@ -106,42 +106,6 @@
     text-align: center;
 }
 
-.input-tabs {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
-
-.tab-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    background: var(--surface-light-color);
-    color: var(--surface-text-color);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 200ms var(--cubic-ease-out);
-}
-
-.tab-button:hover {
-    background: var(--surface-color);
-}
-
-.tab-button.active {
-    background: var(--primary-color);
-    color: var(--primary-text-color);
-}
-
-.tab-content {
-    display: none;
-    width: 100%;
-}
-
-.tab-content.active {
-    display: block;
-}
-
 .search-form form {
     display: flex;
     flex-direction: column;

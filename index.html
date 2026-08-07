@@ -22,29 +22,13 @@
                 <header>
                     <h1>LyricPost</h1>
                 </header>
-                <div class="input-tabs">
-                    <button class="tab-button active" data-tab="search">Search</button>
-                    <button class="tab-button" data-tab="link">Paste Link</button>
-                </div>
-                <div class="tab-content active" id="search-tab">
-                    <form>
-                        <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
-                        <button class="primary" id="search">
-                            <span class="material-symbols-outlined">music_note</span>
-                            Find that song!
-                        </button>
-                    </form>
-                </div>
-                <div class="tab-content" id="link-tab">
-                    <form>
-                        <input class="surface" type="text" id="spotify-link"
-                            placeholder="https://open.spotify.com/track/...">
-                        <button class="primary" id="load-link">
-                            <span class="material-symbols-outlined">link</span>
-                            Load song!
-                        </button>
-                    </form>
-                </div>
+                <form>
+                    <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+                    <button class="primary" id="search">
+                        <span class="material-symbols-outlined">music_note</span>
+                        Find that song!
+                    </button>
+                </form>
                 <div class="searching hidden"></div>
                 <div class="error hidden"></div>
             </div>
@@ -195,19 +179,21 @@
                                 <div class="select-container">
                                     <div>Font type</div>
                                     <select id="text-font-family">
-                                        <option value="default">Default</option>
-                                        <option value="system">System UI</option>
-                                        <option value="helvetica">Helvetica Neue</option>
-                                        <option value="arial">Arial</option>
-                                        <option value="verdana">Verdana</option>
-                                        <option value="tahoma">Tahoma</option>
-                                        <option value="trebuchet">Trebuchet MS</option>
-                                        <option value="georgia">Georgia</option>
-                                        <option value="times">Times New Roman</option>
-                                        <option value="palatino">Palatino</option>
-                                        <option value="garamond">Garamond</option>
-                                        <option value="courier">Courier New</option>
-                                        <option value="menlo">Menlo / Consolas</option>
+                                        <option value="default">Poppins (default)</option>
+                                        <option value="arial">Arial (sans-serif)</option>
+                                        <option value="verdana">Verdana (sans-serif)</option>
+                                        <option value="tahoma">Tahoma (sans-serif)</option>
+                                        <option value="trebuchet">Trebuchet MS (sans-serif)</option>
+                                        <option value="times">Times New Roman (serif)</option>
+                                        <option value="georgia">Georgia (serif)</option>
+                                        <option value="garamond">Garamond (serif)</option>
+                                        <option value="courier">Courier New (monospace)</option>
+                                        <option value="brush">Brush Script MT (cursive)</option>
+                                        <option value="zh-TW">Noto Sans (TW characters)</option>
+                                        <option value="zh-CN">Noto Sans (CN characters)</option>
+                                        <option value="zh-HK">Noto Sans (HK characters)</option>
+                                        <option value="ja">Noto Sans (JP characters)</option>
+                                        <option value="ko">Noto Sans (KR characters)</option>
                                     </select>
                                 </div>
                                 <div class="slider-container">

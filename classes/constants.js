@@ -16,18 +16,20 @@ const APPLE_MUSIC_LOGO =
 
 const FONT_STACKS = {
     default: '',
-    system: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    helvetica: "'Helvetica Neue', Helvetica, Arial, sans-serif",
     arial: "Arial, 'Helvetica Neue', sans-serif",
     verdana: 'Verdana, Geneva, sans-serif',
     tahoma: 'Tahoma, Geneva, sans-serif',
     trebuchet: "'Trebuchet MS', Helvetica, sans-serif",
-    georgia: "Georgia, 'Times New Roman', serif",
     times: "'Times New Roman', Times, serif",
-    palatino: "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+    georgia: "Georgia, 'Times New Roman', serif",
     garamond: "Garamond, 'Times New Roman', serif",
     courier: "'Courier New', Courier, monospace",
-    menlo: "Menlo, Monaco, Consolas, 'Courier New', monospace",
+    brush: "'Brush Script MT', cursive",
+    'zh-TW': '"Poppins", "Noto Sans TC", sans-serif',
+    'zh-CN': '"Poppins", "Noto Sans SC", sans-serif',
+    'zh-HK': '"Poppins", "Noto Sans HK", sans-serif',
+    ja: '"Poppins", "Noto Sans JP", sans-serif',
+    ko: '"Poppins", "Noto Sans KR", sans-serif',
 };
 
 function hexToRgb(hex) {

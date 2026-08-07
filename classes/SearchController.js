@@ -15,12 +15,6 @@ class SearchController {
         this.searchInput = document.querySelector('#song-name');
         /** @type {HTMLButtonElement | null} */
         this.searchButton = document.querySelector('#search');
-        /** @type {HTMLInputElement | null} */
-        this.spotifyLinkInput = document.querySelector('#spotify-link');
-        /** @type {HTMLButtonElement | null} */
-        this.loadLinkButton = document.querySelector('#load-link');
-        /** @type {NodeListOf<Element>} */
-        this.tabButtons = document.querySelectorAll('.tab-button');
 
         /** @type {Element | null} */
         this.cloneableSelectSong = document.querySelector(
@@ -40,81 +34,6 @@ class SearchController {
             });
         }
 
-        if (this.loadLinkButton) {
-            this.loadLinkButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.loadFromSpotifyLink();
-            });
-        }
-
-        this.tabButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const tab = button.dataset.tab;
-                this.switchTab(tab);
-            });
-        });
-    }
-
-    /**
-     * Switches between search and link input tabs
-     * @param {string} tab
-     */
-    switchTab(tab) {
-        this.tabButtons.forEach((btn) => {
-            btn.classList.toggle('active', btn.dataset.tab === tab);
-        });
-
-        document.querySelectorAll('.tab-content').forEach((content) => {
-            content.classList.toggle('active', content.id === `${tab}-tab`);
-        });
-    }
-
-    /**
-     * Loads a song directly from Spotify link
-     */
-    async loadFromSpotifyLink() {
-        if (!this.spotifyLinkInput || !this.loadLinkButton) {
-            return;
-        }
-
-        const url = this.spotifyLinkInput.value.trim();
-
-        if (url === '') {
-            return this.appShell.throwError('Please paste a Spotify link!');
-        }
-
-        const trackId = this.fetcher.parseSpotifyUrl(url);
-
-        if (!trackId) {
-            return this.appShell.throwError(
-                'Invalid Spotify link. Try the Search tab instead!'
-            );
-        }
-
-        this.spotifyLinkInput.setAttribute('disabled', 'true');
-        this.loadLinkButton.setAttribute('disabled', 'true');
-
-        this.appShell.hideError();
-        this.appShell.displaySearching('Loading song from Spotify...');
-
-        try {
-            const song = await this.fetcher.getTrackById(trackId);
-            this.state.songs = [song];
-            this.state.selectedSongIndex = 0;
-            this.state.usedDirectLink = true;
-
-            await this.lyricsController.findLyrics();
-        } catch (error) {
-            console.error(error);
-
-            this.appShell.throwError(
-                "Couldn't load that song. Check the link and try again!"
-            );
-        }
-
-        this.appShell.hideSearching();
-        this.spotifyLinkInput.removeAttribute('disabled');
-        this.loadLinkButton.removeAttribute('disabled');
     }
 
     /**
@@ -144,7 +63,6 @@ class SearchController {
 
         try {
             this.state.songs = await this.fetcher.getSongInfos(name, SONGS_TO_FETCH);
-            this.state.usedDirectLink = false;
 
             this.populateSongSelection();
             this.appShell.displayScreen(2);
