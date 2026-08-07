@@ -396,22 +396,13 @@ class SongImageController {
     /**
      * Prepares song image DOM element
      */
-    async setSongImage() {
+    setSongImage() {
         if (!this.state.selectedSong) {
             return;
         }
 
-        this.coverBase64 = null;
-        if (this.state.selectedSong.albumCoverUrl) {
-            try {
-                this.coverBase64 = await this.setBase64Image(
-                    this.state.selectedSong.albumCoverUrl,
-                    '.song-image > .header > img'
-                );
-            } catch (err) {
-                console.error('Failed to load album cover', err);
-            }
-        }
+        // Render everything that needs no network first so title, artists and
+        // lyrics appear immediately.
         this.setSongInfo();
         this.setSongLyrics(
             Array.from(document.querySelectorAll('.select-line.selected')).map(
@@ -420,7 +411,28 @@ class SongImageController {
         );
         const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
         this.setSongImageColor(randomColor);
-        this.renderImageBackground();
+
+        // Load the album cover in the background; re-render the blurred
+        // backdrop once it arrives instead of blocking the whole screen on it.
+        this.coverBase64 = null;
+        const song = this.state.selectedSong;
+        if (song.albumCoverUrl) {
+            this.setBase64Image(
+                song.albumCoverUrl,
+                '.song-image > .header > img'
+            )
+                .then((base64) => {
+                    // Ignore if the user navigated to a different song meanwhile.
+                    if (this.state.selectedSong !== song) {
+                        return;
+                    }
+                    this.coverBase64 = base64;
+                    this.renderImageBackground();
+                })
+                .catch((err) => {
+                    console.error('Failed to load album cover', err);
+                });
+        }
     }
 
     /**
