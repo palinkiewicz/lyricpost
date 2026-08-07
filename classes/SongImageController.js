@@ -416,6 +416,8 @@ class SongImageController {
         // backdrop once it arrives instead of blocking the whole screen on it.
         this.coverBase64 = null;
         const song = this.state.selectedSong;
+        const coverImg = document.querySelector('.song-image > .header > img');
+        coverImg?.classList.remove('cover-loaded');
         if (song.albumCoverUrl) {
             this.setBase64Image(
                 song.albumCoverUrl,
@@ -427,6 +429,7 @@ class SongImageController {
                         return;
                     }
                     this.coverBase64 = base64;
+                    coverImg?.classList.add('cover-loaded');
                     this.renderImageBackground();
                 })
                 .catch((err) => {

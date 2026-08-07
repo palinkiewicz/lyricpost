@@ -34,6 +34,11 @@
     color: transparent;
 }
 
+/* See wizard.css .song-info-cover.cover-loaded for the Firefox corner-bleed rationale. */
+.song-image>.header>img.cover-loaded {
+    background-image: none;
+}
+
 .song-image>.header .name {
     font-size: 0.95rem;
     font-weight: 700;

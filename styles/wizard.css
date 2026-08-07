@@ -195,6 +195,11 @@
     scale: 1.07;
 }
 
+/* See the note on .song-info-cover.cover-loaded for why the placeholder is dropped. */
+.select-song img.cover-loaded {
+    background-image: none;
+}
+
 .hidden .select-song img {
     aspect-ratio: 10;
     opacity: 0;
@@ -247,6 +252,16 @@
     background-size: cover;
     background-position: center;
     color: transparent;
+}
+
+/*
+ * Drop the placeholder once the real cover has loaded. Firefox otherwise bleeds
+ * up to ~1px of the placeholder background through the rounded corners, because
+ * an <img> with both a border-radius background and rounded replaced content
+ * clips the two separately (see .cover-loaded toggles in the controllers).
+ */
+.song-info-cover.cover-loaded {
+    background-image: none;
 }
 
 .song-info-text {

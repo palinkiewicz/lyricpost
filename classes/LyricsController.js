@@ -90,8 +90,14 @@ class LyricsController {
             return;
         }
 
+        this.songInfoCover.classList.remove('cover-loaded');
         song.getCoverObjectUrl().then((src) => {
             if (src) {
+                this.songInfoCover.addEventListener(
+                    'load',
+                    () => this.songInfoCover.classList.add('cover-loaded'),
+                    { once: true }
+                );
                 this.songInfoCover.setAttribute('src', src);
             }
         });

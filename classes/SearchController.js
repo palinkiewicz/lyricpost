@@ -133,6 +133,11 @@ class SearchController {
         const src = await song.getCoverObjectUrl();
 
         if (src) {
+            img.addEventListener(
+                'load',
+                () => img.classList.add('cover-loaded'),
+                { once: true }
+            );
             img.setAttribute('src', src);
         }
     }
