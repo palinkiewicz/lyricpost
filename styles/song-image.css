@@ -32,6 +32,7 @@
     background-size: cover;
     background-position: center;
     color: transparent;
+    cursor: pointer;
 }
 
 /* See wizard.css .song-info-cover.cover-loaded for the Firefox corner-bleed rationale. */

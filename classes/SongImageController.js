@@ -73,6 +73,10 @@ class SongImageController {
         this.tagHeightSlider = document.querySelector('#tag-height-slider');
         /** @type {HTMLElement | null} */
         this.tagHeightValue = document.querySelector('#tag-height-value');
+        /** @type {HTMLInputElement | null} */
+        this.coverArtFileInput = document.querySelector('#cover-art-file');
+        /** @type {HTMLImageElement | null} */
+        this.coverImg = document.querySelector('.song-image > .header > img');
 
         // Dynamic background state
         this.shadowCornerRadius = BACKGROUND_SHADOW_BORDER_RADIUS;
@@ -261,6 +265,21 @@ class SongImageController {
                     this.customTagActive = true;
                     this.applyCustomServiceTagImage();
                 }
+            });
+        }
+
+        if (this.coverArtFileInput) {
+            this.coverArtFileInput.addEventListener('change', () => {
+                if (this.coverArtFileInput.files?.length) {
+                    this.applyCustomCoverArt(this.coverArtFileInput.files[0]);
+                }
+            });
+        }
+
+        // Clicking the cover art triggers the same upload action.
+        if (this.coverImg && this.coverArtFileInput) {
+            this.coverImg.addEventListener('click', () => {
+                this.coverArtFileInput.click();
             });
         }
 
@@ -667,6 +686,30 @@ class SongImageController {
                 this.songImage.classList.add('spotify-tag');
                 this.songImage.classList.remove('apple-tag');
             }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /**
+     * Replaces the album cover with a user-uploaded image. The file is read
+     * as a base64 data URI (inherently CORS-safe, so it feeds straight into
+     * the existing export pipeline) and reused as the blurred backdrop.
+     * @param {File} file
+     */
+    applyCustomCoverArt(file) {
+        if (!this.coverImg || !file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result !== 'string') {
+                return;
+            }
+            this.coverBase64 = reader.result;
+            this.coverImg.setAttribute('src', reader.result);
+            this.coverImg.classList.add('cover-loaded');
+            this.renderImageBackground();
         };
         reader.readAsDataURL(file);
     }
