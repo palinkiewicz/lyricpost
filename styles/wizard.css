@@ -511,6 +511,24 @@
     left: calc(100% - 1.75rem);
 }
 
+/*
+ * An option that only applies while another one is enabled. Collapsing it also
+ * cancels the panel's flex gap so no empty row is left behind.
+ */
+.conditional-option {
+    max-height: 2.5rem;
+    overflow: hidden;
+    opacity: 1;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.conditional-option.unavailable {
+    max-height: 0;
+    margin-top: -1rem;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .slider-container {
     display: flex;
     flex-direction: column;

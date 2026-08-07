@@ -10,6 +10,8 @@ class SongImageController {
         /** @type {HTMLElement | null} */
         this.songImage = document.querySelector('.song-image');
         /** @type {HTMLElement | null} */
+        this.songImageWrap = document.querySelector('.song-image-wrap');
+        /** @type {HTMLElement | null} */
         this.colorSelection = document.querySelector('.color-selection');
         /** @type {HTMLInputElement | null} */
         this.customColorInput = document.querySelector('#custom-color-input');
@@ -25,6 +27,8 @@ class SongImageController {
         this.downloadButton = document.querySelector('#download');
         /** @type {HTMLElement | null} */
         this.additionalBgSwitch = document.querySelector('#additional-bg');
+        /** @type {HTMLElement | null} */
+        this.backdropCoverSwitch = document.querySelector('#backdrop-cover');
         /** @type {HTMLElement | null} */
         this.lyricsFab = document.querySelector('#lyrics-fab');
 
@@ -65,10 +69,16 @@ class SongImageController {
         // Other tab
         /** @type {HTMLSelectElement | null} */
         this.layoutStyleSelect = document.querySelector('#layout-style');
+        /** @type {HTMLInputElement | null} */
+        this.infoBgSlider = document.querySelector('#info-bg-slider');
+        /** @type {HTMLElement | null} */
+        this.infoBgValue = document.querySelector('#info-bg-value');
         /** @type {HTMLSelectElement | null} */
         this.serviceTagSelect = document.querySelector('#service-tag');
         /** @type {HTMLInputElement | null} */
         this.serviceTagFileInput = document.querySelector('#service-tag-file');
+        /** @type {HTMLSelectElement | null} */
+        this.tagPositionSelect = document.querySelector('#tag-position');
         /** @type {HTMLInputElement | null} */
         this.tagHeightSlider = document.querySelector('#tag-height-slider');
         /** @type {HTMLElement | null} */
@@ -77,6 +87,8 @@ class SongImageController {
         this.coverArtFileInput = document.querySelector('#cover-art-file');
         /** @type {HTMLImageElement | null} */
         this.coverImg = document.querySelector('.song-image > .header > img');
+        /** @type {HTMLElement | null} */
+        this.tagContainer = document.querySelector('.song-image .spotify');
 
         // Dynamic background state
         this.shadowCornerRadius = BACKGROUND_SHADOW_BORDER_RADIUS;
@@ -85,6 +97,8 @@ class SongImageController {
 
         // Image background state
         this.coverBase64 = null;
+        /** Blurred cover without the color tint, drawn on the export backdrop. */
+        this.backdropCanvas = null;
         this.currentBgColor = COLORS[0];
         this.currentTextColor = '#000000';
         this.customTagActive = false;
@@ -112,8 +126,27 @@ class SongImageController {
 
         if (this.additionalBgSwitch && this.songImage) {
             this.additionalBgSwitch.addEventListener('click', () => {
-                this.songImage.classList.toggle('additional-bg');
-                this.songImage.classList.toggle('additional-bg-preview');
+                // The generic .switch-container handler above has already
+                // flipped the switch, so read the new state from it.
+                const on = this.additionalBgSwitch.classList.contains('on');
+                this.songImage.classList.toggle('additional-bg', on);
+                this.songImageWrap?.classList.toggle(
+                    'additional-bg-preview',
+                    on
+                );
+                // The backdrop cover only means anything with a backdrop.
+                this.backdropCoverSwitch?.classList.toggle('unavailable', !on);
+                this.updateOptionsHeight();
+                setTimeout(() => this.updateOptionsHeight(), 250);
+            });
+        }
+
+        if (this.backdropCoverSwitch && this.songImageWrap) {
+            this.backdropCoverSwitch.addEventListener('click', () => {
+                this.songImageWrap.classList.toggle(
+                    'backdrop-cover',
+                    this.backdropCoverSwitch.classList.contains('on')
+                );
             });
         }
 
@@ -250,6 +283,23 @@ class SongImageController {
 
             applyLayoutStyle();
             this.layoutStyleSelect.addEventListener('change', applyLayoutStyle);
+        }
+
+        if (this.infoBgSlider && this.infoBgValue) {
+            const applyInfoBg = () => {
+                this.infoBgValue.textContent = `${this.infoBgSlider.value}%`;
+                this.updateInfoBackground();
+            };
+
+            applyInfoBg();
+            this.infoBgSlider.addEventListener('input', applyInfoBg);
+        }
+
+        if (this.tagPositionSelect && this.songImage) {
+            const applyTagPosition = () => this.updateTagPosition();
+
+            applyTagPosition();
+            this.tagPositionSelect.addEventListener('change', applyTagPosition);
         }
 
         if (this.serviceTagSelect) {
@@ -465,9 +515,54 @@ class SongImageController {
         this.currentBgColor = background;
         if (this.songImage) {
             this.songImage.style.backgroundColor = background;
-            this.songImage.style.setProperty('--song-bg-second', background);
         }
+        if (this.songImageWrap) {
+            this.songImageWrap.style.setProperty('--song-bg-second', background);
+        }
+        this.updateInfoBackground();
         this.renderImageBackground();
+    }
+
+    /**
+     * Tints the song info row with the current background color at the
+     * configured opacity (fully transparent by default).
+     */
+    updateInfoBackground() {
+        if (!this.songImage || !this.infoBgSlider) {
+            return;
+        }
+
+        const opacity = Number(this.infoBgSlider.value) / 100;
+        this.songImage.classList.toggle('info-bg', opacity > 0);
+        this.songImage.style.setProperty(
+            '--song-info-bg',
+            hexToRgba(this.currentBgColor, opacity)
+        );
+    }
+
+    /**
+     * Moves the service tag to the selected position. "In song info" nests it
+     * inside the info row's text column; the others keep it as a card-level
+     * row whose order is decided by CSS.
+     */
+    updateTagPosition() {
+        if (!this.songImage || !this.tagPositionSelect || !this.tagContainer) {
+            return;
+        }
+
+        const position = this.tagPositionSelect.value;
+        this.songImage.classList.remove(
+            'tag-pos-bottom',
+            'tag-pos-top',
+            'tag-pos-info'
+        );
+        this.songImage.classList.add(`tag-pos-${position}`);
+
+        const infoText = this.songImage.querySelector('.header > div');
+        const parent = position === 'info' ? infoText : this.songImage;
+        if (parent && this.tagContainer.parentElement !== parent) {
+            parent.appendChild(this.tagContainer);
+        }
     }
 
     /**
@@ -491,6 +586,8 @@ class SongImageController {
 
         if (!this.coverBase64) {
             this.songImage.style.backgroundImage = '';
+            this.backdropCanvas = null;
+            this.songImageWrap?.style.removeProperty('--song-backdrop-image');
             return;
         }
 
@@ -523,6 +620,17 @@ class SongImageController {
             );
             ctx.filter = 'none';
 
+            // Keep an untinted copy: the backdrop shows the plain blurred
+            // cover so the tinted card still reads as a separate layer on it.
+            this.backdropCanvas = document.createElement('canvas');
+            this.backdropCanvas.width = canvas.width;
+            this.backdropCanvas.height = canvas.height;
+            this.backdropCanvas.getContext('2d').drawImage(canvas, 0, 0);
+            this.songImageWrap?.style.setProperty(
+                '--song-backdrop-image',
+                `url("${this.backdropCanvas.toDataURL()}")`
+            );
+
             const opacity = this.shadowOpacity ?? 0;
             if (opacity > 0) {
                 ctx.fillStyle = hexToRgba(this.currentBgColor, opacity);
@@ -552,6 +660,10 @@ class SongImageController {
             return;
         }
 
+        // The wrapper carries the scale so the previewed backdrop shrinks with
+        // the card instead of staying at the unscaled size.
+        const scaled = this.songImageWrap ?? this.songImage;
+
         const numericWidth = Number(width);
         this.songImage.style.setProperty(
             '--song-image-width',
@@ -562,8 +674,8 @@ class SongImageController {
         const screen = this.songImage.closest('.lyrics-image-screen');
 
         if (!screen) {
-            this.songImage.style.setProperty('--song-image-scale', 1);
-            this.songImage.style.marginBottom = '0px';
+            scaled.style.setProperty('--song-image-scale', 1);
+            scaled.style.marginBottom = '0px';
             return;
         }
 
@@ -576,10 +688,10 @@ class SongImageController {
                 ? Math.min(1, maxVisualWidth / numericWidth)
                 : 1;
 
-        this.songImage.style.setProperty('--song-image-scale', scale);
+        scaled.style.setProperty('--song-image-scale', scale);
 
         const marginBottom = fullHeight * (scale - 1);
-        this.songImage.style.marginBottom = `${marginBottom}px`;
+        scaled.style.marginBottom = `${marginBottom}px`;
     }
 
     /**
@@ -651,14 +763,14 @@ class SongImageController {
             this.songImage.classList.remove('apple-tag');
             this.setBase64Image(
                 SPOTIFY_LOGO,
-                '.song-image > .spotify > img',
+                '.song-image .spotify > img',
                 isLight ? 255 : 0
             );
         } else if (value === 'apple') {
             this.songImage.classList.add('apple-tag');
             this.setBase64Image(
                 APPLE_MUSIC_LOGO,
-                '.song-image > .spotify > img',
+                '.song-image .spotify > img',
                 isLight ? 255 : 0
             );
         }
@@ -736,9 +848,11 @@ class SongImageController {
             .join(', ')} - ${song.name}.png`;
 
         // Strip preview-only class so it doesn't contaminate the export
-        const hadPreview = this.songImage.classList.contains('additional-bg-preview');
+        const preview = this.songImageWrap;
+        const hadPreview =
+            preview?.classList.contains('additional-bg-preview') ?? false;
         if (hadPreview) {
-            this.songImage.classList.remove('additional-bg-preview');
+            preview.classList.remove('additional-bg-preview');
         }
 
         let canvas = await html2canvas(this.songImage, {
@@ -747,7 +861,7 @@ class SongImageController {
         });
 
         if (hadPreview) {
-            this.songImage.classList.add('additional-bg-preview');
+            preview.classList.add('additional-bg-preview');
         }
 
         if (this.songImage.classList.contains('additional-bg')) {
@@ -766,9 +880,7 @@ class SongImageController {
      * @returns {HTMLCanvasElement} canvas with background and shadow
      */
     addBgToDownloadCanvas(canvas) {
-        const backgroundColor = this.songImage
-            ? this.songImage.style.backgroundColor
-            : 'transparent';
+        const backgroundColor = this.currentBgColor;
 
         const borderRadius =
             (this.shadowCornerRadius ?? BACKGROUND_SHADOW_BORDER_RADIUS) *
@@ -799,6 +911,13 @@ class SongImageController {
 
         shadowContext.fillStyle = backgroundColor;
         shadowContext.fillRect(0, 0, shadowCanvas.width, shadowCanvas.height);
+
+        if (
+            this.songImageWrap?.classList.contains('backdrop-cover') &&
+            this.backdropCanvas
+        ) {
+            this.drawCover(shadowContext, this.backdropCanvas, shadowCanvas);
+        }
 
         const opacity = this.shadowOpacity ?? 0.25;
         shadowContext.fillStyle = `rgba(0, 0, 0, ${opacity})`;
@@ -855,6 +974,30 @@ class SongImageController {
         shadowContext.drawImage(canvas, margin, margin);
 
         return shadowCanvas;
+    }
+
+    /**
+     * Draws source centered over the whole target area, cropping the overflow
+     * like CSS `background-size: cover`.
+     * @param {CanvasRenderingContext2D} context
+     * @param {HTMLCanvasElement} source
+     * @param {HTMLCanvasElement} target
+     */
+    drawCover(context, source, target) {
+        const scale = Math.max(
+            target.width / source.width,
+            target.height / source.height
+        );
+        const width = source.width * scale;
+        const height = source.height * scale;
+
+        context.drawImage(
+            source,
+            (target.width - width) / 2,
+            (target.height - height) / 2,
+            width,
+            height
+        );
     }
 
     /**

@@ -1,17 +1,55 @@
+/*
+ * The card is wrapped so the "opaque export" backdrop can be previewed as a
+ * real element behind it (a box-shadow ring cannot carry the cover image).
+ * The wrapper also owns the scale transform: it has to be an ancestor of the
+ * card, since a negative-z-index pseudo-element of a transformed element still
+ * paints over that element's own background.
+ */
+.song-image-wrap {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    transform: scale(var(--song-image-scale, 1));
+    transform-origin: top center;
+}
+
+.song-image-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background-color: var(--song-bg-second, currentColor);
+    background-size: cover;
+    background-position: center;
+    transition: 450ms var(--cubic-ease-out);
+}
+
+.song-image-wrap.additional-bg-preview::before {
+    inset: -1.5rem;
+    opacity: 1;
+}
+
+.song-image-wrap.backdrop-cover::before {
+    background-image: var(--song-backdrop-image, none);
+}
+
+.song-image-wrap.additional-bg-preview>.song-image {
+    box-shadow: 0 1px 16px 2px rgba(0, 0, 0, 0.3);
+}
+
 .song-image {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     padding: 1.2rem 1rem 1rem;
     width: var(--song-image-width, 20rem);
-    transform: scale(var(--song-image-scale, 1));
-    transform-origin: top center;
     background-color: rgba(84, 154, 171, 1);
     background-size: cover;
     background-position: center;
     color: var(--song-text-color, rgba(0, 0, 0, 0.95));
     border-radius: var(--song-border-radius, 1.5rem);
-    box-shadow: 0 0 0 0 var(--song-bg-second, currentColor);
+    box-shadow: 0 0 0 0 transparent;
     transition: 200ms var(--cubic-ease-out),
         box-shadow 450ms var(--cubic-ease-out);
 }
@@ -20,7 +58,14 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    background-color: var(--song-info-bg, transparent);
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.song-image.info-bg>.header {
+    padding: 0.6rem;
 }
 
 .song-image>.header>img {
@@ -70,19 +115,23 @@
     letter-spacing: var(--song-letter-spacing, 0);
 }
 
-.song-image>.spotify {
+/*
+ * The tag is reparented into the info row for the "In song info" position, so
+ * these selectors are descendant rather than child ones.
+ */
+.song-image .spotify {
     height: 0;
     padding: 0;
     overflow: hidden;
     transition: 200ms var(--cubic-ease-out);
 }
 
-.song-image.spotify-tag>.spotify {
+.song-image.spotify-tag .spotify {
     height: calc(var(--song-tag-height, 1.5rem) + 1.5rem);
     padding: 1.2rem 0 0.3rem;
 }
 
-.song-image>.spotify>img {
+.song-image .spotify>img {
     height: var(--song-tag-height, 1.5rem);
 }
 
@@ -93,16 +142,24 @@
 
 .song-image.layout-apple>.header {
     order: 2;
-    padding-top: 1.5rem;
-    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .song-image.layout-apple>.spotify {
     order: 3;
 }
 
-.song-image.additional-bg-preview {
-    box-shadow:
-        0 1px 16px 2px rgba(0, 0, 0, 0.3),
-        0 0 0 24px var(--song-bg-second, currentColor)
+/* Tag positions */
+.song-image.tag-pos-top>.spotify {
+    order: -1;
+}
+
+.song-image.spotify-tag.tag-pos-top>.spotify {
+    padding: 0 0 1.2rem;
+}
+
+.song-image.spotify-tag.tag-pos-info .spotify {
+    height: calc(var(--song-tag-height, 1.5rem) + 0.4rem);
+    padding: 0.4rem 0 0;
 }

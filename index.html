@@ -95,17 +95,19 @@
                 </header>
                 <div class="searching hidden"></div>
                 <div class="image-creator">
-                    <div class="song-image">
-                        <div class="header">
-                            <img src="" alt="album-cover" />
-                            <div>
-                                <div class="name" contenteditable></div>
-                                <div class="authors" contenteditable></div>
+                    <div class="song-image-wrap">
+                        <div class="song-image">
+                            <div class="header">
+                                <img src="" alt="album-cover" />
+                                <div>
+                                    <div class="name" contenteditable></div>
+                                    <div class="authors" contenteditable></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="lyrics" contenteditable></div>
-                        <div class="spotify">
-                            <img src="" />
+                            <div class="lyrics" contenteditable></div>
+                            <div class="spotify">
+                                <img src="" />
+                            </div>
                         </div>
                     </div>
                     <div class="options">
@@ -160,6 +162,10 @@
                                 </div>
                                 <div class="switch-container" id="additional-bg">
                                     <div>Opaque export</div>
+                                    <div class="switch"></div>
+                                </div>
+                                <div class="switch-container conditional-option unavailable" id="backdrop-cover">
+                                    <div>Cover on backdrop</div>
                                     <div class="switch"></div>
                                 </div>
                             </div>
@@ -235,6 +241,13 @@
                                         <option value="apple">Title on bottom</option>
                                     </select>
                                 </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="info-bg-slider">Info row background</label>
+                                        <span id="info-bg-value">0%</span>
+                                    </div>
+                                    <input type="range" id="info-bg-slider" min="0" max="100" value="0" step="1" />
+                                </div>
                                 <div class="select-container tag-select-container">
                                     <div>Service tag</div>
                                     <select id="service-tag">
@@ -246,6 +259,14 @@
                                         upload
                                     </label>
                                     <input type="file" id="service-tag-file" accept="image/*" hidden />
+                                </div>
+                                <div class="select-container">
+                                    <div>Tag position</div>
+                                    <select id="tag-position">
+                                        <option value="bottom">Bottom</option>
+                                        <option value="top">Top</option>
+                                        <option value="info">In song info</option>
+                                    </select>
                                 </div>
                                 <div class="slider-container">
                                     <div>
