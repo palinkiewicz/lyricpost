@@ -348,7 +348,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
 }
 
 @media screen and (max-width: 1000px) {
@@ -364,8 +364,17 @@
 
 .tab-selectors {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     justify-content: flex-start;
+}
+
+/* Sized so all four selectors fit one line inside the 18rem options column. */
+.tab-selectors > button {
+    min-width: 0;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .tab-selectors > button:hover {
@@ -625,6 +634,58 @@
 
 .tag-select-container {
     gap: 0.25rem;
+}
+
+/* Presets tab */
+.preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.preset {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.preset > button {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.preset > button:hover {
+    background-color: var(--surface-color);
+}
+
+.preset > .preset-apply {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preset.active > .preset-apply {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+}
+
+.preset > .preset-action {
+    padding: 0.5rem 0.4rem;
+    font-size: 1.1rem;
+}
+
+.preset-save {
+    justify-content: center;
+    width: 100%;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.preset-save:hover {
+    background-color: var(--surface-color);
 }
 
 .tag-select-container > label {

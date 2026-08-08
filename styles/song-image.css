@@ -28,6 +28,7 @@
 .song-image-wrap.additional-bg-preview::before {
     inset: -1.5rem;
     opacity: 1;
+    border-radius: 16px;
 }
 
 .song-image-wrap.backdrop-cover::before {
@@ -64,8 +65,32 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
+/*
+ * The tinted info row is full bleed: it cancels the card's side padding with
+ * negative margins and pays it back as its own padding, so the row's content
+ * still lines up with the lyrics. The two rules below do the same for the top
+ * or bottom edge whenever the row is the first/last thing in the card — its
+ * corners then have to follow the card's radius, since the card does not clip
+ * its children.
+ */
 .song-image.info-bg>.header {
-    padding: 0.6rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding: 0.6rem 1rem;
+}
+
+.song-image.info-bg.layout-spotify:not(.tag-pos-top)>.header {
+    margin-top: -1.2rem;
+    padding-bottom: 1rem;
+    border-radius: var(--song-border-radius, 1.5rem)
+        var(--song-border-radius, 1.5rem) 0 0;
+}
+
+.song-image.info-bg.layout-apple:not(.tag-pos-bottom)>.header {
+    margin-bottom: -1rem;
+    padding-bottom: 1rem;
+    border-radius: 0 0 var(--song-border-radius, 1.5rem)
+        var(--song-border-radius, 1.5rem);
 }
 
 .song-image>.header>img {
@@ -131,7 +156,13 @@
     padding: 1.2rem 0 0.3rem;
 }
 
+/*
+ * Block, not inline: an inline image sits on the text baseline, so the font's
+ * descender pushes it down out of the fixed-height box. At small tag heights
+ * that is enough to clip the bottom of the logo.
+ */
 .song-image .spotify>img {
+    display: block;
     height: var(--song-tag-height, 1.5rem);
 }
 

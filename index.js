@@ -3,6 +3,7 @@ const appState = new AppState();
 const appShell = new AppShell();
 
 const songImageController = new SongImageController(appState, appShell);
+const presetsController = new PresetsController(songImageController);
 const lyricsController = new LyricsController(
     appState,
     fetcher,

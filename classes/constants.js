@@ -61,6 +61,60 @@ const BACKGROUND_SHADOW_OFFSET_X = 0;
 const BACKGROUND_SHADOW_OFFSET_Y = 4;
 const BACKGROUND_TO_SHADOW_FACTOR = 4;
 
+const PRESETS_STORAGE_KEY = 'lyricpost-presets';
+
+/*
+ * Presets never carry song-specific things (cover art, uploaded service tag).
+ * A missing key leaves that control untouched — Spotify omits bgColor on
+ * purpose so the random per-song background survives applying it.
+ */
+const BUILT_IN_PRESETS = [
+    {
+        name: 'Spotify',
+        settings: {
+            bgColor: '#cd6800',
+            textColor: '#181818',
+            width: 320,
+            cornerRadius: 24,
+            backgroundTransparency: 100,
+            backgroundBlur: 12,
+            additionalBg: false,
+            backdropCover: false,
+            fontFamily: 'default',
+            fontSize: 20,
+            letterSpacing: 0,
+            lineSpacing: 150,
+            layoutStyle: 'spotify',
+            infoBg: 0,
+            serviceTag: 'spotify',
+            tagPosition: 'bottom',
+            tagHeight: 24,
+        },
+    },
+    {
+        name: 'Apple Music',
+        settings: {
+            bgColor: '#181818',
+            textColor: '#f0f0f0',
+            width: 320,
+            cornerRadius: 20,
+            backgroundTransparency: 55,
+            backgroundBlur: 24,
+            additionalBg: true,
+            backdropCover: true,
+            fontFamily: 'arial',
+            fontSize: 24,
+            letterSpacing: 0,
+            lineSpacing: 135,
+            layoutStyle: 'apple',
+            infoBg: 12,
+            serviceTag: 'apple',
+            tagPosition: 'info',
+            tagHeight: 16,
+        },
+    },
+];
+
 const COLORS = [
     '#008fd1',
     '#549aab',

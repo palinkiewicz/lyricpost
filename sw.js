@@ -1,4 +1,4 @@
-const CACHE_NAME = 'v1';
+const CACHE_NAME = 'v2';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -14,6 +14,7 @@ const urlsToCache = [
     '/classes/SearchController.js',
     '/classes/NavigationController.js',
     '/classes/SongImageController.js',
+    '/classes/PresetsController.js',
     '/classes/data/Artist.js',
     '/classes/data/Lyric.js',
     '/classes/data/Song.js',

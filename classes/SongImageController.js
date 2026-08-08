@@ -414,6 +414,136 @@ class SongImageController {
     }
 
     /**
+     * Collects every presetable customization. Song-specific things (cover
+     * art, an uploaded service tag) are deliberately left out.
+     * @returns {object}
+     */
+    getSettings() {
+        return {
+            bgColor: this.currentBgColor,
+            textColor: this.currentTextColor,
+            width: this.widthSlider?.value,
+            cornerRadius: this.cornerRadiusSlider?.value,
+            backgroundTransparency: this.backgroundTransparencySlider?.value,
+            backgroundBlur: this.backgroundBlurSlider?.value,
+            additionalBg: this.additionalBgSwitch?.classList.contains('on'),
+            backdropCover: this.backdropCoverSwitch?.classList.contains('on'),
+            fontFamily: this.fontFamilySelect?.value,
+            fontSize: this.fontSizeSlider?.value,
+            letterSpacing: this.letterSpacingSlider?.value,
+            lineSpacing: this.lineSpacingSlider?.value,
+            layoutStyle: this.layoutStyleSelect?.value,
+            infoBg: this.infoBgSlider?.value,
+            serviceTag: this.serviceTagSelect?.value,
+            tagPosition: this.tagPositionSelect?.value,
+            tagHeight: this.tagHeightSlider?.value,
+        };
+    }
+
+    /**
+     * Applies a settings object produced by getSettings(). Every control is
+     * driven through its own event handler, so a preset goes through exactly
+     * the same code path as the user moving the control. Keys that are absent
+     * leave their control untouched.
+     * @param {object} settings
+     */
+    applySettings(settings) {
+        if (!settings) {
+            return;
+        }
+
+        if (settings.bgColor) {
+            this.setSongImageColor(settings.bgColor);
+            if (this.customColorInput) {
+                this.customColorInput.value = settings.bgColor;
+            }
+        }
+
+        if (settings.textColor) {
+            this.setSongTextColor(settings.textColor);
+            if (this.textCustomColorInput) {
+                this.textCustomColorInput.value = settings.textColor;
+            }
+        }
+
+        this.setControlValue(this.widthSlider, settings.width, 'input');
+        this.setControlValue(
+            this.cornerRadiusSlider,
+            settings.cornerRadius,
+            'input'
+        );
+        this.setControlValue(
+            this.backgroundTransparencySlider,
+            settings.backgroundTransparency,
+            'input'
+        );
+        this.setControlValue(
+            this.backgroundBlurSlider,
+            settings.backgroundBlur,
+            'input'
+        );
+        this.setControlValue(this.fontFamilySelect, settings.fontFamily, 'change');
+        this.setControlValue(this.fontSizeSlider, settings.fontSize, 'input');
+        this.setControlValue(
+            this.letterSpacingSlider,
+            settings.letterSpacing,
+            'input'
+        );
+        this.setControlValue(
+            this.lineSpacingSlider,
+            settings.lineSpacing,
+            'input'
+        );
+        this.setControlValue(
+            this.layoutStyleSelect,
+            settings.layoutStyle,
+            'change'
+        );
+        this.setControlValue(this.infoBgSlider, settings.infoBg, 'input');
+        this.setControlValue(this.serviceTagSelect, settings.serviceTag, 'change');
+        this.setControlValue(
+            this.tagPositionSelect,
+            settings.tagPosition,
+            'change'
+        );
+        this.setControlValue(this.tagHeightSlider, settings.tagHeight, 'input');
+
+        this.setSwitchState(this.additionalBgSwitch, settings.additionalBg);
+        this.setSwitchState(this.backdropCoverSwitch, settings.backdropCover);
+    }
+
+    /**
+     * Sets an input/select value and notifies its listeners.
+     * @param {HTMLInputElement | HTMLSelectElement | null} control
+     * @param {string | number | undefined} value
+     * @param {'input' | 'change'} eventName
+     */
+    setControlValue(control, value, eventName) {
+        if (!control || value === undefined || value === null) {
+            return;
+        }
+
+        control.value = value;
+        control.dispatchEvent(new Event(eventName));
+    }
+
+    /**
+     * Brings a switch to the wanted state through a real click, so whatever is
+     * wired to it runs too.
+     * @param {HTMLElement | null} container
+     * @param {boolean | undefined} on
+     */
+    setSwitchState(container, on) {
+        if (!container || on === undefined || on === null) {
+            return;
+        }
+
+        if (container.classList.contains('on') !== Boolean(on)) {
+            container.click();
+        }
+    }
+
+    /**
      * Sizes the .options box to the currently selected tab panel so the panel
      * isn't mispositioned (the CSS default height is otherwise only corrected
      * once the user switches tabs).

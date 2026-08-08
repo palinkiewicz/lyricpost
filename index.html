@@ -117,6 +117,7 @@
                             </button>
                             <button data-number="2">Text</button>
                             <button data-number="3">Other</button>
+                            <button data-number="4">Presets</button>
                         </div>
                         <div class="tabs">
                             <!-- Background tab -->
@@ -276,6 +277,15 @@
                                     <input type="range" id="tag-height-slider" min="16" max="80" value="24" step="1" />
                                 </div>
                             </div>
+
+                            <!-- Presets tab -->
+                            <div class="panel">
+                                <div class="preset-list"></div>
+                                <button id="save-preset" class="preset-save">
+                                    <span class="material-symbols-outlined">bookmark_add</span>
+                                    Save new preset
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -302,6 +312,7 @@
     <script src="classes/DataFetcher.js"></script>
     <script src="classes/AppShell.js"></script>
     <script src="classes/SongImageController.js"></script>
+    <script src="classes/PresetsController.js"></script>
     <script src="classes/LyricsController.js"></script>
     <script src="classes/SearchController.js"></script>
     <script src="classes/NavigationController.js"></script>
