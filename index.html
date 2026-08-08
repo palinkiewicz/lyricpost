@@ -11,7 +11,13 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/wizard.css">
     <link rel="stylesheet" href="styles/song-image.css">
-    <title>Lyrics Image Generator</title>
+    <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <meta name="theme-color" content="#f6f6f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101018" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>LyricPost: Lyrics Image Generator</title>
 </head>
 
 <body class="dark-mode">
@@ -19,38 +25,27 @@
         <section class="lyrics-image-screen search-form" data-number="1">
             <div class="screen-wrapper">
                 <header>
-                    <h1>Lyrics Image Generator</h1>
+                    <h1>LyricPost</h1>
                 </header>
-                <div class="input-tabs" style="display: none;">
-                    <button class="tab-button active" data-tab="search">Search</button>
-                    <button class="tab-button" data-tab="link">Paste Link</button>
-                </div>
-                <div class="tab-content active" id="search-tab">
-                    <form>
-                        <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
-                        <button class="primary" id="search">
-                            Find that song!
-                        </button>
-                    </form>
-                </div>
-                <div class="tab-content" id="link-tab">
-                    <form>
-                        <input class="surface" type="text" id="spotify-link"
-                            placeholder="https://open.spotify.com/track/...">
-                        <button class="primary" id="load-link">
-                            Load song!
-                        </button>
-                    </form>
-                </div>
+                <form>
+                    <input class="surface" type="text" id="song-name" placeholder="Song name and author here">
+                    <button class="primary" id="search">
+                        <span class="material-symbols-outlined">music_note</span>
+                        Find that song!
+                    </button>
+                </form>
                 <div class="searching hidden"></div>
                 <div class="error hidden"></div>
             </div>
         </section>
+
         <section class="lyrics-image-screen hidden search-results" data-number="2">
             <div class="screen-wrapper">
                 <header>
-                    <button class="go-to-screen material-symbols-outlined" data-number="1">chevron_left</button>
-                    <h2>Select a song</h2>
+                    <div class="header-content-wrapper">
+                        <button class="go-to-screen material-symbols-outlined" data-number="1">chevron_left</button>
+                        <h2>Select a song</h2>
+                    </div>
                 </header>
                 <div class="song-selection">
                     <div class="select-song cloneable">
@@ -61,12 +56,19 @@
                 </div>
             </div>
         </section>
+
         <section class="lyrics-image-screen hidden lyrics-results" data-number="3">
             <div class="screen-wrapper">
                 <header>
-                    <button class="go-to-screen material-symbols-outlined" data-number="2">chevron_left</button>
-                    <h2>Select lines</h2>
-                    <button class="go-to-screen right material-symbols-outlined" data-number="4">chevron_right</button>
+                    <div class="header-content-wrapper">
+                        <button class="go-to-screen material-symbols-outlined" data-number="2">
+                            chevron_left
+                        </button>
+                        <h2>Select lines</h2>
+                        <button class="go-to-screen material-symbols-outlined" id="go-to-final" data-number="4">
+                            chevron_right
+                        </button>
+                    </div>
                 </header>
                 <div class="song-info-display">
                     <img src="" alt="album cover" class="song-info-cover">
@@ -82,62 +84,215 @@
                 <span class="material-symbols-outlined">arrow_forward</span>
             </button>
         </section>
+
         <section class="lyrics-image-screen hidden final-options" data-number="4">
             <div class="screen-wrapper">
                 <header>
-                    <button class="material-symbols-outlined" id="last-go-back">chevron_left</button>
-                    <h2>Song image</h2>
-                    <button class="material-symbols-outlined" id="download">download</button>
+                    <div class="header-content-wrapper">
+                        <button class="material-symbols-outlined" id="last-go-back">
+                            chevron_left
+                        </button>
+                        <h2>Song image</h2>
+                        <button class="material-symbols-outlined primary" id="download">
+                            download
+                        </button>
+                    </div>
                 </header>
                 <div class="searching hidden"></div>
-                <div class="song-image">
-                    <div class="header">
-                        <img src="" alt="album-cover">
-                        <div>
-                            <div class="name" contenteditable></div>
-                            <div class="authors" contenteditable></div>
+                <div class="image-creator">
+                    <div class="song-image-wrap">
+                        <div class="song-image">
+                            <div class="header">
+                                <img src="" alt="album-cover" />
+                                <div>
+                                    <div class="name" contenteditable></div>
+                                    <div class="authors" contenteditable></div>
+                                </div>
+                            </div>
+                            <div class="lyrics" contenteditable></div>
+                            <div class="spotify">
+                                <img src="" />
+                            </div>
                         </div>
                     </div>
-                    <div class="lyrics" contenteditable="true"></div>
-                    <div class="spotify">
-                        <img src="" />
+                    <div class="options">
+                        <div class="tab-selectors">
+                            <button data-number="1" class="primary">
+                                Background
+                            </button>
+                            <button data-number="2">Text</button>
+                            <button data-number="3">Other</button>
+                            <button data-number="4">Presets</button>
+                        </div>
+                        <div class="tabs">
+                            <!-- Background tab -->
+                            <div class="panel selected">
+                                <div class="color-selection">
+                                    <div class="custom-color" id="custom-color">
+                                        <input type="color" id="custom-color-input" />
+                                        <label class="material-symbols-outlined"
+                                            for="custom-color-input">palette</label>
+                                    </div>
+                                </div>
+                                <div class="slider-container width-control">
+                                    <div>
+                                        <label for="width-slider">Width</label>
+                                        <span id="width-value">320px</span>
+                                    </div>
+                                    <input type="range" id="width-slider" min="200" max="600" value="320" step="10" />
+                                </div>
+                                <div class="slider-container radius-control">
+                                    <div>
+                                        <label for="corner-radius-slider">Corner radius</label>
+                                        <span id="corner-radius-value">24px</span>
+                                    </div>
+                                    <input type="range" id="corner-radius-slider" min="0" max="48" value="24"
+                                        step="1" />
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="background-transparency-slider">Background image
+                                            transparency</label>
+                                        <span id="background-transparency-value">100%</span>
+                                    </div>
+                                    <input type="range" id="background-transparency-slider" min="0" max="100"
+                                        value="100" step="1" />
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="background-blur-slider">Blur level</label>
+                                        <span id="background-blur-value">12px</span>
+                                    </div>
+                                    <input type="range" id="background-blur-slider" min="0" max="32" value="12"
+                                        step="1" />
+                                </div>
+                                <div class="switch-container" id="additional-bg">
+                                    <div>Opaque export</div>
+                                    <div class="switch"></div>
+                                </div>
+                                <div class="switch-container conditional-option unavailable" id="backdrop-cover">
+                                    <div>Cover on backdrop</div>
+                                    <div class="switch"></div>
+                                </div>
+                            </div>
+
+                            <!-- Text tab -->
+                            <div class="panel">
+                                <div>
+                                    <div class="color-selection" id="text-color-selection">
+                                        <div class="custom-color" id="text-custom-color">
+                                            <input type="color" id="text-custom-color-input" />
+                                            <label class="material-symbols-outlined"
+                                                for="text-custom-color-input">palette</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="select-container">
+                                    <div>Font type</div>
+                                    <select id="text-font-family">
+                                        <option value="default">Poppins (default)</option>
+                                        <option value="arial">Arial (sans-serif)</option>
+                                        <option value="verdana">Verdana (sans-serif)</option>
+                                        <option value="tahoma">Tahoma (sans-serif)</option>
+                                        <option value="trebuchet">Trebuchet MS (sans-serif)</option>
+                                        <option value="times">Times New Roman (serif)</option>
+                                        <option value="georgia">Georgia (serif)</option>
+                                        <option value="garamond">Garamond (serif)</option>
+                                        <option value="courier">Courier New (monospace)</option>
+                                        <option value="brush">Brush Script MT (cursive)</option>
+                                        <option value="zh-TW">Noto Sans (TW characters)</option>
+                                        <option value="zh-CN">Noto Sans (CN characters)</option>
+                                        <option value="zh-HK">Noto Sans (HK characters)</option>
+                                        <option value="ja">Noto Sans (JP characters)</option>
+                                        <option value="ko">Noto Sans (KR characters)</option>
+                                    </select>
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="font-size-slider">Font size</label>
+                                        <span id="font-size-value">19px</span>
+                                    </div>
+                                    <input type="range" id="font-size-slider" min="12" max="32" value="19" step="1" />
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="letter-spacing-slider">Character spacing</label>
+                                        <span id="letter-spacing-value">0px</span>
+                                    </div>
+                                    <input type="range" id="letter-spacing-slider" min="0" max="8" value="0" step="1" />
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="line-spacing-slider">Line spacing</label>
+                                        <span id="line-spacing-value">150%</span>
+                                    </div>
+                                    <input type="range" id="line-spacing-slider" min="100" max="220" value="150"
+                                        step="5" />
+                                </div>
+                            </div>
+
+                            <!-- Other tab -->
+                            <div class="panel">
+                                <div class="select-container tag-select-container">
+                                    <div>Cover art</div>
+                                    <label class="material-symbols-outlined" for="cover-art-file">
+                                        upload
+                                    </label>
+                                    <input type="file" id="cover-art-file" accept="image/png, image/jpeg" hidden />
+                                </div>
+                                <div class="select-container">
+                                    <div>Layout style</div>
+                                    <select id="layout-style">
+                                        <option value="spotify">Title on top</option>
+                                        <option value="apple">Title on bottom</option>
+                                    </select>
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="info-bg-slider">Info row background</label>
+                                        <span id="info-bg-value">0%</span>
+                                    </div>
+                                    <input type="range" id="info-bg-slider" min="0" max="100" value="0" step="1" />
+                                </div>
+                                <div class="select-container tag-select-container">
+                                    <div>Service tag</div>
+                                    <select id="service-tag">
+                                        <option value="none">None</option>
+                                        <option value="spotify">Spotify</option>
+                                        <option value="apple">Apple Music</option>
+                                    </select>
+                                    <label class="material-symbols-outlined" for="service-tag-file">
+                                        upload
+                                    </label>
+                                    <input type="file" id="service-tag-file" accept="image/*" hidden />
+                                </div>
+                                <div class="select-container">
+                                    <div>Tag position</div>
+                                    <select id="tag-position">
+                                        <option value="bottom">Bottom</option>
+                                        <option value="top">Top</option>
+                                        <option value="info">In song info</option>
+                                    </select>
+                                </div>
+                                <div class="slider-container">
+                                    <div>
+                                        <label for="tag-height-slider">Service tag height</label>
+                                        <span id="tag-height-value">24px</span>
+                                    </div>
+                                    <input type="range" id="tag-height-slider" min="16" max="80" value="24" step="1" />
+                                </div>
+                            </div>
+
+                            <!-- Presets tab -->
+                            <div class="panel">
+                                <div class="preset-list"></div>
+                                <button id="save-preset" class="preset-save">
+                                    <span class="material-symbols-outlined">bookmark_add</span>
+                                    Save new preset
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="color-selection">
-                    <div class="" id="custom-color">
-                        <input type="color" id="custom-color-input">
-                        <label class="material-symbols-outlined" for="custom-color-input">palette</label>
-                    </div>
-                </div>
-                <div class="switch-container" id="light-text">
-                    <div class="switch"></div>
-                    <div>Light text</div>
-                </div>
-                <div class="switch-container" id="spotify-tag">
-                    <div class="switch"></div>
-                    <div>Spotify tag</div>
-                </div>
-                <div class="switch-container" id="additional-bg">
-                    <div class="switch"></div>
-                    <div>Background</div>
-                </div>
-                <div class="width-control">
-                    <div>
-                        <label for="width-slider">Width</label>
-                        <span id="width-value">320px</span>
-                    </div>
-                    <input type="range" id="width-slider" min="200" max="600" value="320" step="10">
-                </div>
-                <div class="control-group font-selection-container">
-                    <div class="font-label">Chinese Glyph Standards</div>
-                    <select id="font-lang" class="surface">
-                        <option value="en">Auto</option>
-                        <option value="zh-TW">TW</option>
-                        <option value="zh-CN">CN</option>
-                        <option value="zh-HK">HK</option>
-                        <option value="ja">JP</option>
-                        <option value="ko">KR</option>
-                    </select>
                 </div>
             </div>
         </section>
@@ -153,11 +308,19 @@
             <span class="material-symbols-outlined"></span>
         </div>
     </footer>
+
+    <script src="classes/constants.js"></script>
     <script src="classes/data/Artist.js"></script>
     <script src="classes/data/Lyric.js"></script>
     <script src="classes/data/Song.js"></script>
+    <script src="classes/AppState.js"></script>
     <script src="classes/DataFetcher.js"></script>
-    <script src="classes/DOMHandler.js"></script>
+    <script src="classes/AppShell.js"></script>
+    <script src="classes/SongImageController.js"></script>
+    <script src="classes/PresetsController.js"></script>
+    <script src="classes/LyricsController.js"></script>
+    <script src="classes/SearchController.js"></script>
+    <script src="classes/NavigationController.js"></script>
     <script src="index.js"></script>
 </body>
 

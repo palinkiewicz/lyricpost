@@ -1,25 +1,96 @@
+/*
+ * The card is wrapped so the "opaque export" backdrop can be previewed as a
+ * real element behind it (a box-shadow ring cannot carry the cover image).
+ * The wrapper also owns the scale transform: it has to be an ancestor of the
+ * card, since a negative-z-index pseudo-element of a transformed element still
+ * paints over that element's own background.
+ */
+.song-image-wrap {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    transform: scale(var(--song-image-scale, 1));
+    transform-origin: top center;
+}
+
+.song-image-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background-color: var(--song-bg-second, currentColor);
+    background-size: cover;
+    background-position: center;
+    transition: 450ms var(--cubic-ease-out);
+}
+
+.song-image-wrap.additional-bg-preview::before {
+    inset: -1.5rem;
+    opacity: 1;
+    border-radius: 16px;
+}
+
+.song-image-wrap.backdrop-cover::before {
+    background-image: var(--song-backdrop-image, none);
+}
+
+.song-image-wrap.additional-bg-preview>.song-image {
+    box-shadow: 0 1px 16px 2px rgba(0, 0, 0, 0.3);
+}
+
 .song-image {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     padding: 1.2rem 1rem 1rem;
     width: var(--song-image-width, 20rem);
-    transform: scale(var(--song-image-scale, 1));
-    transform-origin: top center;
     background-color: rgba(84, 154, 171, 1);
-    color: rgba(0, 0, 0, 0.95);
-    border-radius: 1.5rem;
-    transition: 200ms var(--cubic-ease-out);
-}
-
-.light-text .song-image {
-    color: rgba(255, 255, 255, 0.95);
+    background-size: cover;
+    background-position: center;
+    color: var(--song-text-color, rgba(0, 0, 0, 0.95));
+    border-radius: var(--song-border-radius, 1.5rem);
+    box-shadow: 0 0 0 0 transparent;
+    transition: 200ms var(--cubic-ease-out),
+        box-shadow 450ms var(--cubic-ease-out);
 }
 
 .song-image>.header {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    background-color: var(--song-info-bg, transparent);
+    transition: 200ms var(--cubic-ease-out);
+}
+
+/*
+ * The tinted info row is full bleed: it cancels the card's side padding with
+ * negative margins and pays it back as its own padding, so the row's content
+ * still lines up with the lyrics. The two rules below do the same for the top
+ * or bottom edge whenever the row is the first/last thing in the card — its
+ * corners then have to follow the card's radius, since the card does not clip
+ * its children.
+ */
+.song-image.info-bg>.header {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding: 0.6rem 1rem;
+}
+
+.song-image.info-bg.layout-spotify:not(.tag-pos-top)>.header {
+    margin-top: -1.2rem;
+    padding-bottom: 1rem;
+    border-radius: var(--song-border-radius, 1.5rem)
+        var(--song-border-radius, 1.5rem) 0 0;
+}
+
+.song-image.info-bg.layout-apple:not(.tag-pos-bottom)>.header {
+    margin-bottom: -1rem;
+    padding-bottom: 1rem;
+    border-radius: 0 0 var(--song-border-radius, 1.5rem)
+        var(--song-border-radius, 1.5rem);
 }
 
 .song-image>.header>img {
@@ -31,6 +102,12 @@
     background-size: cover;
     background-position: center;
     color: transparent;
+    cursor: pointer;
+}
+
+/* See wizard.css .song-info-cover.cover-loaded for the Firefox corner-bleed rationale. */
+.song-image>.header>img.cover-loaded {
+    background-image: none;
 }
 
 .song-image>.header .name {
@@ -44,38 +121,76 @@
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--song-author-color, rgba(0, 0, 0, 0.6));
     transition: 200ms var(--cubic-ease-out);
 }
 
-.light-text .song-image>.header .authors {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .song-image>.lyrics {
-    font-size: 1.2rem;
+    font-size: var(--song-lyrics-font-size, 1.2rem);
     font-weight: 700;
-    line-height: 1.5rem;
+    line-height: var(--song-line-height, 1.5rem);
     padding-bottom: 0.2rem;
+    letter-spacing: var(--song-letter-spacing, 0);
 }
 
-.song-image>.spotify {
-    filter: brightness(0) saturate(100%) invert(0%) sepia(5%) saturate(22%) hue-rotate(164deg) brightness(96%) contrast(105%);
+.song-image>.lyrics,
+.song-image>.header .name,
+.song-image>.header .authors {
+    font-family: var(--song-font-family, 'Poppins', sans-serif);
+    letter-spacing: var(--song-letter-spacing, 0);
+}
+
+/*
+ * The tag is reparented into the info row for the "In song info" position, so
+ * these selectors are descendant rather than child ones.
+ */
+.song-image .spotify {
     height: 0;
     padding: 0;
     overflow: hidden;
     transition: 200ms var(--cubic-ease-out);
 }
 
-.spotify-tag .song-image>.spotify {
-    height: 3rem;
+.song-image.spotify-tag .spotify {
+    height: calc(var(--song-tag-height, 1.5rem) + 1.5rem);
     padding: 1.2rem 0 0.3rem;
 }
 
-.song-image>.spotify>img {
-    height: 100%;
+/*
+ * Block, not inline: an inline image sits on the text baseline, so the font's
+ * descender pushes it down out of the fixed-height box. At small tag heights
+ * that is enough to clip the bottom of the logo.
+ */
+.song-image .spotify>img {
+    display: block;
+    height: var(--song-tag-height, 1.5rem);
 }
 
-.light-text .song-image>.spotify {
-    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+/* Layout variants */
+.song-image.layout-apple>.lyrics {
+    order: 1;
+}
+
+.song-image.layout-apple>.header {
+    order: 2;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.song-image.layout-apple>.spotify {
+    order: 3;
+}
+
+/* Tag positions */
+.song-image.tag-pos-top>.spotify {
+    order: -1;
+}
+
+.song-image.spotify-tag.tag-pos-top>.spotify {
+    padding: 0 0 1.2rem;
+}
+
+.song-image.spotify-tag.tag-pos-info .spotify {
+    height: calc(var(--song-tag-height, 1.5rem) + 0.4rem);
+    padding: 0.4rem 0 0;
 }

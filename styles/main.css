@@ -1,19 +1,33 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(241, 128, 60, 0.25);
+    }
+    70% {
+        box-shadow: 0 0 0 1.5rem rgba(241, 128, 60, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(241, 128, 60, 0);
+    }
+}
 
 /* Fallback Asian Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+HK&family=Noto+Sans+JP&family=Noto+Sans+KR&family=Noto+Sans+SC&family=Noto+Sans+TC&display=swap');
 
 * {
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
 
     --background-color: rgba(246, 246, 246, 1);
+    --background-gradient: linear-gradient(90deg, rgba(246, 246, 246, 1), rgba(226, 235, 240, 1), rgba(215, 221, 230, 1), rgba(230, 238, 243, 1));
+    --background-nav-color: rgba(246, 246, 246, 0.7);
     --background-text-color: rgba(18, 55, 64, 1);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
+    --surface-light-color: rgba(84, 154, 171, 0.16);
     --surface-color: rgba(84, 154, 171, 0.3);
     --surface-text-color: rgba(18, 55, 64, 0.85);
-    --primary-color: rgba(241, 128, 45, 1);
-    --primary-text-color: rgba(246, 246, 246, 1);
+    --primary-color: rgba(241, 128, 45, 0.9);
+    --primary-text-color: rgba(255, 238, 228, 1);
     --error-color: rgba(240, 40, 30, 0.3);
     --error-text-color: rgba(240, 40, 30, 1);
 
@@ -41,13 +55,15 @@
 }
 
 .dark-mode, .dark-mode * {
-    --background-color: rgba(20, 20, 20, 1);
-    --background-text-color: rgba(72, 220, 255, 0.8);
-    --surface-light-color: rgba(84, 154, 171, 0.1);
-    --surface-color: rgba(84, 154, 171, 0.25);
-    --surface-text-color: rgba(72, 220, 255, 0.7);
-    --primary-color: rgba(241, 128, 45, 0.95);
-    --primary-text-color: rgba(246, 246, 246, 1);
+    --background-color: rgba(16, 16, 24, 1);
+    --background-gradient: linear-gradient(90deg, rgba(16, 16, 24, 1), rgba(21, 21, 40, 1), rgba(25, 25, 49, 1), rgba(21, 22, 31, 1));
+    --background-nav-color: rgba(16, 16, 24, 0.7);
+    --background-text-color: rgb(123, 158, 255);
+    --surface-light-color: rgba(75, 122, 252, 0.13);
+    --surface-color: rgba(75, 122, 252, 0.2);
+    --surface-text-color: rgba(153, 195, 255, 0.9);
+    --primary-color: rgba(239, 127, 59, 0.9);
+    --primary-text-color: rgba(255, 238, 228, 1);
     --error-color: rgba(240, 40, 30, 0.2);
     --error-text-color: rgba(240, 40, 30, 1);
 }
@@ -57,7 +73,7 @@
 }
 
 .cloneable {
-    display: none!important;
+    display: none !important;
 }
 
 body {
@@ -66,13 +82,16 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
-    background: var(--background-color);
     color: var(--background-text-color);
+    background-color: var(--background-color);
+    background-image: var(--background-gradient);
+    background-size: 140% 140%;
 }
 
-h1, h2 {
+h1,
+h2 {
     margin: 0;
-    padding: 1.5rem 0 1.1rem;
+    padding: 1.3rem 0;
     font-size: 1.6rem;
 }
 
@@ -89,11 +108,29 @@ h1, h2 {
 a {
     text-decoration: none;
     font-weight: 600;
-    color: inherit
+    color: inherit;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+button {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 0;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--surface-light-color);
+    color: var(--surface-text-color);
+    transition: 150ms var(--cubic-ease-out);
+}
+
+button.primary {
+    animation: pulse 1.5s linear infinite;
 }
 
 main {
@@ -104,29 +141,34 @@ main {
 }
 
 header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    background-color: var(--background-nav-color);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+}
+
+.header-content-wrapper {
     position: relative;
 }
 
-header > .go-to-screen, #download, #last-go-back {
+.header-content-wrapper > button {
     position: absolute;
-    top: calc(50% + 0.2rem);
+    top: 50%;
     left: -1rem;
     transform: translate(-100%, -50%);
-    border: 0;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    background-color: var(--surface-light-color);
-    color: var(--surface-text-color);
-    transition: 150ms var(--cubic-ease-out);
 }
 
-header > .go-to-screen.right, #download {
+.header-content-wrapper > button:last-child {
     right: -1rem;
     left: auto;
     transform: translate(100%, -50%);
 }
 
-header > .go-to-screen:hover, #download:hover, #last-go-back:hover {
+.header-content-wrapper > button:hover {
     cursor: pointer;
     background-color: var(--surface-color);
 }
@@ -152,19 +194,19 @@ footer {
 }
 
 #dark-mode-toggle::before {
-    content: "Switch to dark";
+    content: 'Switch to dark';
 }
 
 .dark-mode #dark-mode-toggle::before {
-    content: "Switch to light";
+    content: 'Switch to light';
 }
 
 #dark-mode-toggle > span::after {
-    content: "dark_mode";
+    content: 'dark_mode';
 }
 
 .dark-mode #dark-mode-toggle > span::after {
-    content: "light_mode";
+    content: 'light_mode';
 }
 
 /* Floating Action Button */

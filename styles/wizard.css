@@ -32,7 +32,7 @@
 }
 
 .searching::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     background-color: var(--background-text-color);
@@ -89,6 +89,7 @@
 .screen-wrapper {
     width: 100vw;
     min-height: calc(100vh - 8rem);
+    padding: 5.5rem 0 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -103,42 +104,6 @@
 /* Screen 1: Search form */
 .search-form header {
     text-align: center;
-}
-
-.input-tabs {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
-
-.tab-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    background: var(--surface-light-color);
-    color: var(--surface-text-color);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 200ms var(--cubic-ease-out);
-}
-
-.tab-button:hover {
-    background: var(--surface-color);
-}
-
-.tab-button.active {
-    background: var(--primary-color);
-    color: var(--primary-text-color);
-}
-
-.tab-content {
-    display: none;
-    width: 100%;
-}
-
-.tab-content.active {
-    display: block;
 }
 
 .search-form form {
@@ -159,12 +124,9 @@
     max-width: 25rem;
 }
 
-.search-form form>button {
-    text-align: center;
-    padding: 1rem 1.5rem;
-    border: none;
-    border-radius: 0.5rem;
+.search-form form > button {
     outline: none;
+    padding: 1rem;
     font-weight: 600;
     opacity: 1;
     transition: 200ms var(--cubic-ease-out);
@@ -185,15 +147,14 @@
 .search-results .song-selection {
     display: flex;
     justify-content: space-between;
-    row-gap: 2rem;
-    width: 50rem;
-    max-width: 100%;
-    padding: 2rem;
+    row-gap: 1.5rem;
+    max-width: 50rem;
+    padding: 0 1.5rem;
     flex-wrap: wrap;
 }
 
 .select-song {
-    width: 30%;
+    width: 31%;
     padding: 1rem;
     background-color: var(--surface-light-color);
     border-radius: 0.5rem;
@@ -231,7 +192,12 @@
 }
 
 .select-song:hover img {
-    scale: 1.05;
+    scale: 1.07;
+}
+
+/* See the note on .song-info-cover.cover-loaded for why the placeholder is dropped. */
+.select-song img.cover-loaded {
+    background-image: none;
 }
 
 .hidden .select-song img {
@@ -288,6 +254,16 @@
     color: transparent;
 }
 
+/*
+ * Drop the placeholder once the real cover has loaded. Firefox otherwise bleeds
+ * up to ~1px of the placeholder background through the rounded corners, because
+ * an <img> with both a border-radius background and rounded replaced content
+ * clips the two separately (see .cover-loaded toggles in the controllers).
+ */
+.song-info-cover.cover-loaded {
+    background-image: none;
+}
+
 .song-info-text {
     flex: 1;
     overflow: hidden;
@@ -315,7 +291,7 @@
 .lines-selection {
     padding-top: 0.5rem;
     padding-bottom: 5rem;
-    width: 80%;
+    width: calc(100% - 3rem);
     max-width: 30rem;
 }
 
@@ -331,8 +307,7 @@
     margin: 0 auto 1rem;
     transition: padding 400ms var(--cubic-ease-out),
         margin-bottom 400ms var(--cubic-ease-out),
-        font-size 400ms var(--cubic-ease-out),
-        width 400ms var(--cubic-ease-out),
+        font-size 400ms var(--cubic-ease-out), width 400ms var(--cubic-ease-out),
         background-color 200ms var(--cubic-ease-out),
         scale 200ms var(--cubic-ease-out);
 }
@@ -369,14 +344,88 @@
     margin-bottom: 0;
 }
 
+.image-creator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+}
+
+@media screen and (max-width: 1000px) {
+    .image-creator {
+        flex-direction: column;
+    }
+}
+
+.options {
+    max-width: 18rem;
+    width: 90vw;
+}
+
+.tab-selectors {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-start;
+}
+
+/* Sized so all four selectors fit one line inside the 18rem options column. */
+.tab-selectors > button {
+    min-width: 0;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.tab-selectors > button:hover {
+    cursor: pointer;
+}
+
+.tab-selectors > button.primary {
+    animation: none;
+}
+
+.options {
+    overflow: visible;
+    height: 228px;
+    transition: height 200ms;
+}
+
+.tabs {
+    position: relative;
+    min-width: 0;
+}
+
+.tabs > .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    position: absolute;
+    inset: 0 0 auto 0;
+    visibility: hidden;
+    transform: translateY(-20%);
+    opacity: 0;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--surface-light-color);
+    transition: 200ms;
+}
+
+.tabs > .panel.selected {
+    position: static;
+    visibility: visible;
+    transform: translateY(0);
+    opacity: 1;
+}
+
 .color-selection {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     row-gap: 0.8rem;
-    max-width: 15rem;
-    width: 80%;
-    padding: 2rem 1rem;
+    width: 100%;
     transition: 200ms var(--cubic-ease-out);
 }
 
@@ -401,7 +450,7 @@
     width: 0;
 }
 
-#custom-color {
+.color-selection > .custom-color {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -409,23 +458,21 @@
     border: 1px solid var(--background-text-color);
 }
 
-#custom-color>input {
+.custom-color>input {
     height: 0;
     width: 0;
     padding: 0;
     border: none;
 }
 
-#custom-color>label:hover {
+.custom-color>label:hover {
     cursor: pointer;
 }
 
 .switch-container {
     display: flex;
     align-items: center;
-    max-width: 15rem;
-    width: 80%;
-    padding: 0rem 1rem 1rem;
+    width: 100%;
     transition: 200ms var(--cubic-ease-out);
 }
 
@@ -438,22 +485,25 @@
     padding: 0;
 }
 
-.switch {
+.switch-container > div:not(.switch) {
+    flex: 1;
+}
+
+.switch-container .switch {
     position: relative;
     width: 4rem;
     height: 2rem;
     border-radius: 1rem;
     border: 1px solid var(--background-text-color);
-    margin-right: 1rem;
     transition: 200ms var(--cubic-ease-out);
 }
 
-.hidden .switch {
+.hidden .switch-container .switch {
     height: 0;
 }
 
-.switch::after {
-    content: "";
+.switch-container .switch::after {
+    content: '';
     display: block;
     position: absolute;
     top: 50%;
@@ -466,48 +516,54 @@
     transition: 200ms var(--cubic-ease-out);
 }
 
-.light-text #light-text .switch::after {
+.switch-container.on .switch::after {
     left: calc(100% - 1.75rem);
 }
 
-.spotify-tag #spotify-tag .switch::after {
-    left: calc(100% - 1.75rem);
-}
-
-.additional-bg #additional-bg .switch::after {
-    left: calc(100% - 1.75rem);
-}
-
-.width-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0rem 1rem 1rem;
-    font-size: 0.9rem;
-    max-width: 15rem;
-    width: 80%;
+/*
+ * An option that only applies while another one is enabled. Collapsing it also
+ * cancels the panel's flex gap so no empty row is left behind.
+ */
+.conditional-option {
+    max-height: 2.5rem;
+    overflow: hidden;
+    opacity: 1;
     transition: 200ms var(--cubic-ease-out);
 }
 
-.hidden .width-control {
+.conditional-option.unavailable {
+    max-height: 0;
+    margin-top: -1rem;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    transition: 200ms var(--cubic-ease-out);
+}
+
+.hidden .slider-container {
     font-size: 0;
     padding: 0;
 }
 
-.width-control>div {
+.slider-container > div {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
 }
 
-.width-control label {
+.slider-container > div span {
     font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
 }
 
-.width-control input[type="range"] {
-    width: 100%;
+.slider-container input[type="range"] {
     height: 0.5rem;
     border-radius: 0.25rem;
     outline: none;
@@ -515,7 +571,8 @@
     cursor: pointer;
 }
 
-.width-control input[type="range"]::-webkit-slider-thumb {
+.slider-container input[type="range"]::-webkit-slider-thumb,
+.slider-container input[type="range"]::-moz-range-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 1.2rem;
@@ -526,54 +583,46 @@
     transition: 150ms var(--cubic-ease-out);
 }
 
-.width-control input[type="range"]::-webkit-slider-thumb:hover {
+.slider-container input[type="range"]::-webkit-slider-thumb:hover,
+.slider-container input[type="range"]::-moz-range-thumb:hover {
     transform: scale(1.1);
 }
 
-.width-control input[type="range"]::-moz-range-thumb {
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
-    background: var(--primary-color);
+.color-input-inline {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.color-input-inline input[type="color"] {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--background-text-color);
+    background: transparent;
     cursor: pointer;
-    border: none;
-    transition: 150ms var(--cubic-ease-out);
-}
-
-.width-control input[type="range"]::-moz-range-thumb:hover {
-    transform: scale(1.1);
-}
-
-.width-control #width-value {
-    font-weight: 600;
-    color: var(--primary-color);
 }
 
 @media screen and (max-width: 450px) {
     .select-song {
-        width: 45%;
+        width: 47%;
     }
 }
 
-.font-selection-container {
+.select-container {
     display: flex;
     align-items: center;
-    max-width: 15rem;
-    width: 80%;
-    padding: 0rem 1rem 1rem;
-    transition: 200ms var(--cubic-ease-out);
+    gap: 0.5rem;
 }
 
-.font-label {
-    margin-right: 1rem;
-    min-width: 4rem;
-    font-size: 1rem;
-    font-weight: 500;
+.select-container > div {
+    flex: 2;
 }
 
-#font-lang {
-    flex: 1;
-    padding: 0.4rem 0.6rem;
+.select-container > select {
+    flex: 1; 
+    padding: 0.5rem 0.6rem 0.4rem;
     border: 1px solid var(--background-text-color);
     border-radius: 0.5rem;
     outline: none;
@@ -581,5 +630,74 @@
     font-size: 0.85rem;
     color: var(--background-text-color);
     background: transparent;
-    transition: 200ms var(--cubic-ease-out);
+}
+
+.tag-select-container {
+    gap: 0.25rem;
+}
+
+/* Presets tab */
+.preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.preset {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.preset > button {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.preset > button:hover {
+    background-color: var(--surface-color);
+}
+
+.preset > .preset-apply {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preset.active > .preset-apply {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+}
+
+.preset > .preset-action {
+    padding: 0.5rem 0.4rem;
+    font-size: 1.1rem;
+}
+
+.preset-save {
+    justify-content: center;
+    width: 100%;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.preset-save:hover {
+    background-color: var(--surface-color);
+}
+
+.tag-select-container > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--background-text-color);
+    cursor: pointer;
+}
+
+.tag-select-container > label:hover {
+    background: var(--surface-light-color);
 }

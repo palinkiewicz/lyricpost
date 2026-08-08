@@ -23,7 +23,39 @@ class Song {
         this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
             ?.replace(/\n+/g, '\n')
             ?.split('\n')
-            ?.map(lyric => new Lyric(lyric));
+            ?.map((lyric) => new Lyric(lyric));
+    }
+
+    /**
+     * Lazily fetches the album cover in cors mode and caches it as an object
+     * URL. A plain <img src> makes a no-cors request that Firefox's Opaque
+     * Response Blocking (ORB) can abort for some Last.fm covers, and it re-blocks
+     * on every screen regardless of the HTTP cache. Fetching once and reusing
+     * the object URL avoids that and shares a single request across all screens.
+     * Falls back to the direct URL if the fetch fails.
+     *
+     * @returns {Promise<string | null>}
+     */
+    getCoverObjectUrl() {
+        if (!this.albumCoverUrl) {
+            return Promise.resolve(null);
+        }
+
+        if (!this._coverPromise) {
+            this._coverPromise = fetch(this.albumCoverUrl)
+                .then((response) => response.blob())
+                .then((blob) => URL.createObjectURL(blob))
+                .catch((error) => {
+                    console.error(
+                        'Failed to load album cover',
+                        this.albumCoverUrl,
+                        error
+                    );
+                    return this.albumCoverUrl;
+                });
+        }
+
+        return this._coverPromise;
     }
 
     /**
@@ -35,7 +67,7 @@ class Song {
         this.lyrics = (lyrics?.syncedLyrics ?? lyrics?.plainLyrics)
             ?.replace(/\n+/g, '\n')
             ?.split('\n')
-            ?.map(lyric => new Lyric(lyric))
-            ?.filter(lyric => lyric.text !== '');
+            ?.map((lyric) => new Lyric(lyric))
+            ?.filter((lyric) => lyric.text !== '');
     }
 }
