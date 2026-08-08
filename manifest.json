@@ -1,21 +1,25 @@
 {
-  "name": "My Awesome App",
-  "short_name": "AwesomeApp",
-  "start_url": ".",
+  "name": "LyricPost: Lyrics Image Generator",
+  "short_name": "LyricPost",
+  "description": "Generate shareable Spotify-like lyrics images.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#f6f6f6",
+  "theme_color": "#f6f6f6",
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
