@@ -100,7 +100,7 @@ class SongImageController {
         /** Blurred cover without the color tint, drawn on the export backdrop. */
         this.backdropCanvas = null;
         this.currentBgColor = COLORS[0];
-        this.currentTextColor = '#000000';
+        this.currentTextColor = contrastingTextColor(COLORS[0]);
         this.customTagActive = false;
         this._bgRenderTimer = null;
 
@@ -608,8 +608,17 @@ class SongImageController {
                 (selectLine) => Number(selectLine.dataset.index)
             )
         );
+        // The background is random, so the text color has to follow it —
+        // otherwise a dark draw lands almost-black text on an almost-black card.
         const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
         this.setSongImageColor(randomColor);
+        this.setSongTextColor(contrastingTextColor(randomColor));
+        if (this.customColorInput) {
+            this.customColorInput.value = randomColor;
+        }
+        if (this.textCustomColorInput) {
+            this.textCustomColorInput.value = this.currentTextColor;
+        }
 
         // Load the album cover in the background; re-render the blurred
         // backdrop once it arrives instead of blocking the whole screen on it.

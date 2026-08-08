@@ -54,6 +54,18 @@ function isLightColor(hex) {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140;
 }
 
+const TEXT_COLOR_ON_LIGHT = '#181818';
+const TEXT_COLOR_ON_DARK = '#f0f0f0';
+
+/**
+ * Picks the text color that stays readable on a given background.
+ * @param {string} background
+ * @returns {string}
+ */
+function contrastingTextColor(background) {
+    return isLightColor(background) ? TEXT_COLOR_ON_LIGHT : TEXT_COLOR_ON_DARK;
+}
+
 const BACKGROUND_SHADOW_COLOR = 'rgba(0, 0, 0, 0.25)';
 const BACKGROUND_SHADOW_BORDER_RADIUS = 24;
 const BACKGROUND_SHADOW_BLUR = 12;
