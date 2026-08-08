@@ -733,31 +733,10 @@ class SongImageController {
         const img = new Image();
         img.src = this.coverBase64;
         img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-
             const cardW = this.songImage.offsetWidth || img.width;
             const blurPx = (this.shadowBlur ?? 0) * (img.width / cardW);
-            if (blurPx > 0) {
-                ctx.filter = `blur(${blurPx}px)`;
-            }
-
-            // Draw the cover zoomed ~10% and centered so it overflows the
-            // canvas edges — this keeps the blur sampling real pixels instead
-            // of the transparent border, avoiding the glitchy faded edges.
-            const zoom = 1.1;
-            const dw = img.width * zoom;
-            const dh = img.height * zoom;
-            ctx.drawImage(
-                img,
-                (img.width - dw) / 2,
-                (img.height - dh) / 2,
-                dw,
-                dh
-            );
-            ctx.filter = 'none';
+            const canvas = this.renderBlurredCover(img, blurPx);
+            const ctx = canvas.getContext('2d');
 
             // Keep an untinted copy: the backdrop shows the plain blurred
             // cover so the tinted card still reads as a separate layer on it.
@@ -780,6 +759,96 @@ class SongImageController {
             this.songImage.style.backgroundSize = 'cover';
             this.songImage.style.backgroundPosition = 'center';
         };
+    }
+
+    /**
+     * Blurs the cover into a canvas of the image's own size, without the faded
+     * edges a plain `filter: blur()` leaves behind. The cover is drawn zoomed
+     * ~10% into an oversized canvas whose padding is filled by stretching the
+     * outermost pixel row/column outwards (edge clamping), so the blur always
+     * samples real pixels; the padding is cropped off afterwards. The padding
+     * scales with the radius, which a fixed zoom cannot do — that is why the
+     * background color used to bleed through the edges above ~16px of blur.
+     * @param {HTMLImageElement} img
+     * @param {number} blurPx
+     * @returns {HTMLCanvasElement}
+     */
+    renderBlurredCover(img, blurPx) {
+        const zoom = 1.1;
+        const dw = img.width * zoom;
+        const dh = img.height * zoom;
+        const offsetX = (img.width - dw) / 2;
+        const offsetY = (img.height - dh) / 2;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+
+        if (blurPx <= 0) {
+            ctx.drawImage(img, offsetX, offsetY, dw, dh);
+            return canvas;
+        }
+
+        // A canvas blur fades out over roughly three times its radius.
+        const pad = Math.ceil(blurPx * 3);
+        const padded = document.createElement('canvas');
+        padded.width = img.width + pad * 2;
+        padded.height = img.height + pad * 2;
+        const paddedCtx = padded.getContext('2d');
+        paddedCtx.drawImage(img, pad + offsetX, pad + offsetY, dw, dh);
+
+        // Clamp the drawn rect's edges out to the canvas borders: the sides
+        // first, then full-width top/bottom rows, which also fill the corners.
+        const left = Math.max(0, Math.round(pad + offsetX));
+        const top = Math.max(0, Math.round(pad + offsetY));
+        const right = Math.min(padded.width, Math.round(pad + offsetX + dw));
+        const bottom = Math.min(padded.height, Math.round(pad + offsetY + dh));
+        const bandHeight = bottom - top;
+
+        if (left > 0) {
+            paddedCtx.drawImage(
+                padded, left, top, 1, bandHeight,
+                0, top, left, bandHeight
+            );
+        }
+
+        if (right < padded.width) {
+            paddedCtx.drawImage(
+                padded, right - 1, top, 1, bandHeight,
+                right, top, padded.width - right, bandHeight
+            );
+        }
+
+        if (top > 0) {
+            paddedCtx.drawImage(
+                padded, 0, top, padded.width, 1,
+                0, 0, padded.width, top
+            );
+        }
+
+        if (bottom < padded.height) {
+            paddedCtx.drawImage(
+                padded, 0, bottom - 1, padded.width, 1,
+                0, bottom, padded.width, padded.height - bottom
+            );
+        }
+
+        // Blur the padded canvas whole (blurring it while cropping would only
+        // reintroduce the faded border), then keep the center.
+        const blurred = document.createElement('canvas');
+        blurred.width = padded.width;
+        blurred.height = padded.height;
+        const blurredCtx = blurred.getContext('2d');
+        blurredCtx.filter = `blur(${blurPx}px)`;
+        blurredCtx.drawImage(padded, 0, 0);
+        blurredCtx.filter = 'none';
+
+        ctx.drawImage(
+            blurred, pad, pad, img.width, img.height,
+            0, 0, img.width, img.height
+        );
+        return canvas;
     }
 
     /**
