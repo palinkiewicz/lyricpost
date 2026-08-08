@@ -825,6 +825,25 @@ class SongImageController {
     }
 
     /**
+     * Removes the fit-to-screen scale from a cloned document before export.
+     * html2canvas reads every bound (the card's own, and each word's) straight
+     * from the clone, but draws text at the unscaled computed font size, so a
+     * shrunk preview exports with the words crammed together. The transform is
+     * preview-only anyway — the export always wants the card at full size.
+     * @param {Document} clonedDoc - Document passed to html2canvas' onclone
+     */
+    undoPreviewScale(clonedDoc) {
+        const scaled =
+            clonedDoc.querySelector('.song-image-wrap') ??
+            clonedDoc.querySelector('.song-image');
+
+        if (scaled) {
+            scaled.style.setProperty('--song-image-scale', 1);
+            scaled.style.marginBottom = '0px';
+        }
+    }
+
+    /**
      * Sets song image's name and author to the name of the fetched song
      */
     setSongInfo() {
@@ -988,6 +1007,7 @@ class SongImageController {
         let canvas = await html2canvas(this.songImage, {
             backgroundColor: null,
             scale: window.devicePixelRatio * DOWNLOAD_SCALING_FACTOR,
+            onclone: (clonedDoc) => this.undoPreviewScale(clonedDoc),
         });
 
         if (hadPreview) {
